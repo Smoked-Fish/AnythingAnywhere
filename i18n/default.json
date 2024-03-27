@@ -1,0 +1,9 @@
+{
+  "Message.ConfigReloaded": "Configuration file reloaded.",
+
+  "Config.AnythingAnywhere.Title": "Anything Anywhere",
+  "Config.AnythingAnywhere.GroundEnabled.Name": "Ground Furniture",
+  "Config.AnythingAnywhere.GroundEnabled.Description": "If enabled, you can place ground furniture at any location.",
+  "Config.AnythingAnywhere.WallEnabled.Name": "Wall Furniture",
+  "Config.AnythingAnywhere.WallEnabled.Description": "[EXPERIMENTAL]If enabled, you can place wall furniture at any location."
+}
