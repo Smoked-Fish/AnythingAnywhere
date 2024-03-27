@@ -6,6 +6,7 @@
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
   "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "GitHub:Smoked-Fish/AnythingAnywhere" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
