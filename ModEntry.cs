@@ -1,6 +1,11 @@
 ﻿using HarmonyLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.SDKs;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 using Patches = AnythingAnywhere.Features.Patches;
 
 namespace AnythingAnywhere
@@ -15,13 +20,14 @@ namespace AnythingAnywhere
         {
             I18n.Init(helper.Translation);
 
+
             this.Config = helper.ReadConfig<ModConfig>();
             Harmony harmony = new(this.ModManifest.UniqueID);
             Patches.Initialise(harmony, this.Monitor, () => this.Config, this.Helper.Reflection);
 
+
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
         }
-
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             new ModInteractions.GenericModConfigMenu(this.Helper.ModRegistry, this.ModManifest, this.Monitor, () => this.Config, () => this.Config = new ModConfig(), () => this.Helper.WriteConfig(this.Config)).Register();

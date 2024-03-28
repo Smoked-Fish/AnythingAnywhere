@@ -1,12 +1,15 @@
 {
   "Name": "Anything Anywhere",
   "Author": "Espy",
-  "Version": "1.1.4",
+  "Version": "1.2.0",
   "Description": "Place furniture anywhere.",
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
   "MinimumApiVersion": "4.0.0",
-  "UpdateKeys": [ "GitHub:Smoked-Fish/AnythingAnywhere" ],
+  "UpdateKeys": [
+    "GitHub:Smoked-Fish/AnythingAnywhere",
+    "Nexus:21233"
+  ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",

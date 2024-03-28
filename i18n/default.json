@@ -5,5 +5,11 @@
   "Config.AnythingAnywhere.GroundEnabled.Name": "Ground Furniture",
   "Config.AnythingAnywhere.GroundEnabled.Description": "If enabled, you can place ground furniture at any location.",
   "Config.AnythingAnywhere.WallEnabled.Name": "Wall Furniture",
-  "Config.AnythingAnywhere.WallEnabled.Description": "[EXPERIMENTAL]If enabled, you can place wall furniture at any location."
+  "Config.AnythingAnywhere.WallEnabled.Description": "If enabled, you can place wall furniture at any location.",
+  "Config.AnythingAnywhere.MiniObiliskAnywhere.Name": "Mini-Obilisk",
+  "Config.AnythingAnywhere.MiniObiliskAnywhere.Description": "If enabled, you can place the mini-obilisk at any location.",
+  "Config.AnythingAnywhere.UseJukeboxAnywhere.Name": "Jukebox Functionality",
+  "Config.AnythingAnywhere.UseJukeboxAnywhere.Description": "If enabled, you can use the jukebox anywhere.",
+  "Config.AnythingAnywhere.FarmWallEnabled.Name": "Farm House Freeplace",
+  "Config.AnythingAnywhere.FarmWallEnabled.Description": "If enabled, you can place wall furniture at any location inside the farm houses, for some reason."
 }
