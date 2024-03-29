@@ -2,6 +2,8 @@
   "Message.ConfigReloaded": "Configuration file reloaded.",
 
   "Config.AnythingAnywhere.Title": "Anything Anywhere",
+  "Config.AnythingAnywhere.Furniture.Title": "Furniture",
+  "Config.AnythingAnywhere.Building.Title": "Buildings",
   "Config.AnythingAnywhere.GroundEnabled.Name": "Ground Furniture",
   "Config.AnythingAnywhere.GroundEnabled.Description": "If enabled, you can place ground furniture at any location.",
   "Config.AnythingAnywhere.WallEnabled.Name": "Wall Furniture",
@@ -11,5 +13,16 @@
   "Config.AnythingAnywhere.UseJukeboxAnywhere.Name": "Jukebox Functionality",
   "Config.AnythingAnywhere.UseJukeboxAnywhere.Description": "If enabled, you can use the jukebox anywhere.",
   "Config.AnythingAnywhere.FarmWallEnabled.Name": "Farm House Freeplace",
-  "Config.AnythingAnywhere.FarmWallEnabled.Description": "If enabled, you can place wall furniture at any location inside the farm houses, for some reason."
+  "Config.AnythingAnywhere.FarmWallEnabled.Description": "If enabled, you can place wall furniture at any location inside the farm houses, for some reason.",
+  "Config.AnythingAnywhere.EnableBuilding.Name": "Enable Building",
+  "Config.AnythingAnywhere.EnableBuilding.Description": "Enables the building features of this mod.",
+  "Config.AnythingAnywhere.BuildMenu.Name": "Build Anywhere Menu",
+  "Config.AnythingAnywhere.BuildMenu.Description": "Opens up the build menu anywhere.",
+  "Config.AnythingAnywhere.WizardBuildMenu.Name": "Wizard Build Menu",
+  "Config.AnythingAnywhere.WizardBuildMenu.Description": "Opens up the build menu anywhere.",
+  "Config.AnythingAnywhere.EnableFreeBuild.Name": "Enable Free Build",
+  "Config.AnythingAnywhere.EnableFreeBuild.Description": "If enabled, you can build at any location, even in walls."
 }
+
+
+

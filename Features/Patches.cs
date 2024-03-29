@@ -1,8 +1,11 @@
 ﻿using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using Netcode;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Characters;
 using StardewValley.GameData;
 using StardewValley.Locations;
@@ -66,6 +69,25 @@ namespace AnythingAnywhere.Features
                 prefix: new HarmonyMethod(typeof(Patches), nameof(checkForAction_prefix))
             );
             s_monitor.Log($"Applying Harmony patch: prefixing method \"MiniJukebox.checkForAction\".", LogLevel.Trace);
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.isBuildable), [typeof(Vector2), typeof(bool)]),
+                postfix: new HarmonyMethod(typeof(Patches), nameof(isBuildable_postfix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"GameLocation.isBuildable\".", LogLevel.Trace);
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.IsBuildableLocation)),
+                postfix: new HarmonyMethod(typeof(Patches), nameof(IsBuildableLocation_postfix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"GameLocation.IsBuildableLocation_postfix\".", LogLevel.Trace);
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(CarpenterMenu), nameof(CarpenterMenu.tryToBuild)),
+                prefix: new HarmonyMethod(typeof(Patches), nameof(tryToBuild_prefix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"CarpenterMenu.tryToBuild_prefix\".", LogLevel.Trace);
+
 
             Applied = true;
         }
@@ -260,6 +282,80 @@ namespace AnythingAnywhere.Features
                 return true; //run the original method
             }
         }
-        
+
+        private static void isBuildable_postfix(GameLocation __instance, Vector2 tileLocation, ref bool __result, bool onlyNeedsToBePassable = false)
+        {
+            try
+            {
+                ModConfig config = s_config();
+                if (config.EnableBuilding)
+                {
+                    if (__instance.isTilePassable(tileLocation) && !__instance.isWaterTile((int)tileLocation.X, (int)tileLocation.Y))
+                    {
+                        __result = !__instance.IsTileOccupiedBy(tileLocation, CollisionMask.All, CollisionMask.All);
+                    }
+                    else if (config.EnableFreeBuild)
+                    {
+                        __result = true;
+                    }
+                    else
+                    {
+                        __result = false; // Set to false if the tile is not passable
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"isBuildable_postfix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                return;
+            }
+        }
+
+        private static void IsBuildableLocation_postfix(GameLocation __instance, ref bool __result)
+        {
+            try
+            {
+                ModConfig config = s_config();
+
+                if (config.EnableBuilding)
+                    __result = true;
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"IsBuildableLocation_postfix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                return;
+            }
+        }
+
+        private static bool tryToBuild_prefix(CarpenterMenu __instance, ref bool __result)
+        {
+            try
+            {
+                ModConfig config = s_config();
+
+                if (Game1.activeClickableMenu is BuildAnywhereMenu && config.EnableFreeBuild)
+                {
+                    NetString skinId = __instance.currentBuilding.skinId;
+                    Vector2 tileLocation = new Vector2((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
+                    if (__instance.TargetLocation.buildStructure(__instance.currentBuilding.buildingType.Value, tileLocation, Game1.player, out var building, /*__instance.Blueprint.MagicalConstruction*/ true, true))
+                    {
+                        building.skinId.Value = skinId.Value;
+                        if (building.isUnderConstruction())
+                        {
+                            Game1.netWorldState.Value.MarkUnderConstruction(__instance.Builder, building);
+                        }
+                        __result = true;
+                        return false;
+                    }
+                }
+                __result = false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"tryToBuild_prefix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                return true; //run the original method
+            }
+        }
     }
 }

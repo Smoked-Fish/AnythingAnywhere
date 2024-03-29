@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Patches = AnythingAnywhere.Features.Patches;
+using AnythingAnywhere.Features;
+using StardewValley.Menus;
 
 namespace AnythingAnywhere
 {
@@ -27,6 +29,7 @@ namespace AnythingAnywhere
 
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Input.ButtonsChanged += this.OnButtonsChanged;
         }
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
@@ -40,6 +43,35 @@ namespace AnythingAnywhere
 
             if (this.Keys.ReloadConfig.JustPressed())
                 this.ReloadConfig();
+
+            if (this.Config.BuildMenu.JustPressed())
+            {
+                HandleInstantBuildButtonClick("Robin");
+            }
+
+            if (this.Config.WizardBuildMenu.JustPressed())
+            {
+                HandleInstantBuildButtonClick("Wizard");
+            }
+        }
+
+        private void HandleInstantBuildButtonClick(string builder)
+        {
+            if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
+            {
+                activateBuildAnywhereMenu(builder);
+            }
+            else if (Game1.activeClickableMenu is BuildAnywhereMenu)
+            {
+                Game1.displayFarmer = true;
+                ((BuildAnywhereMenu)Game1.activeClickableMenu).returnToCarpentryMenu();
+                ((BuildAnywhereMenu)Game1.activeClickableMenu).exitThisMenu();
+            }
+        }
+
+        private void activateBuildAnywhereMenu(string builder)
+        {
+            Game1.activeClickableMenu = (IClickableMenu)new BuildAnywhereMenu(builder);
         }
 
         private void ReloadConfig()

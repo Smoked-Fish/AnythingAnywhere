@@ -17,7 +17,7 @@ namespace AnythingAnywhere.ModInteractions
 
             configMenu.AddSectionTitle(
                 mod: manifest,
-                text: I18n.Config_AnythingAnywhere_Title
+                text: I18n.Config_AnythingAnywhere_Furniture_Title
             );
 
             configMenu.AddBoolOption(
@@ -58,6 +58,43 @@ namespace AnythingAnywhere.ModInteractions
                 tooltip: I18n.Config_AnythingAnywhere_FarmWallEnabled_Description,
                 getValue: () => config().AllowAllWallFurnitureFarmHouse,
                 setValue: value => config().AllowAllWallFurnitureFarmHouse = value
+            );
+
+            configMenu.AddSectionTitle(
+                mod: manifest,
+                text: I18n.Config_AnythingAnywhere_Building_Title
+            );
+
+            configMenu.AddBoolOption(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_EnableBuilding_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableBuilding_Description,
+                getValue: () => config().EnableBuilding,
+                setValue: value => config().EnableBuilding = value
+            );
+
+            configMenu.AddKeybindList(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_BuildMenu_Name,
+                tooltip: I18n.Config_AnythingAnywhere_BuildMenu_Description,
+                getValue: () => config().BuildMenu,
+                setValue: value => config().BuildMenu = value
+            );
+
+            configMenu.AddKeybindList(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_WizardBuildMenu_Name,
+                tooltip: I18n.Config_AnythingAnywhere_WizardBuildMenu_Description,
+                getValue: () => config().WizardBuildMenu,
+                setValue: value => config().WizardBuildMenu = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_EnableFreeBuild_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableFreeBuild_Description,
+                getValue: () => config().EnableFreeBuild,
+                setValue: value => config().EnableFreeBuild = value
             );
 
         }
