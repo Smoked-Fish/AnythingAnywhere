@@ -8,16 +8,25 @@ namespace AnythingAnywhere
     {
         public ModConfigKeys Keys { get; set; } = new();
         
-        public bool AllowAllGroundFurniture { get; set; } = true;
-        public bool AllowAllWallFurniture { get; set; } = true;
-        public bool AllowMiniObelisksAnywhere { get; set; } = true;
-        public bool EnableJukeboxFunctionality { get; set; } = true;
-        public bool AllowAllWallFurnitureFarmHouse { get; set; } = false;
+        // FURNITURE
+        public bool EnableFurniture { get; set; } = true;
+        public bool EnableRugTweaks { get; set; } = true;
+        public bool EnableWallFurnitureIndoors { get; set; } = false;
+        public bool EnableFreePlace { get; set; } = false;
 
+
+        // BUILDING
+        public bool EnableBuilding { get; set; } = true;
         public KeybindList BuildMenu { get; set; } = new KeybindList(SButton.OemComma);
         public KeybindList WizardBuildMenu { get; set; } = new KeybindList(SButton.OemPeriod);
-        public bool EnableBuilding { get; set; } = true;
         public bool EnableFreeBuild { get; set; } = false;
+
+
+        // OTHER
+        public KeybindList TableTweakBind { get; set; } = new KeybindList(SButton.LeftShift);
+        public bool EnableTableTweak {  get; set; } = true;
+        public bool AllowMiniObelisksAnywhere { get; set; } = true;
+        public bool EnableJukeboxFunctionality { get; set; } = true;
     }
 
     internal class ModConfigKeys

@@ -44,12 +44,12 @@ namespace AnythingAnywhere
             if (this.Keys.ReloadConfig.JustPressed())
                 this.ReloadConfig();
 
-            if (this.Config.BuildMenu.JustPressed())
+            if (this.Config.BuildMenu.JustPressed() && Config.EnableBuilding)
             {
                 HandleInstantBuildButtonClick("Robin");
             }
 
-            if (this.Config.WizardBuildMenu.JustPressed())
+            if (this.Config.WizardBuildMenu.JustPressed() && Config.EnableBuilding)
             {
                 HandleInstantBuildButtonClick("Wizard");
             }
@@ -71,7 +71,20 @@ namespace AnythingAnywhere
 
         private void activateBuildAnywhereMenu(string builder)
         {
-            Game1.activeClickableMenu = (IClickableMenu)new BuildAnywhereMenu(builder);
+            if (builder == "Wizard" && !Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk && !Config.EnableFreeBuild)
+            {
+                string message = I18n.Message_AnythingAnywhere_NoMagicInk();
+                Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                return;
+            }
+            else if (!Config.EnableBuilding)
+            {
+                return;
+            }
+            else
+            {
+                Game1.activeClickableMenu = (IClickableMenu)new BuildAnywhereMenu(builder, this.Config);
+            }
         }
 
         private void ReloadConfig()

@@ -8,20 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static StardewValley.Menus.CarpenterMenu;
 using Microsoft.Xna.Framework;
 
 namespace AnythingAnywhere.Features
 {
     internal class BuildAnywhereMenu : CarpenterMenu
     {
-        private ModConfig _config;
-
 
         //Builder must be set to Robin or Wizard to avoid divide by zero error.
-        public BuildAnywhereMenu(string builder) : base(builder, Game1.currentLocation)
+        public BuildAnywhereMenu(string builder, ModConfig config) : base(builder, Game1.currentLocation)
         {
-
             UpdateTargetLocation(Game1.currentLocation);
 
             // Initialization logic without assigning readonly fields
@@ -31,9 +27,20 @@ namespace AnythingAnywhere.Features
             int index = 0;
             foreach (KeyValuePair<string, BuildingData> data in Game1.buildingData)
             {
-                if (data.Value.Builder != builder || !GameStateQuery.CheckConditions(data.Value.BuildCondition, TargetLocation) || (data.Value.BuildingToUpgrade != null && TargetLocation.getNumberBuildingsConstructed(data.Value.BuildingToUpgrade) == 0) || !IsValidBuildingForLocation(data.Key, data.Value, TargetLocation))
+                if (data.Value.Builder != builder || !GameStateQuery.CheckConditions(data.Value.BuildCondition, TargetLocation) || (data.Value.BuildingToUpgrade != null && TargetLocation.getNumberBuildingsConstructed(data.Value.BuildingToUpgrade) == 0) || !IsValidBuildingForLocation(data.Key, data.Value, TargetLocation) ||
+                    !config.EnableFreeBuild)
                 {
                     continue;
+                }
+                else if (config.EnableFreeBuild)
+                {
+                    if (data.Value.Builder != builder)
+                        continue;
+
+                    data.Value.MagicalConstruction = true;
+                    data.Value.BuildCost = 0;
+                    data.Value.BuildDays = 0;
+                    data.Value.BuildMaterials = new List<BuildingMaterial>();
                 }
                 Blueprints.Add(new BlueprintEntry(index++, data.Key, data.Value, null));
                 if (data.Value.Skins == null)

@@ -15,6 +15,8 @@ namespace AnythingAnywhere.ModInteractions
             configMenu.Register(mod: manifest, reset: reset, save: save);
 
 
+            // Furniture
+
             configMenu.AddSectionTitle(
                 mod: manifest,
                 text: I18n.Config_AnythingAnywhere_Furniture_Title
@@ -22,43 +24,37 @@ namespace AnythingAnywhere.ModInteractions
 
             configMenu.AddBoolOption(
                 mod: manifest,
-                name: I18n.Config_AnythingAnywhere_GroundEnabled_Name,
-                tooltip: I18n.Config_AnythingAnywhere_GroundEnabled_Description,
-                getValue: () => config().AllowAllGroundFurniture,
-                setValue: value => config().AllowAllGroundFurniture = value
+                name: I18n.Config_AnythingAnywhere_EnableFurniture_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableFurniture_Description,
+                getValue: () => config().EnableFurniture,
+                setValue: value => config().EnableFurniture = value
             );
 
             configMenu.AddBoolOption(
                 mod: manifest,
-                name: I18n.Config_AnythingAnywhere_WallEnabled_Name,
-                tooltip: I18n.Config_AnythingAnywhere_WallEnabled_Description,
-                getValue: () => config().AllowAllWallFurniture,
-                setValue: value => config().AllowAllWallFurniture = value
+                name: I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Description,
+                getValue: () => config().EnableWallFurnitureIndoors,
+                setValue: value => config().EnableWallFurnitureIndoors = value
             );
 
             configMenu.AddBoolOption(
                 mod: manifest,
-                name: I18n.Config_AnythingAnywhere_MiniObiliskAnywhere_Name,
-                tooltip: I18n.Config_AnythingAnywhere_MiniObiliskAnywhere_Description,
-                getValue: () => config().AllowMiniObelisksAnywhere,
-                setValue: value => config().AllowMiniObelisksAnywhere = value
+                name: I18n.Config_AnythingAnywhere_EnableRugTweaks_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableRugTweaks_Description,
+                getValue: () => config().EnableRugTweaks,
+                setValue: value => config().EnableRugTweaks = value
             );
 
             configMenu.AddBoolOption(
                 mod: manifest,
-                name: I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Name,
-                tooltip: I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Description,
-                getValue: () => config().EnableJukeboxFunctionality,
-                setValue: value => config().EnableJukeboxFunctionality = value
+                name: I18n.Config_AnythingAnywhere_EnableFreePlace_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableFreePlace_Description,
+                getValue: () => config().EnableFreePlace,
+                setValue: value => config().EnableFreePlace = value
             );
 
-            configMenu.AddBoolOption(
-                mod: manifest,
-                name: I18n.Config_AnythingAnywhere_FarmWallEnabled_Name,
-                tooltip: I18n.Config_AnythingAnywhere_FarmWallEnabled_Description,
-                getValue: () => config().AllowAllWallFurnitureFarmHouse,
-                setValue: value => config().AllowAllWallFurnitureFarmHouse = value
-            );
+            // Buildings
 
             configMenu.AddSectionTitle(
                 mod: manifest,
@@ -95,6 +91,46 @@ namespace AnythingAnywhere.ModInteractions
                 tooltip: I18n.Config_AnythingAnywhere_EnableFreeBuild_Description,
                 getValue: () => config().EnableFreeBuild,
                 setValue: value => config().EnableFreeBuild = value
+            );
+
+
+            // Other
+
+            configMenu.AddSectionTitle(
+                mod: manifest,
+                text: I18n.Config_AnythingAnywhere_Other_Title
+            );
+
+            configMenu.AddKeybindList(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_TableTweakKeybind_Name,
+                tooltip: I18n.Config_AnythingAnywhere_TableTweakKeybind_Description,
+                getValue: () => config().TableTweakBind,
+                setValue: value => config().TableTweakBind = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_EnableTableTweak_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableTableTweak_Description,
+                getValue: () => config().EnableTableTweak,
+                setValue: value => config().EnableTableTweak = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name,
+                tooltip: I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name,
+                getValue: () => config().AllowMiniObelisksAnywhere,
+                setValue: value => config().AllowMiniObelisksAnywhere = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: manifest,
+                name: I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Name,
+                tooltip: I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Description,
+                getValue: () => config().EnableJukeboxFunctionality,
+                setValue: value => config().EnableJukeboxFunctionality = value
             );
 
         }

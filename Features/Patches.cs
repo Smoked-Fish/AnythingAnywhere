@@ -1,7 +1,5 @@
 ﻿using HarmonyLib;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewModdingAPI;
 using StardewValley;
@@ -46,6 +44,8 @@ namespace AnythingAnywhere.Features
             if (Applied)
                 return;
 
+            // Furniture
+
             s_harmony.Patch(
                 original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.CanPlaceThisFurnitureHere), [typeof(Furniture)]),
                 postfix: new HarmonyMethod(typeof(Patches), nameof(CanPlaceThisFurnitureHere_postfix))
@@ -60,15 +60,41 @@ namespace AnythingAnywhere.Features
 
             s_harmony.Patch(
                 original: AccessTools.Method(typeof(StardewValley.Object), nameof(StardewValley.Object.placementAction), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]),
-                prefix: new HarmonyMethod(typeof(Patches), nameof(placementAction_prefix))
+                prefix: new HarmonyMethod(typeof(Patches), nameof(placementActionObject_prefix))
             );
-            s_monitor.Log($"Applying Harmony patch: prefixing method \"Object.placementAction\".", LogLevel.Trace);
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"Object.placementActionObject_prefix\".", LogLevel.Trace);
 
             s_harmony.Patch(
-                original: AccessTools.Method(typeof(MiniJukebox), nameof(MiniJukebox.checkForAction), [typeof(Farmer), typeof(bool)]),
-                prefix: new HarmonyMethod(typeof(Patches), nameof(checkForAction_prefix))
+                original: AccessTools.Method(typeof(Furniture), nameof(Furniture.placementAction), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]),
+                prefix: new HarmonyMethod(typeof(Patches), nameof(placementActionFurniture_prefix))
             );
-            s_monitor.Log($"Applying Harmony patch: prefixing method \"MiniJukebox.checkForAction\".", LogLevel.Trace);
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"Furniture.placementActionObject_prefix\".", LogLevel.Trace);
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(Furniture), nameof(Furniture.canBePlacedHere), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]),
+                postfix: new HarmonyMethod(typeof(Patches), nameof(canBePlacedHereFurniture_postfix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"Furniture.canBePlacedHereFurniture_postfix\".", LogLevel.Trace);
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(StardewValley.Object), nameof(StardewValley.Object.canBePlacedHere), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]),
+                postfix: new HarmonyMethod(typeof(Patches), nameof(canBePlacedHereObject_postfix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"StardewValley.Object.canBePlacedHereObject_postfix\".", LogLevel.Trace);
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(Furniture), nameof(Furniture.canBeRemoved), [typeof(Farmer)]),
+                postfix: new HarmonyMethod(typeof(Patches), nameof(canBeRemoved_postfix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"Furniture.canBeRemoved_postfix\".", LogLevel.Trace);
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(Furniture), nameof(Furniture.clicked), [typeof(Farmer)]),
+                prefix: new HarmonyMethod(typeof(Patches), nameof(clicked_prefix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"Furniture.clicked_prefix\".", LogLevel.Trace);
+
+            // Building
 
             s_harmony.Patch(
                 original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.isBuildable), [typeof(Vector2), typeof(bool)]),
@@ -88,26 +114,92 @@ namespace AnythingAnywhere.Features
             );
             s_monitor.Log($"Applying Harmony patch: prefixing method \"CarpenterMenu.tryToBuild_prefix\".", LogLevel.Trace);
 
+            // OTHER
+
+            s_harmony.Patch(
+                original: AccessTools.Method(typeof(MiniJukebox), nameof(MiniJukebox.checkForAction), [typeof(Farmer), typeof(bool)]),
+                prefix: new HarmonyMethod(typeof(Patches), nameof(checkForAction_prefix))
+            );
+            s_monitor.Log($"Applying Harmony patch: prefixing method \"MiniJukebox.checkForAction\".", LogLevel.Trace);
 
             Applied = true;
         }
+
+
+
+        // Table Tweak
+        private static bool clicked_prefix(Furniture __instance, Farmer who, ref bool __result)
+        {
+            try
+            {
+                ModConfig config = s_config();
+                if (!config.EnableFurniture)
+                    return true;
+
+
+                if ((__instance.furniture_type.Value == Furniture.table || __instance.furniture_type.Value == Furniture.longTable) && !config.TableTweakBind.IsDown())
+                {
+                    if (__instance.heldObject.Value != null)
+                    {
+                        string message = I18n.Message_AnythingAnywhere_TableRemoval(keybind: config.TableTweakBind);
+                        Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                    }
+                    __result = false;
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"clicked_prefix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                return true;
+            }
+        }
+
+        private static bool placementActionFurniture_prefix(Furniture __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
+        {
+            try
+            {
+                ModConfig config = s_config();
+
+                if (!config.EnableFurniture)
+                    return true;
+
+                StardewValley.Object toPlace = (StardewValley.Object)__instance.getOne();
+                if (config.EnableFurniture)
+                {
+                    foreach (Furniture f in location.furniture)
+                    {
+                        if (f.furniture_type.Value == 11 && (toPlace is Furniture) && !config.TableTweakBind.IsDown())
+                        {
+                            string message = I18n.Message_AnythingAnywhere_TableAddition(keybind: config.TableTweakBind);
+                            Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                            __result = false;
+                            return false; //skip original method
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"placementActionFurniture_prefix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                return true; //run the original method
+            }
+        }
+
+
+
+
+        // Furniture
 
         private static void CanPlaceThisFurnitureHere_postfix(GameLocation __instance, Furniture furniture, ref bool __result)
         {
             try
             {
                 ModConfig config = s_config();
-
-                bool allWallFurniture =
-                    ((int)furniture.furniture_type.Value == 6 ||
-                    (int)furniture.furniture_type.Value == 17 ||
-                    (int)furniture.furniture_type.Value == 13 ||
-                    furniture.QualifiedItemId == "(F)1293");
-
-                if (config.AllowAllWallFurniture && allWallFurniture)
-                    __result = true;
-
-                if (config.AllowAllGroundFurniture)
+                if (config.EnableFurniture)
                     __result = true;
             }
             catch (Exception ex)
@@ -123,22 +215,27 @@ namespace AnythingAnywhere.Features
             {
                 ModConfig config = s_config();
 
-                bool allWallFurniture =
-                    ((int)__instance.furniture_type.Value == 6 ||
-                    (int)__instance.furniture_type.Value == 17 ||
-                    (int)__instance.furniture_type.Value == 13 ||
+                // Check if the furniture is wall furniture
+                bool isWallFurniture =
+                    (__instance.furniture_type.Value == 6 ||
+                    __instance.furniture_type.Value == 17 ||
+                    __instance.furniture_type.Value == 13 ||
                     __instance.QualifiedItemId == "(F)1293");
 
-                if (location.CanPlaceThisFurnitureHere(__instance))
+                // Check conditions for running the code inside
+                if (!config.EnableWallFurnitureIndoors && location is DecoratableLocation decoratableLocation && !config.EnableFreeBuild)
                 {
-                    if (allWallFurniture && config.AllowAllWallFurniture && !(location is IslandFarmHouse || location is FarmHouse))
+                    // Conditions met, but skip if it's not wall furniture
+                    if (!isWallFurniture)
+                    {
                         __result = 0;
-
-                    if (allWallFurniture && config.AllowAllWallFurnitureFarmHouse)
-                        __result = 0;
-
-                    if (__instance is BedFurniture)
-                        __result = 0;
+                    }
+                    return;
+                }
+                // If EnableFreeBuild or EnableWallFurnitureIndoors are true
+                else
+                {
+                    __result = 0;
                 }
             }
             catch (Exception ex)
@@ -148,11 +245,14 @@ namespace AnythingAnywhere.Features
             }
         }
 
-        private static bool placementAction_prefix(StardewValley.Object __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
+        private static bool placementActionObject_prefix(StardewValley.Object __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
         {
             try
             {
                 ModConfig config = s_config();
+                if (!config.EnableFurniture)
+                    return true;
+
                 Vector2 placementTile = new Vector2(x / 64, y / 64);
                 __instance.setHealth(10);
                 __instance.owner.Value = who?.UniqueMultiplayerID ?? Game1.player.UniqueMultiplayerID;
@@ -195,20 +295,6 @@ namespace AnythingAnywhere.Features
                             }
                         }
 
-                        // Find existing obelisks
-                        /*                        var obeliskLocations = Game1.locations
-                                                    .SelectMany(l => l.objects.Pairs)
-                                                    .Where(pair => pair.Value.QualifiedItemId == "(BC)238")
-                                                    .Select(pair => pair.Key)
-                                                    .ToList();*/
-
-                        // Assign obelisk locations
-                        /*                        if (obeliskLocations.Count >= 2)
-                                                {
-                                                    obelisk1 = obeliskLocations[0];
-                                                    obelisk2 = obeliskLocations[1];
-                                                }*/
-
                         if (!obelisk1.Equals(Vector2.Zero) && !obelisk2.Equals(Vector2.Zero))
                         {
                             Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:OnlyPlaceTwo"));
@@ -222,17 +308,61 @@ namespace AnythingAnywhere.Features
                         break;
                         
                 }
+
+                if (config.EnableFreePlace)
+                    __result = true;
+
                 if (__result)
                 {
                     StardewValley.Object toPlace = (StardewValley.Object)__instance.getOne();
+                    bool place_furniture_instance_instead = false;
+                    if (toPlace.GetType() == typeof(Furniture) && Furniture.GetFurnitureInstance(__instance.ItemId, new Vector2(x / 64, y / 64)).GetType() != toPlace.GetType())
+                    {
+                        StorageFurniture storageFurniture = new StorageFurniture(__instance.ItemId, new Vector2(x / 64, y / 64));
+                        storageFurniture.currentRotation.Value = (__instance as Furniture).currentRotation.Value;
+                        storageFurniture.updateRotation();
+                        toPlace = storageFurniture;
+                        place_furniture_instance_instead = true;
+                    }
                     toPlace.shakeTimer = 50;
                     toPlace.Location = location;
                     toPlace.TileLocation = placementTile;
                     toPlace.performDropDownAction(who);
-
-                    location.objects.Add(placementTile, toPlace);
+                    if (toPlace.QualifiedItemId == "(BC)TextSign")
+                    {
+                        toPlace.signText.Value = null;
+                        toPlace.showNextIndex.Value = true;
+                    }
+                    if (toPlace.name.Contains("Seasonal"))
+                    {
+                        int baseIndex = toPlace.ParentSheetIndex - toPlace.ParentSheetIndex % 4;
+                        toPlace.ParentSheetIndex = baseIndex + location.GetSeasonIndex();
+                    }
+                    if (!(toPlace is Furniture) && !config.EnableFreePlace && location.objects.TryGetValue(placementTile, out var tileObj))
+                    {
+                        if (tileObj.QualifiedItemId != __instance.QualifiedItemId)
+                        {
+                            Game1.createItemDebris(tileObj, placementTile * 64f, Game1.random.Next(4));
+                            location.objects[placementTile] = toPlace;
+                        }
+                    }
+                    else if (toPlace is Furniture furniture)
+                    {
+                        if (place_furniture_instance_instead)
+                        {
+                            location.furniture.Add(furniture);
+                        }
+                        else
+                        {
+                            location.furniture.Add(__instance as Furniture);
+                        }
+                    }
+                    else
+                    {
+                        location.objects.Add(placementTile, toPlace);
+                    }
                     toPlace.initializeLightSource(placementTile);
-                    location.playSound("woodyStep");
+
                     return false; //skip original method
                 }
 
@@ -245,12 +375,50 @@ namespace AnythingAnywhere.Features
             }
         }
 
+
+
+
+        private static void canBePlacedHereObject_postfix(StardewValley.Object __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
+        {
+            try
+            {
+                // Enables placing objects in walls.
+                ModConfig config = s_config();
+                if (config.EnableFreePlace)
+                    __result = true;
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"canBePlacedHereObject_postfix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+            }
+        }
+
+
+        private static void canBePlacedHereFurniture_postfix(Furniture __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
+        {
+            try
+            {
+                //Enable placing furniture in walls
+                ModConfig config = s_config();
+                if (config.EnableFreePlace)
+                    __result = true;
+
+
+                if (config.EnableFurniture && __instance.furniture_type.Value == 12 && config.EnableRugTweaks)
+                    __result = true;
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"canBePlacedHereFurniture_postfix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+            }
+        }
+
+        // Enable jukebox functionality outside of the farm
         private static bool checkForAction_prefix(MiniJukebox __instance, Farmer who, ref bool __result, bool justCheckingForActivity = false)
         {
             try
             {
                 ModConfig config = s_config();
-
                 if (!config.EnableJukeboxFunctionality) 
                 {
                     __result = false;
@@ -282,6 +450,34 @@ namespace AnythingAnywhere.Features
                 return true; //run the original method
             }
         }
+
+        // Enable picking up rugs with furniture on top.
+        private static void canBeRemoved_postfix(Furniture __instance, Farmer who, ref bool __result)
+        {
+            try
+            {
+                ModConfig config = s_config();
+
+                if (!config.EnableRugTweaks || __instance.furniture_type.Value != 12)
+                    return;
+
+                foreach (Furniture f in who.currentLocation.furniture)
+                {
+                    if (f.furniture_type.Value == 12)
+                    {
+                        __result = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"IsBuildableLocation_postfix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                return;
+            }
+        }
+
+
+        // Buildings
 
         private static void isBuildable_postfix(GameLocation __instance, Vector2 tileLocation, ref bool __result, bool onlyNeedsToBePassable = false)
         {
