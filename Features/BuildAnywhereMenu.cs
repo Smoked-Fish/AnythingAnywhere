@@ -9,25 +9,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using System.Threading;
 
 namespace AnythingAnywhere.Features
 {
     internal class BuildAnywhereMenu : CarpenterMenu
     {
-
-        //Builder must be set to Robin or Wizard to avoid divide by zero error.
-        public BuildAnywhereMenu(string builder, ModConfig config) : base(builder, Game1.currentLocation)
+        public BuildAnywhereMenu(string builder, ModConfig config, IMonitor monitor) : base(builder, Game1.currentLocation)
         {
             UpdateTargetLocation(Game1.currentLocation);
 
-            // Initialization logic without assigning readonly fields
-            TargetLocation = Game1.currentLocation; // You can assign to TargetLocation because it's not readonly
+            TargetLocation = Game1.currentLocation;
             Game1.player.forceCanMove();
             resetBounds();
             int index = 0;
+            this.Blueprints.Clear();
             foreach (KeyValuePair<string, BuildingData> data in Game1.buildingData)
             {
-                if (data.Value.Builder != builder || !GameStateQuery.CheckConditions(data.Value.BuildCondition, TargetLocation) || (data.Value.BuildingToUpgrade != null && TargetLocation.getNumberBuildingsConstructed(data.Value.BuildingToUpgrade) == 0) || !IsValidBuildingForLocation(data.Key, data.Value, TargetLocation) ||
+
+                if ((data.Value.Builder != builder || !GameStateQuery.CheckConditions(data.Value.BuildCondition, TargetLocation) || (data.Value.BuildingToUpgrade != null && TargetLocation.getNumberBuildingsConstructed(data.Value.BuildingToUpgrade) == 0) || !IsValidBuildingForLocation(data.Key, data.Value, TargetLocation)) &&
                     !config.EnableFreeBuild)
                 {
                     continue;
@@ -36,13 +36,13 @@ namespace AnythingAnywhere.Features
                 {
                     if (data.Value.Builder != builder)
                         continue;
-
                     data.Value.MagicalConstruction = true;
                     data.Value.BuildCost = 0;
                     data.Value.BuildDays = 0;
                     data.Value.BuildMaterials = new List<BuildingMaterial>();
                 }
-                Blueprints.Add(new BlueprintEntry(index++, data.Key, data.Value, null));
+                Blueprints.Add(new BlueprintEntry(index++, data.Key, data.Value, null));               
+                /*monitor.LogOnce($"Blueprint Added. Index: {index}\nData: {data.Key}\nData: {data.Value}", LogLevel.Info);*/
                 if (data.Value.Skins == null)
                 {
                     continue;
@@ -52,9 +52,10 @@ namespace AnythingAnywhere.Features
                     if (skin.ShowAsSeparateConstructionEntry && GameStateQuery.CheckConditions(skin.Condition, TargetLocation))
                     {
                         Blueprints.Add(new BlueprintEntry(index++, data.Key, data.Value, skin.Id));
-                    }
+                    } 
                 }
             }
+
             SetNewActiveBlueprint(0);
             if (Game1.options.SnappyMenus)
             {

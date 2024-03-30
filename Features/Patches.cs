@@ -6,6 +6,7 @@ using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
 using StardewValley.GameData;
+using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -124,6 +125,54 @@ namespace AnythingAnywhere.Features
 
             Applied = true;
         }
+
+
+
+/*        private static bool dayUpdate_prefix(JunimoHut __instance, int dayOfMonth, ref bool __result)
+        {
+            try
+            {
+                Building building = new Building();
+                building.dayUpdate(dayOfMonth);
+                __instance.myJunimos.Clear();
+                __instance.wasLit.Value = false;
+                __instance.shouldSendOutJunimos.Value = true;
+                __result = true;
+                if (__instance.raisinDays.Value > 0 && !Game1.IsWinter)
+                {
+                    __instance.raisinDays.Value--;
+                }
+                if ((int)__instance.raisinDays.Value == 0 && !Game1.IsWinter)
+                {
+                    Chest output = __instance.GetOutputChest();
+                    if (output.Items.CountId("(O)Raisins") > 0)
+                    {
+                        __instance.raisinDays.Value += 7;
+                        output.Items.ReduceId("(O)Raisins", 1);
+                    }
+                }
+                foreach (Farmer f in Game1.getAllFarmers())
+                {
+                    if (f.isActive() && f.currentLocation != null && (f.currentLocation is FarmHouse))
+                    {
+                        __instance.shouldSendOutJunimos.Value = false;
+                        __result = false;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                s_monitor.LogOnce($"Harmony patch \"dayUpdate_prefix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                return true;
+            }
+        }*/
+
+
+
+
+
 
 
 
@@ -314,6 +363,137 @@ namespace AnythingAnywhere.Features
 
                 if (__result)
                 {
+                    if (__instance.Category == -19 && location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature3) && terrainFeature3 is HoeDirt { crop: not null } dirt3 && (__instance.QualifiedItemId == "(O)369" || __instance.QualifiedItemId == "(O)368") && (int)dirt3.crop.currentPhase.Value != 0)
+                    {
+                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13916"));
+                        __result = false;
+                        return false;
+                    }
+                    if (__instance.isSapling())
+                    {
+                        if (__instance.IsWildTreeSapling() || __instance.IsFruitTreeSapling())
+                        {
+                            if (FruitTree.IsTooCloseToAnotherTree(new Vector2(x / 64, y / 64), location))
+                            {
+                                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13060"));
+                                __result = false;
+                                return false;
+                            }
+                            if (FruitTree.IsGrowthBlocked(new Vector2(x / 64, y / 64), location))
+                            {
+                                Game1.showRedMessage(Game1.content.LoadString("Strings\\UI:FruitTree_PlacementWarning", __instance.DisplayName));
+                                __result = false;
+                                return false;
+                            }
+                        }
+                        if (location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature2))
+                        {
+                            if (!(terrainFeature2 is HoeDirt { crop: null }))
+                            {
+                                __result = false;
+                                return false;
+                            }
+                            location.terrainFeatures.Remove(placementTile);
+                        }
+                        string deniedMessage2 = null;
+                        bool canDig = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Diggable", "Back") != null;
+                        string tileType = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Type", "Back");
+                        bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
+                        if ((location is Farm && (canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) || ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2)))
+                        {
+                            location.playSound("dirtyHit");
+                            DelayedAction.playSoundAfterDelay("coin", 100);
+                            if (__instance.IsTeaSapling())
+                            {
+                                location.terrainFeatures.Add(placementTile, new Bush(placementTile, 3, location));
+                                __result = true;
+                                return false;
+                            }
+                            FruitTree fruitTree = new FruitTree(__instance.ItemId)
+                            {
+                                GreenHouseTileTree = (location.IsGreenhouse && tileType == "Stone")
+                            };
+                            fruitTree.growthRate.Value = Math.Max(1, __instance.Quality + 1);
+                            location.terrainFeatures.Add(placementTile, fruitTree);
+                            __result = true;
+                            return false;
+                        }
+                        if (deniedMessage2 == null)
+                        {
+                            deniedMessage2 = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13068");
+                        }
+                        Game1.showRedMessage(deniedMessage2);
+                        __result = false;
+                        return false;
+                    }
+                    if (__instance.Category == -74 || __instance.Category == -19)
+                    {
+                        if (location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature) && terrainFeature is HoeDirt dirt2)
+                        {
+                            string seedId = Crop.ResolveSeedId(who.ActiveObject.ItemId, location);
+                            if (dirt2.canPlantThisSeedHere(seedId, who.ActiveObject.Category == -19))
+                            {
+                                if (dirt2.plant(seedId, who, who.ActiveObject.Category == -19) && who.IsLocalPlayer)
+                                {
+                                    if (__instance.Category == -74)
+                                    {
+                                        foreach (StardewValley.Object o in location.Objects.Values)
+                                        {
+                                            if (!o.IsSprinkler() || o.heldObject.Value == null || !(o.heldObject.Value.QualifiedItemId == "(O)913") || !o.IsInSprinklerRangeBroadphase(placementTile))
+                                            {
+                                                continue;
+                                            }
+                                            if (!o.GetSprinklerTiles().Contains(placementTile))
+                                            {
+                                                continue;
+                                            }
+                                            StardewValley.Object value = o.heldObject.Value.heldObject.Value;
+                                            Chest chest = value as Chest;
+                                            if (chest == null)
+                                            {
+                                                continue;
+                                            }
+                                            IInventory items = chest.Items;
+                                            if (items.Count <= 0 || items[0] == null || chest.GetMutex().IsLocked())
+                                            {
+                                                continue;
+                                            }
+                                            chest.GetMutex().RequestLock(delegate
+                                            {
+                                                if (items.Count > 0 && items[0] != null)
+                                                {
+                                                    Item item = items[0];
+                                                    if (item.Category == -19 && ((HoeDirt)terrainFeature).plant(item.ItemId, who, isFertilizer: true))
+                                                    {
+                                                        item.Stack--;
+                                                        if (item.Stack <= 0)
+                                                        {
+                                                            items[0] = null;
+                                                        }
+                                                    }
+                                                }
+                                                chest.GetMutex().ReleaseLock();
+                                            });
+                                            break;
+                                        }
+                                    }
+                                    Game1.haltAfterCheck = false;
+                                    __result = true;
+                                    return false;
+                                }
+                                __result = false;
+                                return false;
+                            }
+                            __result = false;
+                            return false;
+                        }
+                        __result = false;
+                        return false;
+                    }
+
+
+
+
                     StardewValley.Object toPlace = (StardewValley.Object)__instance.getOne();
                     bool place_furniture_instance_instead = false;
                     if (toPlace.GetType() == typeof(Furniture) && Furniture.GetFurnitureInstance(__instance.ItemId, new Vector2(x / 64, y / 64)).GetType() != toPlace.GetType())
