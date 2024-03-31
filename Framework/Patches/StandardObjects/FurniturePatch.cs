@@ -4,13 +4,16 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Object = StardewValley.Object;
 
-namespace AnythingAnywhere.Framework.Patches.StandardObjects
+namespace AnythingAnywhere.Framework.Patches.StandardObjects    
 {
     internal class FurniturePatch : PatchTemplate
     {
@@ -24,10 +27,11 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         internal void Apply(Harmony harmony)
         {
             harmony.Patch(AccessTools.Method(_object, nameof(Furniture.GetAdditionalFurniturePlacementStatus), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(GetAdditionalFurniturePlacementStatusPostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(Furniture.placementAction), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(PlacementActionPrefix)));
             harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBeRemoved), new[] { typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(CanBeRemovedPostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(Furniture.clicked), new[] { typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(ClickedPrefix)));
+            //DISABLE TABLE AND RUG CHECKS FOR NOW
+            //harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBeRemoved), new[] { typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(CanBeRemovedPostfix)));
+            //harmony.Patch(AccessTools.Method(_object, nameof(Furniture.placementAction), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(PlacementActionPrefix)));
+            //harmony.Patch(AccessTools.Method(_object, nameof(Furniture.clicked), new[] { typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(ClickedPrefix)));
         }
 
         // Enables disabling wall furniture in all places in decortable locations. It can be annoying indoors.
@@ -54,6 +58,28 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             else
             {
                 __result = 0;
+            }
+        }
+
+        //Enable placing furniture in walls
+        private static void CanBePlacedHerePostfix(Furniture __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
+        {
+            if (ModEntry.modConfig.EnableFreePlace)
+                __result = true;
+        }
+
+        // Enable picking up rugs with furniture on top.
+        private static void CanBeRemovedPostfix(Furniture __instance, Farmer who, ref bool __result)
+        {
+            if (!ModEntry.modConfig.EnableRugTweaks || __instance.furniture_type.Value != 12)
+                return;
+
+            foreach (Furniture f in who.currentLocation.furniture)
+            {
+                if (f.furniture_type.Value == 12)
+                {
+                    __result = true;
+                }
             }
         }
 
@@ -88,6 +114,8 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 {
                     if (ModEntry.modConfig.TableTweakBind.IsDown())
                     {
+                        if (__instance.furniture_type.Value == 12)
+                            continue;
                         f.performObjectDropInAction(__instance, probe: false, who ?? Game1.player);
                         __result = true;
                         return false;
@@ -101,33 +129,10 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                     }
                 }
             }
+
             return true;
         }
 
-        //Enable placing furniture in walls
-        private static void CanBePlacedHerePostfix(Furniture __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
-        {
-            if (ModEntry.modConfig.EnableFreePlace)
-                __result = true;
-
-            if (ModEntry.modConfig.EnableFurniture && __instance.furniture_type.Value == 12 && ModEntry.modConfig.EnableRugTweaks)
-                __result = true;
-        }
-
-        // Enable picking up rugs with furniture on top.
-        private static void CanBeRemovedPostfix(Furniture __instance, Farmer who, ref bool __result)
-        {
-            if (!ModEntry.modConfig.EnableRugTweaks || __instance.furniture_type.Value != 12)
-                return;
-
-            foreach (Furniture f in who.currentLocation.furniture)
-            {
-                if (f.furniture_type.Value == 12)
-                {
-                    __result = true;
-                }
-            }
-        }
 
         // Table Tweak pick up item check
         private static bool ClickedPrefix(Furniture __instance, Farmer who, ref bool __result)
