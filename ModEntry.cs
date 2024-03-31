@@ -2,93 +2,105 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.SDKs;
-using System.Collections.Generic;
 using System.Linq;
 using System;
-using Patches = AnythingAnywhere.Features.Patches;
-using AnythingAnywhere.Features;
 using StardewValley.Menus;
-using StardewValley.TerrainFeatures;
-using System.Xml.Linq;
 using SObject = StardewValley.Object;
 using Microsoft.Xna.Framework;
+using AnythingAnywhere.Framework.UI;
+using AnythingAnywhere.Framework.Managers;
+using AnythingAnywhere.Framework.Patches.GameLocations;
+using AnythingAnywhere.Framework.Patches.StandardObjects;
+using AnythingAnywhere.Framework.Patches.Menus;
 
 namespace AnythingAnywhere
 {
-    internal sealed class ModEntry : Mod
+    public class ModEntry : Mod
     {
-        private ModConfig Config { get; set; }
+        // Shared static helpers
+        internal static IMonitor monitor;
+        internal static IModHelper modHelper;
+        internal static Multiplayer multiplayer;
+        internal static ModConfig modConfig;
 
-        private ModConfigKeys Keys => this.Config.Keys;
+        // Managers
+        internal static ApiManager apiManager;
 
         public override void Entry(IModHelper helper)
         {
+            // Setup i18n
             I18n.Init(helper.Translation);
 
+            // Setup the monitor, helper and multiplayer
+            monitor = Monitor;
+            modHelper = helper;
+            multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
-            this.Config = helper.ReadConfig<ModConfig>();
-            Harmony harmony = new(this.ModManifest.UniqueID);
-            Patches.Initialise(harmony, this.Monitor, () => this.Config, this.Helper.Reflection);
+            // Setup the manager
+            apiManager = new ApiManager(monitor);
 
-            helper.ConsoleCommands.Add("seed_packet_fix", "Seed packet placement fix.\n\nUsage: seed_packet_fix <value>\n- value: the map id. \"current\" for current map.", this.SeedPacketFix);
+            // Load the Harmony patches
+            try
+            {
+                var harmony = new Harmony(this.ModManifest.UniqueID);
 
+                // Apply GameLocations patches
+                new GameLocationPatch(monitor, helper).Apply(harmony);
+
+                // Apply the object patches
+                new ObjectPatch(monitor, helper).Apply(harmony);
+                new FurniturePatch(monitor, helper).Apply(harmony);
+                new MiniJukeboxPatch(monitor, helper).Apply(harmony);
+
+                // Apply the Menu patches OLD
+                // new CarpenterMenuPatch(monitor, helper).Apply(harmony);
+            }
+            catch (Exception e)
+            {
+                Monitor.Log($"Issue with Harmony patching: {e}", LogLevel.Error);
+                return;
+            }
+
+            // Add debug commands
+            helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
+
+            // Hook into GameLoop events
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+
+            // Hook into Input events
             helper.Events.Input.ButtonsChanged += this.OnButtonsChanged;
         }
 
-        private void SeedPacketFix(string command, string[] args)
-        {
-
-            HandleCommand(this.Monitor, args[0], args[1]);
-        }
-
-
-        private int RemoveCustomObjects(GameLocation location, string itemToRemove)
-        {
-            int removed = 0;
-
-            foreach ((Vector2 tile, SObject? obj) in location.Objects.Pairs.ToArray())
-            {
-                if (obj.QualifiedItemId == itemToRemove)
-                {
-                    location.Objects.Remove(tile);
-                    removed++;
-                }
-            }
-
-            return removed;
-        }
-
-
-        public void HandleCommand(IMonitor monitor, string reqLoc, string objToRemove)
-        {
-            // check context
-            if (!Context.IsWorldReady)
-            {
-                monitor.Log("You need to load a save to use this command.", LogLevel.Error);
-                return;
-            }
-
-            // get target location
-            GameLocation? location = Game1.locations.FirstOrDefault(p => p.Name != null && p.Name.Equals(reqLoc, StringComparison.OrdinalIgnoreCase));
-            if (location == null && reqLoc == "current")
-                location = Game1.currentLocation;
-            if (location == null)
-            {
-                string[] locationNames = (from loc in Game1.locations where !string.IsNullOrWhiteSpace(loc.Name) orderby loc.Name select loc.Name).ToArray();
-                monitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
-                return;
-            }
-
-            this.RemoveCustomObjects(location, objToRemove);
-        }
-
-
-
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            new ModInteractions.GenericModConfigMenu(this.Helper.ModRegistry, this.ModManifest, this.Monitor, () => this.Config, () => this.Config = new ModConfig(), () => this.Helper.WriteConfig(this.Config)).Register();
+            modConfig = Helper.ReadConfig<ModConfig>();
+
+            if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu") && apiManager.HookIntoGenericModConfigMenu(Helper))
+            {
+                var configApi = apiManager.GetGenericModConfigMenuApi();
+                configApi.Register(ModManifest, () => modConfig = new ModConfig(), () => Helper.WriteConfig(modConfig));
+
+                // Register the furniture settings
+                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Furniture_Title);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFurniture, value => modConfig.EnableFurniture = value, I18n.Config_AnythingAnywhere_EnableFurniture_Name, I18n.Config_AnythingAnywhere_EnableFurniture_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableWallFurnitureIndoors, value => modConfig.EnableWallFurnitureIndoors = value, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Name, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableRugTweaks, value => modConfig.EnableRugTweaks = value, I18n.Config_AnythingAnywhere_EnableRugTweaks_Name, I18n.Config_AnythingAnywhere_EnableRugTweaks_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreePlace, value => modConfig.EnableFreePlace = value, I18n.Config_AnythingAnywhere_EnableFreePlace_Name, I18n.Config_AnythingAnywhere_EnableFreePlace_Description);
+
+                // Register the build settings
+                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Building_Title);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuilding, value => modConfig.EnableBuilding = value, I18n.Config_AnythingAnywhere_EnableBuilding_Name, I18n.Config_AnythingAnywhere_EnableBuilding_Description);
+                configApi.AddKeybindList(ModManifest, () => modConfig.BuildMenu, value => modConfig.BuildMenu = value, I18n.Config_AnythingAnywhere_BuildMenu_Name, I18n.Config_AnythingAnywhere_BuildMenu_Description);
+                configApi.AddKeybindList(ModManifest, () => modConfig.WizardBuildMenu, value => modConfig.WizardBuildMenu = value, I18n.Config_AnythingAnywhere_WizardBuildMenu_Name, I18n.Config_AnythingAnywhere_WizardBuildMenu_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreeBuild, value => modConfig.EnableFreeBuild = value, I18n.Config_AnythingAnywhere_EnableFreeBuild_Name, I18n.Config_AnythingAnywhere_EnableFreeBuild_Description);
+
+                // Register the other settings
+                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Other_Title);
+                configApi.AddKeybindList(ModManifest, () => modConfig.TableTweakBind, value => modConfig.TableTweakBind = value, I18n.Config_AnythingAnywhere_TableTweakKeybind_Name, I18n.Config_AnythingAnywhere_TableTweakKeybind_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableTableTweak, value => modConfig.EnableTableTweak = value, I18n.Config_AnythingAnywhere_EnableTableTweak_Name, I18n.Config_AnythingAnywhere_EnableTableTweak_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.AllowMiniObelisksAnywhere, value => modConfig.AllowMiniObelisksAnywhere = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableJukeboxFunctionality, value => modConfig.EnableJukeboxFunctionality = value, I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Name, I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Description);
+            }
         }
 
         private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
@@ -96,18 +108,11 @@ namespace AnythingAnywhere
             if (!Context.IsWorldReady)
                 return;
 
-            if (this.Keys.ReloadConfig.JustPressed())
-                this.ReloadConfig();
-
-            if (this.Config.BuildMenu.JustPressed() && Config.EnableBuilding)
-            {
+            if (modConfig.BuildMenu.JustPressed() && modConfig.EnableBuilding)
                 HandleInstantBuildButtonClick("Robin");
-            }
 
-            if (this.Config.WizardBuildMenu.JustPressed() && Config.EnableBuilding)
-            {
+            if (modConfig.WizardBuildMenu.JustPressed() && modConfig.EnableBuilding)
                 HandleInstantBuildButtonClick("Wizard");
-            }
         }
 
         private void HandleInstantBuildButtonClick(string builder)
@@ -126,26 +131,63 @@ namespace AnythingAnywhere
 
         private void activateBuildAnywhereMenu(string builder)
         {
-            if (builder == "Wizard" && !Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk && !Config.EnableFreeBuild)
+            if (builder == "Wizard" && !Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk && !modConfig.EnableFreeBuild)
             {
                 string message = I18n.Message_AnythingAnywhere_NoMagicInk();
                 Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
-            else if (!Config.EnableBuilding)
+            else if (!modConfig.EnableBuilding)
             {
                 return;
             }
             else
             {
-                Game1.activeClickableMenu = (IClickableMenu)new BuildAnywhereMenu(builder, this.Config, this.Monitor);
+                Game1.activeClickableMenu = (IClickableMenu)new BuildAnywhereMenu(builder, modConfig, this.Monitor);
             }
         }
 
-        private void ReloadConfig()
+        private void DebugRemoveObjects(string command, string[] args)
         {
-            this.Config = this.Helper.ReadConfig<ModConfig>();
-            this.Monitor.Log(I18n.Message_ConfigReloaded(), LogLevel.Info);
+            if (args.Length <= 1)
+            {
+                Monitor.Log($"Missing required arguments: [LOCATION] [OBJECT_ID]", LogLevel.Warn);
+                return;
+            }
+
+            // check context
+            if (!Context.IsWorldReady)
+            {
+                monitor.Log("You need to load a save to use this command.", LogLevel.Error);
+                return;
+            }
+
+            // get target location
+            var location = Game1.locations.FirstOrDefault(p => p.Name != null && p.Name.Equals(args[0], StringComparison.OrdinalIgnoreCase));
+            if (location == null && args[0] == "current")
+            {
+                location = Game1.currentLocation;
+            }
+            if (location == null)
+            {
+                string[] locationNames = (from loc in Game1.locations where !string.IsNullOrWhiteSpace(loc.Name) orderby loc.Name select loc.Name).ToArray();
+                monitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
+                return;
+            }
+
+            // remove objects
+            int removed = 0;
+            foreach ((Vector2 tile, var obj) in location.Objects.Pairs.ToArray())
+            {
+                if (obj.QualifiedItemId == args[1])
+                {
+                    location.Objects.Remove(tile);
+                    removed++;
+                }
+            }
+
+            monitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
+            return;
         }
     }
 }

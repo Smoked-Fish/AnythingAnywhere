@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using System.Threading;
 
-namespace AnythingAnywhere.Features
+namespace AnythingAnywhere.Framework.UI
 {
     internal class BuildAnywhereMenu : CarpenterMenu
     {
@@ -23,11 +23,11 @@ namespace AnythingAnywhere.Features
             Game1.player.forceCanMove();
             resetBounds();
             int index = 0;
-            this.Blueprints.Clear();
+            Blueprints.Clear();
             foreach (KeyValuePair<string, BuildingData> data in Game1.buildingData)
             {
 
-                if ((data.Value.Builder != builder || !GameStateQuery.CheckConditions(data.Value.BuildCondition, TargetLocation) || (data.Value.BuildingToUpgrade != null && TargetLocation.getNumberBuildingsConstructed(data.Value.BuildingToUpgrade) == 0) || !IsValidBuildingForLocation(data.Key, data.Value, TargetLocation)) &&
+                if ((data.Value.Builder != builder || !GameStateQuery.CheckConditions(data.Value.BuildCondition, TargetLocation) || data.Value.BuildingToUpgrade != null && TargetLocation.getNumberBuildingsConstructed(data.Value.BuildingToUpgrade) == 0 || !IsValidBuildingForLocation(data.Key, data.Value, TargetLocation)) &&
                     !config.EnableFreeBuild)
                 {
                     continue;
@@ -41,7 +41,7 @@ namespace AnythingAnywhere.Features
                     data.Value.BuildDays = 0;
                     data.Value.BuildMaterials = new List<BuildingMaterial>();
                 }
-                Blueprints.Add(new BlueprintEntry(index++, data.Key, data.Value, null));               
+                Blueprints.Add(new BlueprintEntry(index++, data.Key, data.Value, null));
                 /*monitor.LogOnce($"Blueprint Added. Index: {index}\nData: {data.Key}\nData: {data.Value}", LogLevel.Info);*/
                 if (data.Value.Skins == null)
                 {
@@ -52,7 +52,7 @@ namespace AnythingAnywhere.Features
                     if (skin.ShowAsSeparateConstructionEntry && GameStateQuery.CheckConditions(skin.Condition, TargetLocation))
                     {
                         Blueprints.Add(new BlueprintEntry(index++, data.Key, data.Value, skin.Id));
-                    } 
+                    }
                 }
             }
 
@@ -66,19 +66,19 @@ namespace AnythingAnywhere.Features
 
         private void resetBounds()
         {
-            xPositionOnScreen = Game1.uiViewport.Width / 2 - maxWidthOfBuildingViewer - IClickableMenu.spaceToClearSideBorder;
-            yPositionOnScreen = Game1.uiViewport.Height / 2 - maxHeightOfBuildingViewer / 2 - IClickableMenu.spaceToClearTopBorder + 32;
-            width = maxWidthOfBuildingViewer + maxWidthOfDescription + IClickableMenu.spaceToClearSideBorder * 2 + 64;
-            height = maxHeightOfBuildingViewer + IClickableMenu.spaceToClearTopBorder;
+            xPositionOnScreen = Game1.uiViewport.Width / 2 - maxWidthOfBuildingViewer - spaceToClearSideBorder;
+            yPositionOnScreen = Game1.uiViewport.Height / 2 - maxHeightOfBuildingViewer / 2 - spaceToClearTopBorder + 32;
+            width = maxWidthOfBuildingViewer + maxWidthOfDescription + spaceToClearSideBorder * 2 + 64;
+            height = maxHeightOfBuildingViewer + spaceToClearTopBorder;
             initialize(xPositionOnScreen, yPositionOnScreen, width, height, showUpperRightCloseButton: true);
-            okButton = new ClickableTextureComponent("OK", new Rectangle(xPositionOnScreen + width - IClickableMenu.borderWidth - IClickableMenu.spaceToClearSideBorder - 192 - 12, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors, new Rectangle(366, 373, 16, 16), 4f)
+            okButton = new ClickableTextureComponent("OK", new Rectangle(xPositionOnScreen + width - borderWidth - spaceToClearSideBorder - 192 - 12, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors, new Rectangle(366, 373, 16, 16), 4f)
             {
                 myID = 106,
                 rightNeighborID = 104,
                 leftNeighborID = 105,
                 upNeighborID = 109
             };
-            cancelButton = new ClickableTextureComponent("OK", new Rectangle(xPositionOnScreen + width - IClickableMenu.borderWidth - IClickableMenu.spaceToClearSideBorder - 64, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f)
+            cancelButton = new ClickableTextureComponent("OK", new Rectangle(xPositionOnScreen + width - borderWidth - spaceToClearSideBorder - 64, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f)
             {
                 myID = 107,
                 leftNeighborID = 104,
@@ -97,7 +97,7 @@ namespace AnythingAnywhere.Features
                 rightNeighborID = -99998,
                 upNeighborID = 109
             };
-            demolishButton = new ClickableTextureComponent(Game1.content.LoadString("Strings\\UI:Carpenter_Demolish"), new Rectangle(xPositionOnScreen + width - IClickableMenu.borderWidth - IClickableMenu.spaceToClearSideBorder - 128 - 8, yPositionOnScreen + maxHeightOfBuildingViewer + 64 - 4, 64, 64), null, null, Game1.mouseCursors, new Rectangle(348, 372, 17, 17), 4f)
+            demolishButton = new ClickableTextureComponent(Game1.content.LoadString("Strings\\UI:Carpenter_Demolish"), new Rectangle(xPositionOnScreen + width - borderWidth - spaceToClearSideBorder - 128 - 8, yPositionOnScreen + maxHeightOfBuildingViewer + 64 - 4, 64, 64), null, null, Game1.mouseCursors, new Rectangle(348, 372, 17, 17), 4f)
             {
                 myID = 104,
                 rightNeighborID = 107,
@@ -111,14 +111,14 @@ namespace AnythingAnywhere.Features
                 leftNeighborID = 105,
                 upNeighborID = 109
             };
-            moveButton = new ClickableTextureComponent(Game1.content.LoadString("Strings\\UI:Carpenter_MoveBuildings"), new Rectangle(xPositionOnScreen + width - IClickableMenu.borderWidth - IClickableMenu.spaceToClearSideBorder - 256 - 20, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors, new Rectangle(257, 284, 16, 16), 4f)
+            moveButton = new ClickableTextureComponent(Game1.content.LoadString("Strings\\UI:Carpenter_MoveBuildings"), new Rectangle(xPositionOnScreen + width - borderWidth - spaceToClearSideBorder - 256 - 20, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors, new Rectangle(257, 284, 16, 16), 4f)
             {
                 myID = 105,
                 rightNeighborID = 106,
                 leftNeighborID = -99998,
                 upNeighborID = 109
             };
-            paintButton = new ClickableTextureComponent(Game1.content.LoadString("Strings\\UI:Carpenter_PaintBuildings"), new Rectangle(xPositionOnScreen + width - IClickableMenu.borderWidth - IClickableMenu.spaceToClearSideBorder - 320 - 20, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors2, new Rectangle(80, 208, 16, 16), 4f)
+            paintButton = new ClickableTextureComponent(Game1.content.LoadString("Strings\\UI:Carpenter_PaintBuildings"), new Rectangle(xPositionOnScreen + width - borderWidth - spaceToClearSideBorder - 320 - 20, yPositionOnScreen + maxHeightOfBuildingViewer + 64, 64, 64), null, null, Game1.mouseCursors2, new Rectangle(80, 208, 16, 16), 4f)
             {
                 myID = 105,
                 rightNeighborID = -99998,
@@ -144,7 +144,7 @@ namespace AnythingAnywhere.Features
                 }
             }
             demolishButton.visible = Game1.IsMasterGame;
-            moveButton.visible = Game1.IsMasterGame || Game1.player.team.farmhandsCanMoveBuildings.Value == FarmerTeam.RemoteBuildingPermissions.On || (Game1.player.team.farmhandsCanMoveBuildings.Value == FarmerTeam.RemoteBuildingPermissions.OwnedBuildings && has_owned_buildings);
+            moveButton.visible = Game1.IsMasterGame || Game1.player.team.farmhandsCanMoveBuildings.Value == FarmerTeam.RemoteBuildingPermissions.On || Game1.player.team.farmhandsCanMoveBuildings.Value == FarmerTeam.RemoteBuildingPermissions.OwnedBuildings && has_owned_buildings;
             paintButton.visible = has_paintable_buildings;
             if (!demolishButton.visible)
             {
