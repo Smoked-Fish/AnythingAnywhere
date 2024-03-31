@@ -176,27 +176,42 @@ namespace AnythingAnywhere.Features
 
 
 
-        // Table Tweak
+        // Table Tweak pick up item check
         private static bool clicked_prefix(Furniture __instance, Farmer who, ref bool __result)
         {
             try
             {
                 ModConfig config = s_config();
-                if (!config.EnableFurniture)
+                if (!config.EnableFurniture || !config.EnableTableTweak)
                     return true;
 
-
-                if ((__instance.furniture_type.Value == Furniture.table || __instance.furniture_type.Value == Furniture.longTable) && !config.TableTweakBind.IsDown())
+                Game1.haltAfterCheck = false;
+                if ((int)__instance.furniture_type.Value == 11 && who.ActiveObject != null && __instance.heldObject.Value == null)
                 {
-                    if (__instance.heldObject.Value != null)
-                    {
-                        string message = I18n.Message_AnythingAnywhere_TableRemoval(keybind: config.TableTweakBind);
-                        Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
-                    }
                     __result = false;
                     return false;
                 }
-                return true;
+                if (__instance.heldObject.Value != null && config.TableTweakBind.IsDown())
+                {
+                    StardewValley.Object item = __instance.heldObject.Value;
+                    __instance.heldObject.Value = null;
+                    if (who.addItemToInventoryBool(item))
+                    {
+                        item.performRemoveAction();
+                        Game1.playSound("coin");
+                        __result = true;
+                        return false;
+                    }
+                    __instance.heldObject.Value = item;
+                }
+                else
+                {
+                    string message = I18n.Message_AnythingAnywhere_TableRemoval(keybind: config.TableTweakBind);
+                    Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                    __result = false;
+                }
+                __result = false;
+                return false;
             }
             catch (Exception ex)
             {
@@ -205,21 +220,48 @@ namespace AnythingAnywhere.Features
             }
         }
 
+        // Table Tweak place item on table check
         private static bool placementActionFurniture_prefix(Furniture __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
         {
             try
             {
                 ModConfig config = s_config();
 
-                if (!config.EnableFurniture)
+                if (!config.EnableFurniture || !config.EnableTableTweak)
                     return true;
 
-                StardewValley.Object toPlace = (StardewValley.Object)__instance.getOne();
-                if (config.EnableFurniture)
+
+
+
+                if (!__instance.isGroundFurniture())
                 {
-                    foreach (Furniture f in location.furniture)
+                    y = __instance.GetModifiedWallTilePosition(location, x / 64, y / 64) * 64;
+                }
+                if (__instance.GetAdditionalFurniturePlacementStatus(location, x, y, who) != 0)
+                {
+                    __result = false;
+                    return false;
+                }
+                Vector2 tile = new Vector2(x / 64, y / 64);
+                if (__instance.TileLocation != tile)
+                {
+                    __instance.TileLocation = tile;
+                }
+                else
+                {
+                    __instance.RecalculateBoundingBox();
+                }
+                foreach (Furniture f in location.furniture)
+                {
+                    if (f.furniture_type.Value == 11 && f.heldObject.Value == null && f.GetBoundingBox().Intersects(__instance.boundingBox.Value))
                     {
-                        if (f.furniture_type.Value == 11 && (toPlace is Furniture) && !config.TableTweakBind.IsDown())
+                        if (config.TableTweakBind.IsDown())
+                        {
+                            f.performObjectDropInAction(__instance, probe: false, who ?? Game1.player);
+                            __result = true;
+                            return false;
+                        }
+                        else
                         {
                             string message = I18n.Message_AnythingAnywhere_TableAddition(keybind: config.TableTweakBind);
                             Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
@@ -228,7 +270,6 @@ namespace AnythingAnywhere.Features
                         }
                     }
                 }
-
                 return true;
             }
             catch (Exception ex)
@@ -550,7 +591,7 @@ namespace AnythingAnywhere.Features
             }
             catch (Exception ex)
             {
-                s_monitor.LogOnce($"Harmony patch \"placementAction_prefix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
+                s_monitor.LogOnce($"Harmony patch \"placementActionObject_prefix\" has encountered an error. Full error message: \n{ex.ToString()}", LogLevel.Error);
                 return true; //run the original method
             }
         }
