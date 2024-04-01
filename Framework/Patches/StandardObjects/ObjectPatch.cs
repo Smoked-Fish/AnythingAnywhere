@@ -135,12 +135,12 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 {
                     case "(O)TentKit":
                         {
-                            /*                            if (location == null || !location.IsOutdoors)
-                                                        {
-                                                            Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Furniture_Outdoors_Message"));
-                                                            __result = false;
-                                                            return false;
-                                                        }*/
+                            if (location == null || !location.IsOutdoors)
+                            {
+                                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Furniture_Outdoors_Message"));
+                                __result = false;
+                                return false;
+                            }
                             if (Utility.isFestivalDay((Game1.dayOfMonth + 1) % 28, (Game1.dayOfMonth == 28) ? ((Season)((int)(Game1.season + 1) % 4)) : Game1.season, location.GetLocationContextId()))
                             {
                                 Game1.showRedMessage(Game1.content.LoadString("Strings\\1_6_Strings:FestivalTentWarning"));

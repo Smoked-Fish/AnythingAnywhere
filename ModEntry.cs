@@ -57,6 +57,7 @@ namespace AnythingAnywhere
                 // Apply the TerrainFeature patches
                 new FruitTreePatch(monitor, helper).Apply(harmony);
                 new TreePatch(monitor, helper).Apply(harmony);
+                new HoeDirtPatch(monitor, helper).Apply(harmony);
 
                 // Apply the Menu patches OLD
                 // new CarpenterMenuPatch(monitor, helper).Apply(harmony);
@@ -104,6 +105,7 @@ namespace AnythingAnywhere
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Other_Title);
                 //configApi.AddKeybindList(ModManifest, () => modConfig.TableTweakBind, value => modConfig.TableTweakBind = value, I18n.Config_AnythingAnywhere_TableTweakKeybind_Name, I18n.Config_AnythingAnywhere_TableTweakKeybind_Description);
                 //configApi.AddBoolOption(ModManifest, () => modConfig.EnableTableTweak, value => modConfig.EnableTableTweak = value, I18n.Config_AnythingAnywhere_EnableTableTweak_Name, I18n.Config_AnythingAnywhere_EnableTableTweak_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnablePlanting, value => modConfig.EnablePlanting = value, I18n.Config_AnythingAnywhere_EnablePlanting_Name, I18n.Config_AnythingAnywhere_EnablePlanting_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableFruitTreeTweaks, value => modConfig.EnableFruitTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableWildTreeTweaks, value => modConfig.EnableWildTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.AllowMiniObelisksAnywhere, value => modConfig.AllowMiniObelisksAnywhere = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Description);

@@ -15,7 +15,7 @@
 
   // Building Configs
 
-  "Config.AnythingAnywhere.Building.Title": "Buildings",
+  "Config.AnythingAnywhere.Building.Title": "Building",
   "Config.AnythingAnywhere.EnableBuilding.Name": "Enable Building",
   "Config.AnythingAnywhere.EnableBuilding.Description": "Enables the building features of this mod.",
   "Config.AnythingAnywhere.BuildMenu.Name": "Build Anywhere Menu",
@@ -27,11 +27,13 @@
 
   // Other Config
 
-  "Config.AnythingAnywhere.Other.Title": "Other",
+  "Config.AnythingAnywhere.Other.Title": "Misc",
   //"Config.AnythingAnywhere.TableTweakKeybind.Name": "Table Tweak Bind",
   //"Config.AnythingAnywhere.TableTweakKeybind.Description": "If enabled, you have to press this button/button combo to pick up or place items on tables. (placing furniture onto tables will delete the furniture)",
   //"Config.AnythingAnywhere.EnableTableTweak.Name": "Enable Table Tweak",
   //"Config.AnythingAnywhere.EnableTableTweak.Description": "Enables needing to hold down the table tweak bind to pick up or place items onto tables.",
+  "Config.AnythingAnywhere.EnablePlanting.Name": "Enable Farming",
+  "Config.AnythingAnywhere.EnablePlanting.Description": "Enables farming at any location.",
   "Config.AnythingAnywhere.EnableFruitTreeTweaks.Name": "Fruit Tree Tweaks",
   "Config.AnythingAnywhere.EnableFruitTreeTweaks.Description": "Removes growth restrictions on fruit trees.",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Wild Tree Tweaks",
