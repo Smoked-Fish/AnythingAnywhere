@@ -3,9 +3,9 @@
 
   // Furniture Configs
 
-  "Config.AnythingAnywhere.Furniture.Title": "Furniture",
-  "Config.AnythingAnywhere.EnableFurniture.Name": "Enable Furniture",
-  "Config.AnythingAnywhere.EnableFurniture.Description": "Enables placing furniture at any location.",
+  "Config.AnythingAnywhere.Placing.Title": "Placing",
+  "Config.AnythingAnywhere.EnablePlacing.Name": "Enable Placing",
+  "Config.AnythingAnywhere.EnablePlacing.Description": "Enables placing objects(furniture, chests, ect) at any location.",
   "Config.AnythingAnywhere.EnableRugTweaks.Name": "Enable Rug Tweaks",
   "Config.AnythingAnywhere.EnableRugTweaks.Description": "Enables picking up rugs with furniture on top of them and placing rugs under anything (including walls for now).",
   "Config.AnythingAnywhere.EnableWallFurnitureIndoors.Name": "Wall Furniture Indoors",
@@ -28,10 +28,14 @@
   // Other Config
 
   "Config.AnythingAnywhere.Other.Title": "Other",
-  "Config.AnythingAnywhere.TableTweakKeybind.Name": "Table Tweak Bind",
-  "Config.AnythingAnywhere.TableTweakKeybind.Description": "If enabled, you have to press this button/button combo to pick up or place items on tables. (placing furniture onto tables will delete the furniture)",
-  "Config.AnythingAnywhere.EnableTableTweak.Name": "Enable Table Tweak",
-  "Config.AnythingAnywhere.EnableTableTweak.Description": "Enables needing to hold down the table tweak bind to pick up or place items onto tables.",
+  //"Config.AnythingAnywhere.TableTweakKeybind.Name": "Table Tweak Bind",
+  //"Config.AnythingAnywhere.TableTweakKeybind.Description": "If enabled, you have to press this button/button combo to pick up or place items on tables. (placing furniture onto tables will delete the furniture)",
+  //"Config.AnythingAnywhere.EnableTableTweak.Name": "Enable Table Tweak",
+  //"Config.AnythingAnywhere.EnableTableTweak.Description": "Enables needing to hold down the table tweak bind to pick up or place items onto tables.",
+  "Config.AnythingAnywhere.EnableFruitTreeTweaks.Name": "Fruit Tree Tweaks",
+  "Config.AnythingAnywhere.EnableFruitTreeTweaks.Description": "Removes growth restrictions on fruit trees.",
+  "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Wild Tree Tweaks",
+  "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Removes growth restrictions on wild trees. This will quickly grow out of control.",
   "Config.AnythingAnywhere.EnableMiniObilisk.Name": "Mini-Obilisk",
   "Config.AnythingAnywhere.EnableMiniObilisk.Description": "Enables placing 2 mini-obilisks per location.",
   "Config.AnythingAnywhere.UseJukeboxAnywhere.Name": "Jukebox Functionality",

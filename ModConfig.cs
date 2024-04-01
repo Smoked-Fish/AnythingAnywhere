@@ -9,8 +9,8 @@ namespace AnythingAnywhere
         public ModConfigKeys Keys { get; set; } = new();
         
         // FURNITURE
-        public bool EnableFurniture { get; set; } = true;
-        public bool EnableRugTweaks { get; set; } = true;
+        public bool EnablePlacing { get; set; } = true;
+        //public bool EnableRugTweaks { get; set; } = true;
         public bool EnableWallFurnitureIndoors { get; set; } = false;
         public bool EnableFreePlace { get; set; } = false;
 
@@ -23,8 +23,10 @@ namespace AnythingAnywhere
 
 
         // OTHER
-        public KeybindList TableTweakBind { get; set; } = new KeybindList(SButton.LeftShift);
-        public bool EnableTableTweak {  get; set; } = true;
+        //public KeybindList TableTweakBind { get; set; } = new KeybindList(SButton.LeftShift);
+        //public bool EnableTableTweak {  get; set; } = true;
+        public bool EnableFruitTreeTweaks { get; set; } = true;
+        public bool EnableWildTreeTweaks { get; set; } = false;
         public bool AllowMiniObelisksAnywhere { get; set; } = true;
         public bool EnableJukeboxFunctionality { get; set; } = true;
     }

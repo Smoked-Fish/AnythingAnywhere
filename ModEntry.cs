@@ -12,6 +12,8 @@ using AnythingAnywhere.Framework.Managers;
 using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.Menus;
+using StardewValley.TerrainFeatures;
+using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 
 namespace AnythingAnywhere
 {
@@ -44,13 +46,17 @@ namespace AnythingAnywhere
             {
                 var harmony = new Harmony(this.ModManifest.UniqueID);
 
-                // Apply GameLocations patches
+                // Apply GameLocation patches
                 new GameLocationPatch(monitor, helper).Apply(harmony);
 
-                // Apply the object patches
+                // Apply the StandardObject patches
                 new ObjectPatch(monitor, helper).Apply(harmony);
                 new FurniturePatch(monitor, helper).Apply(harmony);
                 new MiniJukeboxPatch(monitor, helper).Apply(harmony);
+
+                // Apply the TerrainFeature patches
+                new FruitTreePatch(monitor, helper).Apply(harmony);
+                new TreePatch(monitor, helper).Apply(harmony);
 
                 // Apply the Menu patches OLD
                 // new CarpenterMenuPatch(monitor, helper).Apply(harmony);
@@ -81,8 +87,8 @@ namespace AnythingAnywhere
                 configApi.Register(ModManifest, () => modConfig = new ModConfig(), () => Helper.WriteConfig(modConfig));
 
                 // Register the furniture settings
-                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Furniture_Title);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFurniture, value => modConfig.EnableFurniture = value, I18n.Config_AnythingAnywhere_EnableFurniture_Name, I18n.Config_AnythingAnywhere_EnableFurniture_Description);
+                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Placing_Title);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnablePlacing, value => modConfig.EnablePlacing = value, I18n.Config_AnythingAnywhere_EnablePlacing_Name, I18n.Config_AnythingAnywhere_EnablePlacing_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableWallFurnitureIndoors, value => modConfig.EnableWallFurnitureIndoors = value, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Name, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Description);
                 //configApi.AddBoolOption(ModManifest, () => modConfig.EnableRugTweaks, value => modConfig.EnableRugTweaks = value, I18n.Config_AnythingAnywhere_EnableRugTweaks_Name, I18n.Config_AnythingAnywhere_EnableRugTweaks_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreePlace, value => modConfig.EnableFreePlace = value, I18n.Config_AnythingAnywhere_EnableFreePlace_Name, I18n.Config_AnythingAnywhere_EnableFreePlace_Description);
@@ -98,7 +104,9 @@ namespace AnythingAnywhere
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Other_Title);
                 //configApi.AddKeybindList(ModManifest, () => modConfig.TableTweakBind, value => modConfig.TableTweakBind = value, I18n.Config_AnythingAnywhere_TableTweakKeybind_Name, I18n.Config_AnythingAnywhere_TableTweakKeybind_Description);
                 //configApi.AddBoolOption(ModManifest, () => modConfig.EnableTableTweak, value => modConfig.EnableTableTweak = value, I18n.Config_AnythingAnywhere_EnableTableTweak_Name, I18n.Config_AnythingAnywhere_EnableTableTweak_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.AllowMiniObelisksAnywhere, value => modConfig.AllowMiniObelisksAnywhere = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFruitTreeTweaks, value => modConfig.EnableFruitTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableWildTreeTweaks, value => modConfig.EnableWildTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.AllowMiniObelisksAnywhere, value => modConfig.AllowMiniObelisksAnywhere = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableJukeboxFunctionality, value => modConfig.EnableJukeboxFunctionality = value, I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Name, I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Description);
             }
         }

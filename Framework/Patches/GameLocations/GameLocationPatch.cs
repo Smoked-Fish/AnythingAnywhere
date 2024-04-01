@@ -7,6 +7,7 @@ using StardewValley.Tools;
 using System;
 using System.Linq;
 using System.Threading;
+using xTile;
 using Object = StardewValley.Object;
 
 namespace AnythingAnywhere.Framework.Patches.GameLocations
@@ -25,12 +26,13 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanPlaceThisFurnitureHere), new[] { typeof(Furniture)}), postfix: new HarmonyMethod(GetType(), nameof(CanPlaceThisFurnitureHerePostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.isBuildable), new[] { typeof(Vector2), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(IsBuildablePostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
+            //harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanPlantTreesHere), new[] { typeof(string), typeof(int), typeof(int), typeof(string) }), prefix: new HarmonyMethod(GetType(), nameof(CanPlantTreesHerePostfix)));
         }
 
         // Sets all furniture types as placeable in all locations. This lets you place beds outside.
         private static void CanPlaceThisFurnitureHerePostfix(GameLocation __instance, Furniture furniture, ref bool __result)
         {
-            if (ModEntry.modConfig.EnableFurniture)
+            if (ModEntry.modConfig.EnablePlacing)
                     __result = true;
         }
 
@@ -59,6 +61,13 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
         {
             if (ModEntry.modConfig.EnableBuilding)
                 __result = true;
+        }
+
+        private static void CanPlantTreesHerePostfix(GameLocation __instance, string itemId, int tileX, int tileY, out string deniedMessage, ref bool __result)
+        {
+            deniedMessage = "";
+            if (ModEntry.modConfig.EnableFruitTreeTweaks)
+                __result = __instance.CheckItemPlantRules(itemId, isGardenPot: false, true || (Object.isWildTreeSeed(itemId) && __instance.doesTileHavePropertyNoNull(tileX, tileY, "Type", "Back") == "Dirt") || (__instance.map?.Properties.ContainsKey("ForceAllowTreePlanting") ?? false), out deniedMessage); ;
         }
     }
 }

@@ -69,7 +69,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         }
 
         // Enable picking up rugs with furniture on top.
-        private static void CanBeRemovedPostfix(Furniture __instance, Farmer who, ref bool __result)
+/*        private static void CanBeRemovedPostfix(Furniture __instance, Farmer who, ref bool __result)
         {
             if (!ModEntry.modConfig.EnableRugTweaks || __instance.furniture_type.Value != 12)
                 return;
@@ -86,7 +86,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         // Table Tweak place item on table check
         private static bool PlacementActionPrefix(Furniture __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
         {
-            if (!ModEntry.modConfig.EnableFurniture || !ModEntry.modConfig.EnableTableTweak)
+            if (!ModEntry.modConfig.EnablePlacing || !ModEntry.modConfig.EnableTableTweak)
                 return true;
 
             if (!__instance.isGroundFurniture())
@@ -137,7 +137,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         // Table Tweak pick up item check
         private static bool ClickedPrefix(Furniture __instance, Farmer who, ref bool __result)
         {
-            if (!ModEntry.modConfig.EnableFurniture || !ModEntry.modConfig.EnableTableTweak)
+            if (!ModEntry.modConfig.EnablePlacing || !ModEntry.modConfig.EnableTableTweak)
                 return true;
 
             Game1.haltAfterCheck = false;
@@ -168,7 +168,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             __result = false;
             return false;
         }
-
+*/
 
     }
 }
