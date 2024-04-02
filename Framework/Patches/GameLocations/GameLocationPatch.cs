@@ -39,7 +39,7 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
         {
             if (ModEntry.modConfig.EnableBuilding)
             {
-                if (ModEntry.modConfig.EnableFreeBuild)
+                if (ModEntry.modConfig.EnableBuildAnywhere)
                 {
                     __result = true;
                 }
@@ -70,7 +70,7 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
                     __result = true;
             }
 
-            if (ModEntry.modConfig.EnableFreeBuild)
+            if (ModEntry.modConfig.EnableBuildAnywhere)
                 __result = true;
         }
 

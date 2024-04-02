@@ -38,7 +38,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __instance.QualifiedItemId == "(F)1293");
 
             // Check conditions for running the code inside
-            if (!ModEntry.modConfig.EnableWallFurnitureIndoors && location is DecoratableLocation decoratableLocation && !ModEntry.modConfig.EnableFreeBuild)
+            if (!ModEntry.modConfig.EnableWallFurnitureIndoors && location is DecoratableLocation decoratableLocation && !ModEntry.modConfig.EnableBuildAnywhere)
             {
                 // Conditions met, but skip if it's not wall furniture
                 if (!isWallFurniture)
@@ -47,7 +47,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 }
                 return;
             }
-            // If EnableFreeBuild or EnableWallFurnitureIndoors are true
+            // If EnableBuildAnywhere or EnableWallFurnitureIndoors are true
             else
             {
                 __result = 0;

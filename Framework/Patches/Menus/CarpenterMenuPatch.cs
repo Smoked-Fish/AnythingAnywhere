@@ -27,11 +27,11 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         // Build in walls
         private static bool TryToBuildPrefix(CarpenterMenu __instance, ref bool __result)
         {
-            if (Game1.activeClickableMenu is BuildAnywhereMenu && ModEntry.modConfig.EnableFreeBuild)
+            if (Game1.activeClickableMenu is BuildAnywhereMenu && ModEntry.modConfig.EnableBuildAnywhere)
             {
                 NetString skinId = __instance.currentBuilding.skinId;
                 Vector2 tileLocation = new Vector2((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
-                if (__instance.TargetLocation.buildStructure(__instance.currentBuilding.buildingType.Value, tileLocation, Game1.player, out var building, /*__instance.Blueprint.MagicalConstruction*/ true, true))
+                if (__instance.TargetLocation.buildStructure(__instance.currentBuilding.buildingType.Value, tileLocation, Game1.player, out var building, __instance.Blueprint.MagicalConstruction, true))
                 {
                     building.skinId.Value = skinId.Value;
                     if (building.isUnderConstruction())

@@ -944,7 +944,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                     }
                     if (dirt == null)
                     {
-                        if ((FruitTree.IsTooCloseToAnotherTree(tile, l, !__instance.IsFruitTreeSapling())) && !ModEntry.modConfig.EnablePlacing)
+                        if ((FruitTree.IsTooCloseToAnotherTree(tile, l, !__instance.IsFruitTreeSapling())) && !ModEntry.modConfig.EnableFruitTreeTweaks)
                         {
                             if (showError)
                             {

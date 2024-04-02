@@ -20,7 +20,8 @@ namespace AnythingAnywhere
         public KeybindList BuildMenu { get; set; } = new KeybindList(SButton.OemComma);
         public KeybindList WizardBuildMenu { get; set; } = new KeybindList(SButton.OemPeriod);
         public bool EnableAnimalRelocate { get; set; } = true;
-        public bool EnableFreeBuild { get; set; } = false;
+        public bool EnableInstantBuild { get; set; } = false;
+        public bool EnableBuildAnywhere { get; set; } = false;
 
 
         // OTHER

@@ -23,11 +23,11 @@ namespace AnythingAnywhere.Framework.UI
             {
 
                 if ((data.Value.Builder != builder || !GameStateQuery.CheckConditions(data.Value.BuildCondition, TargetLocation) || data.Value.BuildingToUpgrade != null && TargetLocation.getNumberBuildingsConstructed(data.Value.BuildingToUpgrade) == 0 || !IsValidBuildingForLocation(data.Key, data.Value, TargetLocation)) &&
-                    !config.EnableFreeBuild)
+                    !config.EnableInstantBuild)
                 {
                     continue;
                 }
-                else if (config.EnableFreeBuild)
+                else if (config.EnableInstantBuild)
                 {
                     if (data.Value.Builder != builder)
                         continue;
