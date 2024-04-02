@@ -1,7 +1,4 @@
-{
-  "Message.ConfigReloaded": "Configuration file reloaded.",
-
-  // Furniture Configs
+{  // Furniture Configs
 
   "Config.AnythingAnywhere.Placing.Title": "Placing",
   "Config.AnythingAnywhere.EnablePlacing.Name": "Enable Placing",
@@ -18,10 +15,14 @@
   "Config.AnythingAnywhere.Building.Title": "Building",
   "Config.AnythingAnywhere.EnableBuilding.Name": "Enable Building",
   "Config.AnythingAnywhere.EnableBuilding.Description": "Enables the building features of this mod.",
+  "Config.AnythingAnywhere.EnableBuildingIndoors.Name": "Enable Building Indoors",
+  "Config.AnythingAnywhere.EnableBuildingIndoors.Description": "Enables building while inside.",
   "Config.AnythingAnywhere.BuildMenu.Name": "Build Anywhere Menu",
   "Config.AnythingAnywhere.BuildMenu.Description": "Opens up the carpenter menu anywhere.",
   "Config.AnythingAnywhere.WizardBuildMenu.Name": "Wizard Build Menu",
   "Config.AnythingAnywhere.WizardBuildMenu.Description": "Opens up the Wizards build menu anywhere.",
+  "Config.AnythingAnywhere.AnimalRelocate.Name": "Enable Animal Relocation",
+  "Config.AnythingAnywhere.AnimalRelocate.Description": "Enables relocating animals from location to location.",
   "Config.AnythingAnywhere.EnableFreeBuild.Name": "Enable Free Build",
   "Config.AnythingAnywhere.EnableFreeBuild.Description": "Enables building at any location, even in walls.",
 
@@ -45,8 +46,10 @@
 
   // Player Messages
   "Message.AnythingAnywhere.TableRemoval": "Hold down {{keybind}} to remove object from table.",
+  "Message.AnythingAnywhere.NoBuildingIndoors": "Building indoors is disabled.",
   "Message.AnythingAnywhere.TableAddition": "Hold down {{keybind}} to add object to table.",
-  "Message.AnythingAnywhere.NoMagicInk": "You need Magic Ink to open the Wizard's Build Menu"
+  "Message.AnythingAnywhere.NoMagicInk": "You need Magic Ink to open the Wizard's Build Menu",
+  "Message.AnythingAnywhere.ChooseAnimalLocation": "Where do you want to relocate the animal?"
 }
 
 

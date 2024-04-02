@@ -17,8 +17,10 @@ namespace AnythingAnywhere
 
         // BUILDING
         public bool EnableBuilding { get; set; } = true;
+        public bool EnableBuildingIndoors { get; set; } = false;
         public KeybindList BuildMenu { get; set; } = new KeybindList(SButton.OemComma);
         public KeybindList WizardBuildMenu { get; set; } = new KeybindList(SButton.OemPeriod);
+        public bool EnableAnimalRelocate { get; set; } = true;
         public bool EnableFreeBuild { get; set; } = false;
 
 

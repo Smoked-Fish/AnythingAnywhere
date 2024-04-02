@@ -60,7 +60,8 @@ namespace AnythingAnywhere
                 new HoeDirtPatch(monitor, helper).Apply(harmony);
 
                 // Apply the Menu patches OLD
-                // new CarpenterMenuPatch(monitor, helper).Apply(harmony);
+                new CarpenterMenuPatch(monitor, helper).Apply(harmony);
+                new AnimalQueryMenuPatch(monitor, helper).Apply(harmony);
             }
             catch (Exception e)
             {
@@ -97,9 +98,12 @@ namespace AnythingAnywhere
                 // Register the build settings
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Building_Title);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuilding, value => modConfig.EnableBuilding = value, I18n.Config_AnythingAnywhere_EnableBuilding_Name, I18n.Config_AnythingAnywhere_EnableBuilding_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildingIndoors, value => modConfig.EnableBuildingIndoors = value, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Name, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.BuildMenu, value => modConfig.BuildMenu = value, I18n.Config_AnythingAnywhere_BuildMenu_Name, I18n.Config_AnythingAnywhere_BuildMenu_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.WizardBuildMenu, value => modConfig.WizardBuildMenu = value, I18n.Config_AnythingAnywhere_WizardBuildMenu_Name, I18n.Config_AnythingAnywhere_WizardBuildMenu_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableAnimalRelocate, value => modConfig.EnableAnimalRelocate = value, I18n.Config_AnythingAnywhere_AnimalRelocate_Name, I18n.Config_AnythingAnywhere_AnimalRelocate_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreeBuild, value => modConfig.EnableFreeBuild = value, I18n.Config_AnythingAnywhere_EnableFreeBuild_Name, I18n.Config_AnythingAnywhere_EnableFreeBuild_Description);
+
 
                 // Register the other settings
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Other_Title);
@@ -141,10 +145,13 @@ namespace AnythingAnywhere
 
         private void activateBuildAnywhereMenu(string builder)
         {
-            if (builder == "Wizard" && !Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk && !modConfig.EnableFreeBuild)
+            if (!Game1.currentLocation.IsOutdoors && !modConfig.EnableBuildingIndoors)
             {
-                string message = I18n.Message_AnythingAnywhere_NoMagicInk();
-                Game1.addHUDMessage(new HUDMessage(message, HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoBuildingIndoors(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+            }
+            else if (builder == "Wizard" && !Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk && !modConfig.EnableFreeBuild)
+            {
+                Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoMagicInk(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
             else if (!modConfig.EnableBuilding)

@@ -31,25 +31,29 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
         }
 
-        // Sets all furniture types as placeable in all locations. This lets you place beds outside.
+        // Sets all furniture types as placeable in all locations.
         private static void CanPlaceThisFurnitureHerePostfix(GameLocation __instance, Furniture furniture, ref bool __result)
         {
             if (ModEntry.modConfig.EnablePlacing)
                     __result = true;
         }
 
-        // Sets tiles buildable for construction
+        // Sets tiles buildable for construction (just visual)
         private static void IsBuildablePostfix(GameLocation __instance, Vector2 tileLocation, ref bool __result, bool onlyNeedsToBePassable = false)
         {
             if (ModEntry.modConfig.EnableBuilding)
             {
-                if (__instance.isTilePassable(tileLocation) && !__instance.isWaterTile((int)tileLocation.X, (int)tileLocation.Y))
-                {
-                    __result = !__instance.IsTileOccupiedBy(tileLocation, CollisionMask.All, CollisionMask.All);
-                }
-                else if (ModEntry.modConfig.EnableFreeBuild)
+                if (ModEntry.modConfig.EnableFreeBuild)
                 {
                     __result = true;
+                }
+                else if (!__instance.IsOutdoors && !ModEntry.modConfig.EnableBuildingIndoors)
+                {
+                    __result = false;
+                }
+                else if (__instance.isTilePassable(tileLocation) && !__instance.isWaterTile((int)tileLocation.X, (int)tileLocation.Y))
+                {
+                    __result = !__instance.IsTileOccupiedBy(tileLocation, CollisionMask.All, CollisionMask.All);
                 }
                 else
                 {
@@ -62,6 +66,15 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
         private static void IsBuildableLocationPostfix(GameLocation __instance, ref bool __result)
         {
             if (ModEntry.modConfig.EnableBuilding)
+            {
+                if (ModEntry.modConfig.EnableBuildingIndoors)
+                    __result = true;
+
+                if (__instance.IsOutdoors)
+                    __result = true;
+            }
+
+            if (ModEntry.modConfig.EnableFreeBuild)
                 __result = true;
         }
     }
