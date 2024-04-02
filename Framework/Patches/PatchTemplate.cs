@@ -1,19 +1,5 @@
-﻿using AnythingAnywhere.Framework.Interfaces;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
-using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Buildings;
-using StardewValley.Characters;
-using StardewValley.Locations;
-using StardewValley.Monsters;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Object = StardewValley.Object;
+﻿using StardewModdingAPI;
+
 
 namespace AnythingAnywhere.Framework.Patches
 {

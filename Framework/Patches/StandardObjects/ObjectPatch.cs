@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
-using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
+using StardewModdingAPI;
 using StardewValley.GameData.Fences;
 using StardewValley.GameData.WildTrees;
 using StardewValley.GameData;
@@ -9,17 +8,11 @@ using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Xml.Linq;
-using Object = StardewValley.Object;
-using xTile.Tiles;
-using StardewValley.ItemTypeDefinitions;
-using System.Diagnostics.CodeAnalysis;
 using StardewValley.Extensions;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System;
+using Object = StardewValley.Object;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {

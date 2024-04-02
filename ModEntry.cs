@@ -1,19 +1,17 @@
 ﻿using HarmonyLib;
+using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
-using System.Linq;
-using System;
 using StardewValley.Menus;
-using SObject = StardewValley.Object;
 using Microsoft.Xna.Framework;
 using AnythingAnywhere.Framework.UI;
 using AnythingAnywhere.Framework.Managers;
 using AnythingAnywhere.Framework.Patches.GameLocations;
-using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.Menus;
-using StardewValley.TerrainFeatures;
+using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
+using System.Linq;
+using System;
 
 namespace AnythingAnywhere
 {

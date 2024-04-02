@@ -1,18 +1,15 @@
 ﻿using HarmonyLib;
-using StardewModdingAPI;
-using StardewValley.Buildings;
 using StardewValley;
+using StardewModdingAPI;
 using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Object = StardewValley.Object;
-using System.Reflection;
+using StardewValley.Buildings;
 using Microsoft.Xna.Framework;
-using xTile.Dimensions;
 using Microsoft.Xna.Framework.Input;
+using xTile.Dimensions;
+using System.Reflection;
+using System.Linq;
+using System.Collections.Generic;
+using System;
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {

@@ -1,17 +1,10 @@
 ﻿using HarmonyLib;
-using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Locations;
+using StardewModdingAPI;
 using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
+using StardewValley.Locations;
+using Microsoft.Xna.Framework;
 using System;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using Object = StardewValley.Object;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects    
 {

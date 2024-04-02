@@ -1,20 +1,11 @@
 ﻿using HarmonyLib;
-using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.GameData;
-using StardewValley.Monsters;
+using StardewModdingAPI;
 using StardewValley.Objects;
-using StardewValley.TokenizableStrings;
-using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using xTile;
+using Microsoft.Xna.Framework;
 using xTile.ObjectModel;
 using xTile.Tiles;
-using Object = StardewValley.Object;
+using System;
 
 namespace AnythingAnywhere.Framework.Patches.GameLocations
 {
