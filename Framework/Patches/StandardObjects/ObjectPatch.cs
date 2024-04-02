@@ -635,12 +635,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         return false;
                     case "(BC)238": // Mini-Obelisk
                         {
-                            if (!(location is Farm) && !ModEntry.modConfig.AllowMiniObelisksAnywhere)
-                            {
-                                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:OnlyPlaceOnFarm"));
-                                __result = false;
-                                return false;
-                            }
                             Vector2 obelisk1 = Vector2.Zero;
                             Vector2 obelisk2 = Vector2.Zero;
 
@@ -659,7 +653,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                                     }
                                 }
                             }
-                            if (!obelisk1.Equals(Vector2.Zero) && !obelisk2.Equals(Vector2.Zero))
+                            if (!obelisk1.Equals(Vector2.Zero) && !obelisk2.Equals(Vector2.Zero) && !ModEntry.modConfig.MultipleMiniObelisks)
                             {
                                 Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:OnlyPlaceTwo"));
                                 __result = false;

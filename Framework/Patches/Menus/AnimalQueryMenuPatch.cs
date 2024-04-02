@@ -95,23 +95,23 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             if (__instance.moveHomeButton.containsPoint(x, y))
             {
-                List<KeyValuePair<string, string>> list = new();
+                List<KeyValuePair<string, string>> validLocations = new();
 
                 Game1.playSound("smallSelect");
                 foreach (GameLocation location in Game1.locations)
                 {
                     if (location.buildings.Any((Building p) => p.GetIndoors() is AnimalHouse) && (!Game1.IsClient || location.CanBeRemotedlyViewed()))
                     {
-                        list.Add(new KeyValuePair<string, string>(location.NameOrUniqueName, location.DisplayName));
+                        validLocations.Add(new KeyValuePair<string, string>(location.NameOrUniqueName, location.DisplayName));
                     }
                 }
-                if (!list.Any())
+                if (!validLocations.Any())
                 {
                     Farm farm = Game1.getFarm();
 
-                    list.Add(new KeyValuePair<string, string>(farm.NameOrUniqueName, farm.DisplayName));
+                    validLocations.Add(new KeyValuePair<string, string>(farm.NameOrUniqueName, farm.DisplayName));
                 }
-                Game1.currentLocation.ShowPagedResponses("test", list, delegate (string value)
+                Game1.currentLocation.ShowPagedResponses(I18n.Message_AnythingAnywhere_ChooseAnimalLocation(), validLocations, delegate (string value)
                 {
                     GameLocation locationFromName = Game1.getLocationFromName(value);
 

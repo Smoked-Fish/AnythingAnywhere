@@ -1,4 +1,4 @@
-{  // Furniture Configs
+{ // Furniture Configs
 
   "Config.AnythingAnywhere.Placing.Title": "Placing",
   "Config.AnythingAnywhere.EnablePlacing.Name": "Enable Placing",
@@ -35,12 +35,14 @@
   //"Config.AnythingAnywhere.EnableTableTweak.Description": "Enables needing to hold down the table tweak bind to pick up or place items onto tables.",
   "Config.AnythingAnywhere.EnablePlanting.Name": "Enable Farming",
   "Config.AnythingAnywhere.EnablePlanting.Description": "Enables farming at any location.",
+  "Config.AnythingAnywhere.EnableDiggingAll.Name": "Dig Anything",
+  "Config.AnythingAnywhere.EnableDiggingAll.Description": "Enables hoeing any tile.",
   "Config.AnythingAnywhere.EnableFruitTreeTweaks.Name": "Fruit Tree Tweaks",
   "Config.AnythingAnywhere.EnableFruitTreeTweaks.Description": "Removes growth restrictions on fruit trees.",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Wild Tree Tweaks",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Removes growth restrictions on wild trees. This will quickly grow out of control.",
-  "Config.AnythingAnywhere.EnableMiniObilisk.Name": "Mini-Obilisk",
-  "Config.AnythingAnywhere.EnableMiniObilisk.Description": "Enables placing 2 mini-obilisks per location.",
+  "Config.AnythingAnywhere.EnableMiniObilisk.Name": "Multiple Mini-Obilisk",
+  "Config.AnythingAnywhere.EnableMiniObilisk.Description": "Enables placing more than 2 mini-obilisks per location.",
   "Config.AnythingAnywhere.UseJukeboxAnywhere.Name": "Jukebox Functionality",
   "Config.AnythingAnywhere.UseJukeboxAnywhere.Description": "Enables jukebox functionality anywhere. (except in the rain)",
 

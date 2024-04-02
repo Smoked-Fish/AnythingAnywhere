@@ -28,9 +28,10 @@ namespace AnythingAnywhere
         //public KeybindList TableTweakBind { get; set; } = new KeybindList(SButton.LeftShift);
         //public bool EnableTableTweak {  get; set; } = true;
         public bool EnablePlanting { get; set; } = true;
+        public bool EnableDiggingAll { get; set; } = false;
         public bool EnableFruitTreeTweaks { get; set; } = true;
         public bool EnableWildTreeTweaks { get; set; } = false;
-        public bool AllowMiniObelisksAnywhere { get; set; } = true;
+        public bool MultipleMiniObelisks { get; set; } = false;
         public bool EnableJukeboxFunctionality { get; set; } = true;
     }
 

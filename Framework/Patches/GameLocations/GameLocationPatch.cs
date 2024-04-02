@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData;
+using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TokenizableStrings;
 using StardewValley.Tools;
@@ -11,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using xTile;
+using xTile.ObjectModel;
+using xTile.Tiles;
 using Object = StardewValley.Object;
 
 namespace AnythingAnywhere.Framework.Patches.GameLocations
@@ -29,6 +32,8 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanPlaceThisFurnitureHere), new[] { typeof(Furniture)}), postfix: new HarmonyMethod(GetType(), nameof(CanPlaceThisFurnitureHerePostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.isBuildable), new[] { typeof(Vector2), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(IsBuildablePostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
+            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.doesTileHaveProperty), new [] { typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(DoesTileHavePropertyPostfix)));
+
         }
 
         // Sets all furniture types as placeable in all locations.
@@ -76,6 +81,43 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
 
             if (ModEntry.modConfig.EnableFreeBuild)
                 __result = true;
+        }
+
+        // Set all tiles as diggable
+        private static void DoesTileHavePropertyPostfix(GameLocation __instance, int xTile, int yTile, string propertyName, string layerName, ref string __result)
+        {
+            if (!Context.IsWorldReady || !__instance.farmers.Any() || !(propertyName == "Diggable") || !(layerName == "Back") || !ModEntry.modConfig.EnablePlanting)
+            {
+                return;
+            }
+
+            Tile tile = __instance.Map.GetLayer("Back")?.Tiles[xTile, yTile];
+            if (tile?.TileSheet == null)
+            {
+                return;
+            }
+            string text = null;
+            IPropertyCollection tileIndexProperties = tile.TileIndexProperties;
+            if (tileIndexProperties != null && tileIndexProperties.TryGetValue("Type", out var value))
+            {
+                text = value?.ToString();
+            }
+            else
+            {
+                IPropertyCollection properties = tile.Properties;
+                if (properties != null && properties.TryGetValue("Type", out value))
+                {
+                    text = value?.ToString();
+                }
+            }
+            if (ModEntry.modConfig.EnableDiggingAll)
+            {
+                __result = "T";
+            }
+            if (text == "Dirt" || text == "Grass")
+            {
+                __result = "T";
+            }
         }
     }
 }
