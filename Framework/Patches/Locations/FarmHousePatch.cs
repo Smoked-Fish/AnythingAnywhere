@@ -29,7 +29,7 @@ namespace AnythingAnywhere.Framework.Patches.Locations
 
         private static bool ResetLocalStatePrefix(FarmHouse __instance)
         {
-            if (!Game1.player.currentLocation.IsOutdoors && !Game1.player.currentLocation.Name.StartsWith("Farm"))
+            if (!Game1.player.currentLocation.IsOutdoors && !(Game1.player.currentLocation.Name.StartsWith("Farm") || Game1.player.currentLocation.Name.StartsWith("Cabin")))
             {
                 //Game1.player.Position = Utility.PointToVector2(getEntryLocation()) * 64f;
                 Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
