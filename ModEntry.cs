@@ -12,6 +12,8 @@ using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using System.Linq;
 using System;
+using StardewValley.Locations;
+using AnythingAnywhere.Framework.Patches.Locations;
 
 namespace AnythingAnywhere
 {
@@ -47,19 +49,24 @@ namespace AnythingAnywhere
                 // Apply GameLocation patches
                 new GameLocationPatch(monitor, helper).Apply(harmony);
 
+                // Apply Location patches
+                new FarmHousePatch(monitor, helper).Apply(harmony);
+
+                // Apply the Menu patches OLD
+                new CarpenterMenuPatch(monitor, helper).Apply(harmony);
+                new AnimalQueryMenuPatch(monitor, helper).Apply(harmony);
+
                 // Apply the StandardObject patches
-                new ObjectPatch(monitor, helper).Apply(harmony);
+                new CaskPatch(monitor, helper).Apply(harmony);
                 new FurniturePatch(monitor, helper).Apply(harmony);
                 new MiniJukeboxPatch(monitor, helper).Apply(harmony);
+                new ObjectPatch(monitor, helper).Apply(harmony);
 
                 // Apply the TerrainFeature patches
                 new FruitTreePatch(monitor, helper).Apply(harmony);
                 new TreePatch(monitor, helper).Apply(harmony);
                 new HoeDirtPatch(monitor, helper).Apply(harmony);
 
-                // Apply the Menu patches OLD
-                new CarpenterMenuPatch(monitor, helper).Apply(harmony);
-                new AnimalQueryMenuPatch(monitor, helper).Apply(harmony);
             }
             catch (Exception e)
             {
@@ -112,6 +119,7 @@ namespace AnythingAnywhere
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableDiggingAll, value => modConfig.EnableDiggingAll = value, I18n.Config_AnythingAnywhere_EnableDiggingAll_Name, I18n.Config_AnythingAnywhere_EnableDiggingAll_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableFruitTreeTweaks, value => modConfig.EnableFruitTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableWildTreeTweaks, value => modConfig.EnableWildTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.BypassMagicInk, value => modConfig.BypassMagicInk = value, I18n.Config_AnythingAnywhere_BypassMagicInk_Name, I18n.Config_AnythingAnywhere_BypassMagicInk_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.MultipleMiniObelisks, value => modConfig.MultipleMiniObelisks = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableJukeboxFunctionality, value => modConfig.EnableJukeboxFunctionality = value, I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Name, I18n.Config_AnythingAnywhere_UseJukeboxAnywhere_Description);
             }
@@ -133,7 +141,7 @@ namespace AnythingAnywhere
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
             {
-                activateBuildAnywhereMenu(builder);
+                ActivateBuildAnywhereMenu(builder);
             }
             else if (Game1.activeClickableMenu is BuildAnywhereMenu)
             {
@@ -143,25 +151,28 @@ namespace AnythingAnywhere
             }
         }
 
-        private void activateBuildAnywhereMenu(string builder)
+        private void ActivateBuildAnywhereMenu(string builder)
         {
+            // Check if building is disabled
+            if (!modConfig.EnableBuilding)
+                return;
+
+            // Check if indoors and building indoors is disabled
             if (!Game1.currentLocation.IsOutdoors && !modConfig.EnableBuildingIndoors)
             {
                 Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoBuildingIndoors(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                return;
             }
-            else if (builder == "Wizard" && !Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk && !modConfig.EnableBuildAnywhere)
+            // Check if the builder is the Wizard and either the player doesn't have magic ink or the magic ink bypass is disabled
+            bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || modConfig.BypassMagicInk);
+            if (builder == "Wizard" && magicInkCheck && !modConfig.EnableInstantBuild)
             {
                 Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoMagicInk(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
-            else if (!modConfig.EnableBuilding)
-            {
-                return;
-            }
-            else
-            {
-                Game1.activeClickableMenu = (IClickableMenu)new BuildAnywhereMenu(builder, modConfig, this.Monitor);
-            }
+
+            // If none of the above conditions are met, activate the BuildAnywhereMenu
+            Game1.activeClickableMenu = new BuildAnywhereMenu(builder, modConfig, this.Monitor);
         }
 
         private void DebugRemoveObjects(string command, string[] args)

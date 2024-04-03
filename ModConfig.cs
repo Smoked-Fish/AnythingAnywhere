@@ -31,6 +31,7 @@ namespace AnythingAnywhere
         public bool EnableDiggingAll { get; set; } = false;
         public bool EnableFruitTreeTweaks { get; set; } = true;
         public bool EnableWildTreeTweaks { get; set; } = false;
+        public bool BypassMagicInk { get; set; } = false;
         public bool MultipleMiniObelisks { get; set; } = false;
         public bool EnableJukeboxFunctionality { get; set; } = true;
     }

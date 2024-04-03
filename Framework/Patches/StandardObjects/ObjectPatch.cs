@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
 using Object = StardewValley.Object;
+using System.Xml.Linq;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
@@ -35,6 +36,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 
         // Lets the placement of some special items including the mini fridge and obelisk
         // NEED TO FIX
+
         private static bool PlacementActionPrefix(Object __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
         {
             if (!ModEntry.modConfig.EnablePlacing)
@@ -45,15 +47,15 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             __instance.Location = location;
             __instance.TileLocation = placementTile;
             __instance.owner.Value = who?.UniqueMultiplayerID ?? Game1.player.UniqueMultiplayerID;
+
+            // Do not allow placing objects on top of eachother.
+            if (location.objects.ContainsKey(placementTile))
+            {
+                __result = false;
+                return false;
+            }
             if (!__instance.bigCraftable.Value && !(__instance is Furniture))
             {
-                if (__instance.IsSprinkler() && location.doesTileHavePropertyNoNull((int)placementTile.X, (int)placementTile.Y, "NoSprinklers", "Back") == "T")
-                {
-                    Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:NoSprinklers"));
-                    __result = false;
-                    return false;
-                }
-                // Bypass wild tree check
                 if (__instance.IsWildTreeSapling())
                 {
                     if (!canPlaceWildTreeSeed(__instance, location, placementTile, out var deniedMessage))
@@ -76,7 +78,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         __result = true;
                         return false;
                     }
-                    __result = false;
                     return false;
                 }
                 if (__instance.IsFloorPathItem())
@@ -124,6 +125,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                     __result = true;
                     return false;
                 }
+
                 switch (__instance.QualifiedItemId)
                 {
                     case "(O)TentKit":
@@ -218,6 +220,11 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         return false;
                     case "(O)286":
                         {
+                            if (location.objects.ContainsKey(placementTile))
+                            {
+                                __result = false;
+                                return false;
+                            }
                             foreach (TemporaryAnimatedSprite temporarySprite in location.temporarySprites)
                             {
                                 if (temporarySprite.position.Equals(placementTile * 64f))
@@ -255,6 +262,11 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         }
                     case "(O)287":
                         {
+                            if (location.objects.ContainsKey(placementTile))
+                            {
+                                __result = false;
+                                return false;
+                            }
                             foreach (TemporaryAnimatedSprite temporarySprite2 in location.temporarySprites)
                             {
                                 if (temporarySprite2.position.Equals(placementTile * 64f))
@@ -292,6 +304,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         }
                     case "(O)288":
                         {
+
                             foreach (TemporaryAnimatedSprite temporarySprite3 in location.temporarySprites)
                             {
                                 if (temporarySprite3.position.Equals(placementTile * 64f))
@@ -703,7 +716,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             // Bypass fruit tree placement checks
             if (__instance.isSapling())
             {
-                if ((__instance.IsWildTreeSapling() /*&& !ModEntry.modConfig.EnableWildTreeTweaks*/) || (__instance.IsFruitTreeSapling() && !ModEntry.modConfig.EnablePlacing))
+                if ((__instance.IsWildTreeSapling() && !ModEntry.modConfig.EnableWildTreeTweaks) || (__instance.IsFruitTreeSapling() && !ModEntry.modConfig.EnablePlacing))
                 {
                     if (FruitTree.IsTooCloseToAnotherTree(new Vector2(x / 64, y / 64), location))
                     {
@@ -731,8 +744,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 bool canDig = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Diggable", "Back") != null;
                 string tileType = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Type", "Back");
                 bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
-                // Remove location needing to be Farm
-                if ((((canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) || ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2))) || ModEntry.modConfig.EnablePlacing)
+                if (((location is Farm && (canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) || ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2))) || ModEntry.modConfig.EnablePlacing)
                 {
                     location.playSound("dirtyHit");
                     DelayedAction.playSoundAfterDelay("coin", 100);
@@ -849,7 +861,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                     int baseIndex = toPlace.ParentSheetIndex - toPlace.ParentSheetIndex % 4;
                     toPlace.ParentSheetIndex = baseIndex + location.GetSeasonIndex();
                 }
-                if (!(toPlace is Furniture) && !ModEntry.modConfig.EnableFreePlace && location.objects.TryGetValue(placementTile, out var tileObj))
+                if (!(toPlace is Furniture) && location.objects.TryGetValue(placementTile, out var tileObj))
                 {
                     if (tileObj.QualifiedItemId != __instance.QualifiedItemId)
                     {
@@ -882,6 +894,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 
 
 
+
         // Lets objects be placed inside of walls
         // NEED TO FIX
         private static bool CanBePlacedHerePrefix(Object __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
@@ -891,8 +904,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = true;
                 return false;
             }
-
-
 
             if (__instance.QualifiedItemId == "(O)710")
             {
