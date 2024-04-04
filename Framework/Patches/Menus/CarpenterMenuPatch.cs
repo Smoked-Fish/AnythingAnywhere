@@ -42,7 +42,6 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     return false;
                 }
             }
-            __result = false;
             return true;
         }
     }

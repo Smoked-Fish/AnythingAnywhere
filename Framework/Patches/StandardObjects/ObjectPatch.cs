@@ -34,9 +34,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 
         }
 
-        // Lets the placement of some special items including the mini fridge and obelisk
-        // NEED TO FIX
-
+        // Object placment action
         private static bool PlacementActionPrefix(Object __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
         {
             if (!ModEntry.modConfig.EnablePlacing)
@@ -891,12 +889,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             return false;
         }
 
-
-
-
-
-        // Lets objects be placed inside of walls
-        // NEED TO FIX
+        // object placement valid
         private static bool CanBePlacedHerePrefix(Object __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
         {
             if (ModEntry.modConfig.EnableFreePlace)

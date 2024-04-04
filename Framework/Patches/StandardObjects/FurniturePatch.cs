@@ -5,6 +5,7 @@ using StardewValley.Objects;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework;
 using System;
+using StardewValley.Menus;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects    
 {
@@ -35,7 +36,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 (__instance.furniture_type.Value == 6 ||
                 __instance.furniture_type.Value == 17 ||
                 __instance.furniture_type.Value == 13 ||
-                __instance.QualifiedItemId == "(F)1293");
+                __instance.QualifiedItemId == "(F)1293");   
 
             // Check conditions for running the code inside
             if (!ModEntry.modConfig.EnableWallFurnitureIndoors && location is DecoratableLocation decoratableLocation && !ModEntry.modConfig.EnableBuildAnywhere)

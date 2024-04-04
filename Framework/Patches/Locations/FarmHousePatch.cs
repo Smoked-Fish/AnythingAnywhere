@@ -29,6 +29,9 @@ namespace AnythingAnywhere.Framework.Patches.Locations
 
         private static bool ResetLocalStatePrefix(FarmHouse __instance)
         {
+            if (Game1.player.currentLocation.Name.StartsWith("ScienceHouse") || Game1.player.currentLocation.Name.EndsWith("ScienceHouse"))
+                return true;
+
             if (!Game1.player.currentLocation.IsOutdoors && !(Game1.player.currentLocation is FarmHouse || Game1.player.currentLocation is Cabin))
             {
                 //Game1.player.Position = Utility.PointToVector2(getEntryLocation()) * 64f;
