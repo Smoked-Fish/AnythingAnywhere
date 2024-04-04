@@ -1,7 +1,7 @@
 {
   "Name": "Anything Anywhere",
   "Author": "Espy",
-  "Version": "1.5.8",
+  "Version": "1.6.0",
   "Description": "Build and place anything anywhere.",
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",

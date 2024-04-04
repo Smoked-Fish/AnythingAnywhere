@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using StardewValley.GameData.Buildings;
 using Microsoft.CodeAnalysis;
+using StardewValley.Objects;
 
 
 namespace AnythingAnywhere.Framework.Patches.Menus
@@ -59,10 +60,73 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             if (!ModEntry.modConfig.EnableBuildingRelocate)
                 return true;
 
-            if (!ModEntry.modConfig.RelocationKey.IsDown())
+            if (Game1.IsMultiplayer)
+            {
+                if (ModEntry.modConfig.RelocationKey.IsDown())
+                {
+                    Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_MultiplayerRelocate(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                }
                 return true;
+            }
+
+            if (Game1.activeClickableMenu is not BuildAnywhereMenu){
+                return true;
+            }
+
+            if (__instance.freeze)
+            {
+                return true;
+            }
+
+            if (!__instance.onFarm)
+            {
+                return true;
+            }
+
+            if (__instance.cancelButton.containsPoint(x, y))
+            {
+                if (__instance.onFarm)
+                {
+                    if (__instance.moving && __instance.buildingToMove != null)
+                    {
+                        Game1.playSound("cancel");
+                        return false;
+                    }
+                    __instance.returnToCarpentryMenu();
+                    Game1.playSound("smallSelect");
+                    return false;
+                }
+                __instance.exitThisMenu();
+                Game1.player.forceCanMove();
+                Game1.playSound("bigDeSelect");
+            }
+
+            if (!__instance.onFarm && __instance.backButton.containsPoint(x, y))
+            {
+                return true;
+            }
+
+            if (!__instance.onFarm && __instance.forwardButton.containsPoint(x, y))
+            {
+                return true;
+            }
 
             if (!__instance.onFarm || __instance.freeze || Game1.IsFading())
+            {
+                return true;
+            }
+
+            if (__instance.demolishing)
+            {
+                return true;
+            }
+
+            if (__instance.upgrading)
+            {
+                return true;
+            }
+
+            if (__instance.painting)
             {
                 return true;
             }
@@ -72,7 +136,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 if (__instance.buildingToMove == null)
                 {
                     __instance.buildingToMove = __instance.TargetLocation.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getMouseY(ui_scale: false)) / 64));
-                    
+
                     if (__instance.buildingToMove != null)
                     {
                         if ((__instance.buildingToMove.GetIndoors() is FarmHouse || __instance.buildingToMove.GetIndoors() is Cabin) && !ModEntry.modConfig.EnableCabinsAnywhere)
@@ -94,6 +158,20 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                             return false;
                         }
 
+                        if (!ModEntry.modConfig.RelocationKey.IsDown())
+                        {
+                            __instance.buildingToMove.isMoving = true;
+                            Game1.playSound("axchop");
+                            return false;
+                        }
+
+                        if(Game1.getLocationFromName(__instance.BuilderLocationName) != __instance.TargetLocation)
+                        {
+                            Game1.playSound("cancel");
+                            return false;
+                        }
+
+
                         Game1.playSound("smallSelect");
                         List<KeyValuePair<string, string>> buildableLocations = new List<KeyValuePair<string, string>>();
                         foreach (GameLocation location in Game1.locations)
@@ -107,6 +185,11 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         {
                             Farm farm = Game1.getFarm();
                             buildableLocations.Add(new KeyValuePair<string, string>(farm.NameOrUniqueName, farm.DisplayName));
+                        }
+                        if (Game1.getLocationFromName(__instance.BuilderLocationName) != __instance.TargetLocation)
+                        {
+                            Game1.playSound("cancel");
+                            return false;
                         }
                         Game1.currentLocation.ShowPagedResponses(I18n.Message_AnythingAnywhere_ChooseBuildingLocation(), buildableLocations, delegate (string value)
                         {
@@ -158,6 +241,11 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             }
             return true;
         }
+
+
+
+
+
 
         // Make cabins builable outside of farm if enabled.
         private static bool IsValidBuildingForLocationPrefix(CarpenterMenu __instance, string typeId, BuildingData data, GameLocation targetLocation, ref bool __result)

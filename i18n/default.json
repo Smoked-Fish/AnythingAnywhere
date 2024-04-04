@@ -59,6 +59,7 @@
   "Message.AnythingAnywhere.NoBuildingIndoors": "Building indoors is disabled",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} Cannot be moved to another map",
   "Message.AnythingAnywhere.NoMagicInk": "You need Magic Ink to open the Wizard's Build Menu",
+  "Message.AnythingAnywhere.MultiplayerRelocate": "You cannot move buildings to other locations while in multiplayer",
   "Message.AnythingAnywhere.ChooseBuildingLocation": "Where do you want to relocate the building?",
   "Message.AnythingAnywhere.ChooseAnimalLocation": "Where do you want to relocate the animal?"
 }
