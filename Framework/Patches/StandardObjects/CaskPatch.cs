@@ -24,7 +24,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         // Enable jukebox functionality outside of the farm
         private static bool IsValidCaskLocationPrefix(Cask __instance, ref bool __result)
         {
-            if (ModEntry.modConfig.EnablePlacing)
+            if (ModEntry.modConfig.EnableCaskFunctionality)
             {
                 __result = true;
                 return false;

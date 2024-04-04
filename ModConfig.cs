@@ -5,11 +5,9 @@ namespace AnythingAnywhere
 {
     internal class ModConfig
     {
-        public ModConfigKeys Keys { get; set; } = new();
-        
-        // FURNITURE
+       
+        // PLACING
         public bool EnablePlacing { get; set; } = true;
-        //public bool EnableRugTweaks { get; set; } = true;
         public bool EnableWallFurnitureIndoors { get; set; } = false;
         public bool EnableFreePlace { get; set; } = false;
 
@@ -19,25 +17,23 @@ namespace AnythingAnywhere
         public bool EnableBuildingIndoors { get; set; } = false;
         public KeybindList BuildMenu { get; set; } = new KeybindList(SButton.OemComma);
         public KeybindList WizardBuildMenu { get; set; } = new KeybindList(SButton.OemPeriod);
+        public KeybindList RelocationKey { get; set; } = new KeybindList(SButton.LeftShift);
+        public bool EnableBuildingRelocate { get; set; } = true;
         public bool EnableAnimalRelocate { get; set; } = true;
         public bool EnableInstantBuild { get; set; } = false;
         public bool EnableBuildAnywhere { get; set; } = false;
 
-
-        // OTHER
-        //public KeybindList TableTweakBind { get; set; } = new KeybindList(SButton.LeftShift);
-        //public bool EnableTableTweak {  get; set; } = true;
+        // FARMING
         public bool EnablePlanting { get; set; } = true;
         public bool EnableDiggingAll { get; set; } = false;
-        public bool EnableFruitTreeTweaks { get; set; } = true;
+        public bool EnableFruitTreeTweaks { get; set; } = false;
         public bool EnableWildTreeTweaks { get; set; } = false;
-        public bool BypassMagicInk { get; set; } = false;
-        public bool MultipleMiniObelisks { get; set; } = false;
-        public bool EnableJukeboxFunctionality { get; set; } = true;
-    }
 
-    internal class ModConfigKeys
-    {
-        public KeybindList ReloadConfig { get; set; } = new();
+        // OTHER
+        public bool BypassMagicInk { get; set; } = false;
+        public bool EnableCaskFunctionality { get; set; } = false;
+        public bool EnableJukeboxFunctionality { get; set; } = true;
+        public bool EnableCabinsAnywhere { get; set; } = false;
+        public bool MultipleMiniObelisks { get; set; } = false;
     }
 }

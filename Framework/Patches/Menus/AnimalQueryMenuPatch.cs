@@ -132,6 +132,30 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             return true;
         }
 
+        // Update current location to TargetLocation
+        private static void PrepareForAnimalPlacementPostfix(AnimalQueryMenu __instance)
+        {
+            if (!ModEntry.modConfig.EnableAnimalRelocate)
+                return;
+
+            bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
+            FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
+            movingAnimal = true;
+            Game1.currentLocation.cleanupBeforePlayerExit();
+            Game1.currentLocation = TargetLocation;
+            Game1.player.viewingLocation.Value = Game1.currentLocation.NameOrUniqueName;
+            Game1.globalFadeToClear();
+            __instance.okButton.bounds.X = Game1.uiViewport.Width - 128;
+            __instance.okButton.bounds.Y = Game1.uiViewport.Height - 128;
+            Game1.displayHUD = false;
+            Game1.viewportFreeze = true;
+            Game1.viewport.Location = new Location(3136, 320);
+            Game1.panScreen(0, 0);
+            Game1.currentLocation.resetForPlayerEntry();
+            Game1.displayFarmer = false;
+        }
+
+        // Show correct hover colors
         private static void PerformHoverActionPostfix(AnimalQueryMenu __instance, int x, int y)
         {
             if (!ModEntry.modConfig.EnableAnimalRelocate)
@@ -162,35 +186,16 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             }
         }
 
-        private static void PrepareForAnimalPlacementPostfix(AnimalQueryMenu __instance)
-        {
-            if (!ModEntry.modConfig.EnableAnimalRelocate)
-                return;
-
-            bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
-            FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
-            movingAnimal = true;
-            Game1.currentLocation.cleanupBeforePlayerExit();
-            Game1.currentLocation = TargetLocation;
-            Game1.player.viewingLocation.Value = Game1.currentLocation.NameOrUniqueName;
-            Game1.globalFadeToClear();
-            __instance.okButton.bounds.X = Game1.uiViewport.Width - 128;
-            __instance.okButton.bounds.Y = Game1.uiViewport.Height - 128;
-            Game1.displayHUD = false;
-            Game1.viewportFreeze = true;
-            Game1.viewport.Location = new Location(3136, 320);
-            Game1.panScreen(0, 0);
-            Game1.currentLocation.resetForPlayerEntry();
-            Game1.displayFarmer = false;
-        }
-
         // Enable WASD on move animal menu
         private static void ReceiveKeyPressPostfix(AnimalQueryMenu __instance, Keys key)
         {
             if (!ModEntry.modConfig.EnableAnimalRelocate)
                 return;
 
-            if (!Game1.options.SnappyMenus)
+            bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
+
+
+            if (movingAnimal)
             {
                 if (Game1.options.doesInputListContain(Game1.options.moveDownButton, key))
                 {
