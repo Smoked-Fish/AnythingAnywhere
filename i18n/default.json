@@ -37,7 +37,7 @@
   //"Config.AnythingAnywhere.EnableTableTweak.Description": "Enables needing to hold down the table tweak bind to pick up or place items onto tables.",
   "Config.AnythingAnywhere.EnablePlanting.Name": "Enable Farming",
   "Config.AnythingAnywhere.EnablePlanting.Description": "Enables farming at any location.",
-  "Config.AnythingAnywhere.EnableDiggingAll.Name": "Dig Anything",
+  "Config.AnythingAnywhere.EnableDiggingAll.Name": "Hoe Anything",
   "Config.AnythingAnywhere.EnableDiggingAll.Description": "Enables hoeing any tile.",
   "Config.AnythingAnywhere.EnableFruitTreeTweaks.Name": "Fruit Tree Tweaks",
   "Config.AnythingAnywhere.EnableFruitTreeTweaks.Description": "Removes growth restrictions on fruit trees.",
