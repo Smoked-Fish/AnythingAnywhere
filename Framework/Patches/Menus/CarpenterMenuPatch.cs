@@ -139,13 +139,6 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
                     if (__instance.buildingToMove != null)
                     {
-                        if ((__instance.buildingToMove.GetIndoors() is FarmHouse || __instance.buildingToMove.GetIndoors() is Cabin) && !ModEntry.modConfig.EnableCabinsAnywhere)
-                        {
-                            Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoMovingBuildingLocation(buildingName: __instance.buildingToMove.GetIndoorsName()), 3));
-                            Game1.playSound("cancel");
-                            __instance.buildingToMove = null;
-                            return false;
-                        }
 
                         if ((int)__instance.buildingToMove.daysOfConstructionLeft.Value > 0)
                         {
@@ -162,6 +155,14 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         {
                             __instance.buildingToMove.isMoving = true;
                             Game1.playSound("axchop");
+                            return false;
+                        }
+
+                        if ((__instance.buildingToMove.GetIndoors() is FarmHouse || __instance.buildingToMove.GetIndoors() is Cabin) && !ModEntry.modConfig.EnableCabinsAnywhere)
+                        {
+                            Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoMovingBuildingLocation(buildingName: __instance.buildingToMove.GetIndoorsName()), 3));
+                            Game1.playSound("cancel");
+                            __instance.buildingToMove = null;
                             return false;
                         }
 
