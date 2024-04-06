@@ -51,7 +51,66 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = false;
                 return false;
             }
-            
+
+            // Bypass fruit tree placement checks
+            if (__instance.isSapling())
+            {
+                if ((__instance.IsWildTreeSapling() && !ModEntry.modConfig.EnableWildTreeTweaks) || (__instance.IsFruitTreeSapling() && !ModEntry.modConfig.EnablePlacing))
+                {
+                    if (FruitTree.IsTooCloseToAnotherTree(new Vector2(x / 64, y / 64), location))
+                    {
+                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13060"));
+                        __result = false;
+                        return false;
+                    }
+                    if (FruitTree.IsGrowthBlocked(new Vector2(x / 64, y / 64), location))
+                    {
+                        Game1.showRedMessage(Game1.content.LoadString("Strings\\UI:FruitTree_PlacementWarning", __instance.DisplayName));
+                        __result = false;
+                        return false;
+                    }
+                }
+                if (location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature2))
+                {
+                    if (!(terrainFeature2 is HoeDirt { crop: null }))
+                    {
+                        __result = false;
+                        return false;
+                    }
+                    location.terrainFeatures.Remove(placementTile);
+                }
+                string deniedMessage2 = null;
+                bool canDig = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Diggable", "Back") != null;
+                string tileType = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Type", "Back");
+                bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
+                if (((location is Farm && (canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) || ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2))) || ModEntry.modConfig.EnablePlacing)
+                {
+                    location.playSound("dirtyHit");
+                    DelayedAction.playSoundAfterDelay("coin", 100);
+                    if (__instance.IsTeaSapling())
+                    {
+                        location.terrainFeatures.Add(placementTile, new Bush(placementTile, 3, location));
+                        __result = true;
+                        return false;
+                    }
+                    FruitTree fruitTree = new FruitTree(__instance.ItemId)
+                    {
+                        GreenHouseTileTree = (location.IsGreenhouse && tileType == "Stone")
+                    };
+                    fruitTree.growthRate.Value = Math.Max(1, __instance.Quality + 1);
+                    location.terrainFeatures.Add(placementTile, fruitTree);
+                    __result = true;
+                    return false;
+                }
+                if (deniedMessage2 == null)
+                {
+                    deniedMessage2 = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13068");
+                }
+                Game1.showRedMessage(deniedMessage2);
+                __result = false;
+                return false;
+            }
+
             if (!__instance.bigCraftable.Value && !(__instance is Furniture))
             {
                 return true;
@@ -118,68 +177,12 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         return true;
                 }
             }
+
             if (__instance.Category == -19 && location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature3) && terrainFeature3 is HoeDirt { crop: not null } dirt3 && (__instance.QualifiedItemId == "(O)369" || __instance.QualifiedItemId == "(O)368") && (int)dirt3.crop.currentPhase.Value != 0)
             {
                 return true;
             }
-            // Bypass fruit tree placement checks
-            if (__instance.isSapling())
-            {
-                if ((__instance.IsWildTreeSapling() && !ModEntry.modConfig.EnableWildTreeTweaks) || (__instance.IsFruitTreeSapling() && !ModEntry.modConfig.EnablePlacing))
-                {
-                    if (FruitTree.IsTooCloseToAnotherTree(new Vector2(x / 64, y / 64), location))
-                    {
-                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13060"));
-                        __result = false;
-                        return false;
-                    }
-                    if (FruitTree.IsGrowthBlocked(new Vector2(x / 64, y / 64), location))
-                    {
-                        Game1.showRedMessage(Game1.content.LoadString("Strings\\UI:FruitTree_PlacementWarning", __instance.DisplayName));
-                        __result = false;
-                        return false;
-                    }
-                }
-                if (location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature2))
-                {
-                    if (!(terrainFeature2 is HoeDirt { crop: null }))
-                    {
-                        __result = false;
-                        return false;
-                    }
-                    location.terrainFeatures.Remove(placementTile);
-                }
-                string deniedMessage2 = null;
-                bool canDig = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Diggable", "Back") != null;
-                string tileType = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Type", "Back");
-                bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
-                if (((location is Farm && (canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) || ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2))) || ModEntry.modConfig.EnablePlacing)
-                {
-                    location.playSound("dirtyHit");
-                    DelayedAction.playSoundAfterDelay("coin", 100);
-                    if (__instance.IsTeaSapling())
-                    {
-                        location.terrainFeatures.Add(placementTile, new Bush(placementTile, 3, location));
-                        __result = true;
-                        return false;
-                    }
-                    FruitTree fruitTree = new FruitTree(__instance.ItemId)
-                    {
-                        GreenHouseTileTree = (location.IsGreenhouse && tileType == "Stone")
-                    };
-                    fruitTree.growthRate.Value = Math.Max(1, __instance.Quality + 1);
-                    location.terrainFeatures.Add(placementTile, fruitTree);
-                    __result = true;
-                    return false;
-                }
-                if (deniedMessage2 == null)
-                {
-                    deniedMessage2 = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13068");
-                }
-                Game1.showRedMessage(deniedMessage2);
-                __result = false;
-                return false;
-            }
+
             if (__instance.Category == -74 || __instance.Category == -19)
             {
                 return true;
