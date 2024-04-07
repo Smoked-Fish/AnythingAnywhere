@@ -52,17 +52,17 @@ namespace AnythingAnywhere
                 // Apply Location patches
                 new FarmHousePatch(monitor, helper).Apply(harmony);
 
-                // Apply the Menu patches OLD
+                // Apply Menu patches
                 new CarpenterMenuPatch(monitor, helper).Apply(harmony);
                 new AnimalQueryMenuPatch(monitor, helper).Apply(harmony);
 
-                // Apply the StandardObject patches
+                // Apply StandardObject patches
                 new CaskPatch(monitor, helper).Apply(harmony);
                 new FurniturePatch(monitor, helper).Apply(harmony);
                 new MiniJukeboxPatch(monitor, helper).Apply(harmony);
                 new ObjectPatch(monitor, helper).Apply(harmony);
 
-                // Apply the TerrainFeature patches
+                // Apply TerrainFeature patches
                 new FruitTreePatch(monitor, helper).Apply(harmony);
                 new TreePatch(monitor, helper).Apply(harmony);
                 new HoeDirtPatch(monitor, helper).Apply(harmony);
