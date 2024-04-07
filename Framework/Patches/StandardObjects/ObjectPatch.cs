@@ -51,7 +51,127 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = false;
                 return false;
             }
+            if (!__instance.bigCraftable.Value && !(__instance is Furniture))
+            {
+                if (__instance.IsSprinkler() && location.doesTileHavePropertyNoNull((int)placementTile.X, (int)placementTile.Y, "NoSprinklers", "Back") == "T")
+                {
+                    return true;
+                }
+                if (__instance.IsWildTreeSapling())
+                {
+                    return true;
+                }
+                if (__instance.IsFloorPathItem())
+                {
+                    return true;
+                }
+                if (ItemContextTagManager.HasBaseTag(__instance.QualifiedItemId, "torch_item"))
+                {
+                    return true;
+                }
+                if (__instance.IsFenceItem())
+                {
+                    return true;
+                }
+                switch (__instance.QualifiedItemId)
+                {
+                    case "(O)TentKit":
+                    case "(O)926":
+                    case "(O)286":
+                    case "(O)287":
+                    case "(O)288":
+                    case "(O)893":
+                    case "(O)894":
+                    case "(O)895":
+                    case "(O)297":
+                    case "(O)BlueGrassStarter":
+                    case "(O)710":
+                    case "(O)805":
+                        return true;
+                }
 
+            }
+            else
+            {
+                if (__instance.IsTapper())
+                {
+                    return true;
+                }
+                if (__instance.HasContextTag("sign_item"))
+                {
+                    return true;
+                }
+                if (__instance.HasContextTag("torch_item"))
+                {
+                    return true;
+                }
+                switch (__instance.QualifiedItemId)
+                {
+                    case "(BC)108":
+                    case "(BC)109":
+                    case "(BC)71":
+                    case "(BC)232":
+                    case "(BC)130":
+                    case "(BC)BigChest":
+                    case "(BC)BigStoneChest":
+                    case "(BC)163":
+                    case "(BC)165":
+                    case "(BC)208":
+                    case "(BC)209":
+                    case "(BC)211":
+                    case "(BC)214":
+                    case "(BC)248":
+                    case "(BC)256":
+                    case "(BC)275":
+                        return true;
+                    case "(BC)216": // Mini-Fridge
+                        {
+                            Chest fridge = new Chest("216", placementTile, 217, 2)
+                            {
+                                shakeTimer = 50
+                            };
+                            fridge.fridge.Value = true;
+                            location.objects.Add(placementTile, fridge);
+                            location.playSound("hammer");
+                            __result = true;
+                            return false;
+                        }
+                    case "(BC)238": // Mini-Obelisk
+                        {
+                            Vector2 obelisk1 = Vector2.Zero;
+                            Vector2 obelisk2 = Vector2.Zero;
+
+                            foreach (KeyValuePair<Vector2, Object> o2 in location.objects.Pairs)
+                            {
+                                if (o2.Value.QualifiedItemId == "(BC)238")
+                                {
+                                    if (obelisk1.Equals(Vector2.Zero))
+                                    {
+                                        obelisk1 = o2.Key;
+                                    }
+                                    else if (obelisk2.Equals(Vector2.Zero))
+                                    {
+                                        obelisk2 = o2.Key;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!obelisk1.Equals(Vector2.Zero) && !obelisk2.Equals(Vector2.Zero) && !ModEntry.modConfig.MultipleMiniObelisks)
+                            {
+                                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:OnlyPlaceTwo"));
+                                __result = false;
+                                return false; //skip original method
+                            }
+                            break;
+                        }
+                    case "(BC)254": // Ostrich Incubator
+                        break;
+                }
+            }
+            if (__instance.Category == -19 && location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature3) && terrainFeature3 is HoeDirt { crop: not null } dirt3 && (__instance.QualifiedItemId == "(O)369" || __instance.QualifiedItemId == "(O)368") && (int)dirt3.crop.currentPhase.Value != 0)
+            {
+                return true;
+            }
             // Bypass fruit tree placement checks
             if (__instance.isSapling())
             {
@@ -110,79 +230,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = false;
                 return false;
             }
-
-            if (!__instance.bigCraftable.Value && !(__instance is Furniture))
-            {
-                return true;
-            }
-            else
-            {
-                if (__instance.IsTapper())
-                {
-                    return true;
-                }
-                if (__instance.HasContextTag("sign_item"))
-                {
-                    return true;
-                }
-                if (__instance.HasContextTag("torch_item"))
-                {
-                    return true;
-                }
-                switch (__instance.QualifiedItemId)
-                {
-                    case "(BC)216": // Mini-Fridge
-                        {
-                            Chest fridge = new Chest("216", placementTile, 217, 2)
-                            {
-                                shakeTimer = 50
-                            };
-                            fridge.fridge.Value = true;
-                            location.objects.Add(placementTile, fridge);
-                            location.playSound("hammer");
-                            __result = true;
-                            return false;
-                        }
-                    case "(BC)238": // Mini-Obelisk
-                        {
-                            Vector2 obelisk1 = Vector2.Zero;
-                            Vector2 obelisk2 = Vector2.Zero;
-
-                            foreach (KeyValuePair<Vector2, Object> o2 in location.objects.Pairs)
-                            {
-                                if (o2.Value.QualifiedItemId == "(BC)238")
-                                {
-                                    if (obelisk1.Equals(Vector2.Zero))
-                                    {
-                                        obelisk1 = o2.Key;
-                                    }
-                                    else if (obelisk2.Equals(Vector2.Zero))
-                                    {
-                                        obelisk2 = o2.Key;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!obelisk1.Equals(Vector2.Zero) && !obelisk2.Equals(Vector2.Zero) && !ModEntry.modConfig.MultipleMiniObelisks)
-                            {
-                                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:OnlyPlaceTwo"));
-                                __result = false;
-                                return false; //skip original method
-                            }
-                            break;
-                        }
-                    case "(BC)254": // Ostrich Incubator
-                        break;
-                    default:
-                        return true;
-                }
-            }
-
-            if (__instance.Category == -19 && location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature3) && terrainFeature3 is HoeDirt { crop: not null } dirt3 && (__instance.QualifiedItemId == "(O)369" || __instance.QualifiedItemId == "(O)368") && (int)dirt3.crop.currentPhase.Value != 0)
-            {
-                return true;
-            }
-
             if (__instance.Category == -74 || __instance.Category == -19)
             {
                 return true;
