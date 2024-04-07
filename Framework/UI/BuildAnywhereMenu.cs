@@ -12,8 +12,6 @@ namespace AnythingAnywhere.Framework.UI
     {
         public BuildAnywhereMenu(string builder, ModConfig config, IMonitor monitor) : base(builder, Game1.currentLocation)
         {
-            UpdateTargetLocation(Game1.currentLocation);
-
             TargetLocation = Game1.currentLocation;
             Game1.player.forceCanMove();
             resetBounds();
@@ -154,11 +152,6 @@ namespace AnythingAnywhere.Framework.UI
                 okButton.leftNeighborID = moveButton.leftNeighborID;
             }
             UpdateAppearanceButtonVisibility();
-        }
-
-        public void UpdateTargetLocation(GameLocation newTargetLocation)
-        {
-            TargetLocation = newTargetLocation;
         }
     }
 }
