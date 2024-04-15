@@ -53,7 +53,6 @@ namespace AnythingAnywhere
                 new FarmHousePatch(monitor, helper).Apply(harmony);
 
                 // Apply Menu patches
-                new CarpenterMenuPatch(monitor, helper).Apply(harmony);
                 new AnimalQueryMenuPatch(monitor, helper).Apply(harmony);
 
                 // Apply StandardObject patches
