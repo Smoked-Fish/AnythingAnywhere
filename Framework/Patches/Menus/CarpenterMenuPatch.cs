@@ -29,8 +29,8 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         internal void Apply(Harmony harmony)
         {
             harmony.Patch(AccessTools.Method(_object, nameof(CarpenterMenu.tryToBuild)), prefix: new HarmonyMethod(GetType(), nameof(TryToBuildPrefix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(CarpenterMenu.receiveLeftClick), new[] { typeof(int), typeof(int), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(ReceiveLeftClickPrefix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(CarpenterMenu.IsValidBuildingForLocation), new[] { typeof(string), typeof(BuildingData), typeof(GameLocation) }), prefix: new HarmonyMethod(GetType(), nameof(IsValidBuildingForLocationPrefix)));
+            harmony.Patch(AccessTools.Method(_object, nameof(CarpenterMenu.IsValidBuildingForLocation), [typeof(string), typeof(BuildingData), typeof(GameLocation)]), prefix: new HarmonyMethod(GetType(), nameof(IsValidBuildingForLocationPrefix)));
+            //harmony.Patch(AccessTools.Method(_object, nameof(CarpenterMenu.receiveLeftClick), new[] { typeof(int), typeof(int), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(ReceiveLeftClickPrefix)));
         }
 
         // Build in walls
@@ -54,8 +54,19 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             return true;
         }
 
+        // Make cabins builable outside of farm if enabled.
+        private static bool IsValidBuildingForLocationPrefix(CarpenterMenu __instance, string typeId, BuildingData data, GameLocation targetLocation, ref bool __result)
+        {
+            if (!ModEntry.modConfig.EnableCabinsAnywhere)
+                return true;
+
+            __result = true;
+            return false;
+        }
+
+
         // Only show building relocate menu if relocation key is held down
-        private static bool ReceiveLeftClickPrefix(CarpenterMenu __instance, int x, int y, bool playSound = true)
+        /*private static bool ReceiveLeftClickPrefix(CarpenterMenu __instance, int x, int y, bool playSound = true)
         {
             if (!ModEntry.modConfig.EnableBuildingRelocate)
                 return true;
@@ -69,7 +80,8 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 return true;
             }
 
-            if (Game1.activeClickableMenu is not BuildAnywhereMenu){
+            if (Game1.activeClickableMenu is not BuildAnywhereMenu)
+            {
                 return true;
             }
 
@@ -166,7 +178,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                             return false;
                         }
 
-                        if(Game1.getLocationFromName(__instance.BuilderLocationName) != __instance.TargetLocation)
+                        if (Game1.getLocationFromName(__instance.BuilderLocationName) != __instance.TargetLocation)
                         {
                             Game1.playSound("cancel");
                             return false;
@@ -241,21 +253,6 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 return false;
             }
             return true;
-        }
-
-
-
-
-
-
-        // Make cabins builable outside of farm if enabled.
-        private static bool IsValidBuildingForLocationPrefix(CarpenterMenu __instance, string typeId, BuildingData data, GameLocation targetLocation, ref bool __result)
-        {
-            if (!ModEntry.modConfig.EnableCabinsAnywhere)
-                return true;
-
-            __result = true;
-            return false;
-        }
+        }*/
     }
 }
