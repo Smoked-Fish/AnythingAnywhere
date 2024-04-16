@@ -59,7 +59,28 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 }
                 if (__instance.IsWildTreeSapling())
                 {
-                    return true;
+                    if (!canPlaceWildTreeSeed(__instance, location, placementTile, out var deniedMessage))
+                    {
+                        if (deniedMessage == null)
+                        {
+                            deniedMessage = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13021");
+                        }
+                        Game1.showRedMessage(deniedMessage);
+                        __result = false;
+                        return false;
+                    }
+                    string treeType = Tree.ResolveTreeTypeFromSeed(__instance.QualifiedItemId);
+                    if (treeType != null)
+                    {
+                        Game1.stats.Increment("wildtreesplanted");
+                        location.terrainFeatures.Remove(placementTile);
+                        location.terrainFeatures.Add(placementTile, new Tree(treeType, 0));
+                        location.playSound("dirtyHit");
+                        __result = true;
+                        return false;
+                    }
+                    __result = false;
+                    return false;
                 }
                 if (__instance.IsFloorPathItem())
                 {
@@ -274,7 +295,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                     __result = false;
                     return false;
                 }
-                if (!canPlaceWildTreeSeed(__instance, l, tile, out var deniedMessage) && !ModEntry.modConfig.EnablePlacing)
+                if (!canPlaceWildTreeSeed(__instance, l, tile, out var deniedMessage))
                 {
                     if (showError && deniedMessage != null)
                     {
@@ -375,12 +396,12 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         // Reimpmenting canPlaceWildTreeSeed, as its private and can't reference.
         internal static bool canPlaceWildTreeSeed(Object __instance, GameLocation location, Vector2 tile, out string deniedMessage)
         {
-            if (location.IsNoSpawnTile(tile, "Tree", ignoreTileSheetProperties: true))
+            if (location.IsNoSpawnTile(tile, "Tree", ignoreTileSheetProperties: true) && !ModEntry.modConfig.EnableFreePlace)
             {
                 deniedMessage = null;
                 return false;
             }
-            if (location.IsNoSpawnTile(tile, "Tree") && !location.doesEitherTileOrTileIndexPropertyEqual((int)tile.X, (int)tile.Y, "CanPlantTrees", "Back", "T"))
+            if (location.IsNoSpawnTile(tile, "Tree") && !location.doesEitherTileOrTileIndexPropertyEqual((int)tile.X, (int)tile.Y, "CanPlantTrees", "Back", "T") && !ModEntry.modConfig.EnableFreePlace)
             {
                 deniedMessage = null;
                 return false;
@@ -399,11 +420,13 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             {
                 return false;
             }
-            if (ModEntry.modConfig.EnablePlacing)
+            if (ModEntry.modConfig.EnableFreePlace)
             {
+                deniedMessage = null;
                 return true;
             }
-            return location.CheckItemPlantRules(__instance.QualifiedItemId, isGardenPot: false, location.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Diggable", "Back") != null || location.doesEitherTileOrTileIndexPropertyEqual((int)tile.X, (int)tile.Y, "CanPlantTrees", "Back", "T"), out deniedMessage);
+
+            return location.CheckItemPlantRules(__instance.QualifiedItemId, isGardenPot: false, true, out deniedMessage);
         }
 
     }
