@@ -1288,7 +1288,8 @@ namespace AnythingAnywhere.Framework.UI
                 {
                     ingredientsPosition.Y += 64f;
                 }
-                if (blueprint.BuildCost >= 0 && !ModEntry.modConfig.EnableInstantBuild)
+                // If 0, don't display
+                if (blueprint.BuildCost >= 1)
                 {
                     b.Draw(Game1.mouseCursors_1_6, ingredientsPosition + new Vector2(-8f, -4f), new Microsoft.Xna.Framework.Rectangle(241, 303, 14, 13), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.89f);
                     string price_string = Utility.getNumberWithCommas(blueprint.BuildCost);
