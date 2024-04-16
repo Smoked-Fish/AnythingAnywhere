@@ -111,8 +111,6 @@ namespace AnythingAnywhere
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuilding, value => modConfig.EnableBuilding = value, I18n.Config_AnythingAnywhere_EnableBuilding_Name, I18n.Config_AnythingAnywhere_EnableBuilding_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.BuildMenu, value => modConfig.BuildMenu = value, I18n.Config_AnythingAnywhere_BuildMenu_Name, I18n.Config_AnythingAnywhere_BuildMenu_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.WizardBuildMenu, value => modConfig.WizardBuildMenu = value, I18n.Config_AnythingAnywhere_WizardBuildMenu_Name, I18n.Config_AnythingAnywhere_WizardBuildMenu_Description);
-                //configApi.AddKeybindList(ModManifest, () => modConfig.RelocationKey, value => modConfig.RelocationKey = value, I18n.Config_AnythingAnywhere_RelocationKey_Name, I18n.Config_AnythingAnywhere_RelocationKey_Description);
-                //configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildingRelocate, value => modConfig.EnableBuildingRelocate = value, I18n.Config_AnythingAnywhere_BuildingRelocate_Name, I18n.Config_AnythingAnywhere_BuildingRelocate_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableAnimalRelocate, value => modConfig.EnableAnimalRelocate = value, I18n.Config_AnythingAnywhere_AnimalRelocate_Name, I18n.Config_AnythingAnywhere_AnimalRelocate_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildingIndoors, value => modConfig.EnableBuildingIndoors = value, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Name, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableInstantBuild, value => modConfig.EnableInstantBuild = value, I18n.Config_AnythingAnywhere_EnableInstantBuild_Name, I18n.Config_AnythingAnywhere_EnableInstantBuild_Description);
@@ -187,7 +185,7 @@ namespace AnythingAnywhere
             }
 
             // If none of the above conditions are met, activate the BuildAnywhereMenu
-            Game1.activeClickableMenu = new BuildAnywhereMenu(builder, modConfig, this.Monitor);
+            Game1.activeClickableMenu = new BuildAnywhereMenu(builder);
         }
 
         private void DebugRemoveObjects(string command, string[] args)
