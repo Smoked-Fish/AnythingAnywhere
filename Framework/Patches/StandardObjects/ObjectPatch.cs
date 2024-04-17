@@ -9,11 +9,11 @@ using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Extensions;
+using Object = StardewValley.Object;
+using AnythingAnywhere.Framework.External.CustomBush;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
-using Object = StardewValley.Object;
-using System.Xml.Linq;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
@@ -230,7 +230,8 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                     DelayedAction.playSoundAfterDelay("coin", 100);
                     if (__instance.IsTeaSapling())
                     {
-                        location.terrainFeatures.Add(placementTile, new Bush(placementTile, 3, location));
+                        var newBush = new Bush(placementTile, 3, location);
+                        location.terrainFeatures.Add(placementTile, CustomBushModData.AddBushModData(newBush, __instance));
                         __result = true;
                         return false;
                     }
@@ -366,7 +367,35 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 }
                 if (__instance.IsTeaSapling())
                 {
-                    return true;
+                    bool isFreeGardenPot = pot != null && pot.bush.Value == null && pot.hoeDirt.Value.crop == null;
+                    if (isFreeGardenPot)
+                    {
+                        if (!l.IsOutdoors)
+                        {
+                            __result = true;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (obj != null || dirt != null)
+                        {
+                            __result = false;
+                            return false;
+                        }
+                        if (!l.CanItemBePlacedHere(tile, itemIsPassable: true, collisionMask))
+                        {
+                            __result = false;
+                            return false;
+                        }
+                        if (l.IsGreenhouse && l.doesTileHaveProperty((int)tile.X, (int)tile.Y, "Diggable", "Back") == null)
+                        {
+                            __result = false;
+                            return false;
+                        }
+                    }
+                    __result = true;
+                    return false;
                 }
                 if (__instance.IsWildTreeSapling() )
                 {

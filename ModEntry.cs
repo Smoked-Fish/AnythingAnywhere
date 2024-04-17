@@ -2,18 +2,17 @@
 using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley.Menus;
 using Microsoft.Xna.Framework;
 using AnythingAnywhere.Framework.UI;
 using AnythingAnywhere.Framework.Managers;
-using AnythingAnywhere.Framework.Patches.GameLocations;
+using AnythingAnywhere.Framework.Interfaces;
 using AnythingAnywhere.Framework.Patches.Menus;
+using AnythingAnywhere.Framework.Patches.Locations;
+using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using System.Linq;
 using System;
-using StardewValley.Locations;
-using AnythingAnywhere.Framework.Patches.Locations;
 
 namespace AnythingAnywhere
 {
@@ -22,6 +21,7 @@ namespace AnythingAnywhere
         // Shared static helpers
         internal static IMonitor monitor;
         internal static IModHelper modHelper;
+        internal static ICustomBushApi customBushApi;
         internal static Multiplayer multiplayer;
         internal static ModConfig modConfig;
 
@@ -87,6 +87,11 @@ namespace AnythingAnywhere
         {
             modConfig = Helper.ReadConfig<ModConfig>();
 
+            if (Helper.ModRegistry.IsLoaded("furyx639.CustomBush") && apiManager.HookIntoCustomBush(Helper))
+            {
+                customBushApi = apiManager.GetCustomBushApi();
+            }
+
             if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu") && apiManager.HookIntoGenericModConfigMenu(Helper))
             {
                 var configApi = apiManager.GetGenericModConfigMenuApi();
@@ -137,7 +142,7 @@ namespace AnythingAnywhere
 
             }
         }
-
+        
         private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
             if (!Context.IsWorldReady)

@@ -8,6 +8,7 @@ namespace AnythingAnywhere.Framework.Managers
     {
         private IMonitor _monitor;
         private IGenericModConfigMenuApi _genericModConfigMenuApi;
+        private ICustomBushApi _customBushApi;
 
         public ApiManager(IMonitor monitor)
         {
@@ -27,9 +28,28 @@ namespace AnythingAnywhere.Framework.Managers
             return true;
         }
 
+        internal bool HookIntoCustomBush(IModHelper helper)
+        {
+            _customBushApi = helper.ModRegistry.GetApi<ICustomBushApi>("furyx639.CustomBush");
+
+            if (_customBushApi is null)
+            {
+                _monitor.Log("Failed to hook into furyx639.CustomBush.", LogLevel.Error);
+                return false;
+            }
+
+            _monitor.Log("Successfully hooked into furyx639.CustomBush.", LogLevel.Debug);
+            return true;
+        }
+
         public IGenericModConfigMenuApi GetGenericModConfigMenuApi()
         {
             return _genericModConfigMenuApi;
+        }
+
+        public ICustomBushApi GetCustomBushApi()
+        {
+            return _customBushApi;
         }
     }
 }
