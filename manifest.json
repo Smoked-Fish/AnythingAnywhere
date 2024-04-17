@@ -1,7 +1,7 @@
 {
   "Name": "Anything Anywhere",
   "Author": "Espy",
-  "Version": "1.6.7",
+  "Version": "1.6.8",
   "Description": "Build and place anything anywhere.",
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
@@ -11,6 +11,10 @@
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
       "MinimumVersion": "1.12.0",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "furyx639.CustomBush",
       "IsRequired": false
     }
   ]
