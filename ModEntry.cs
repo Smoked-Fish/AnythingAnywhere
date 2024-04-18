@@ -75,6 +75,7 @@ namespace AnythingAnywhere
 
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
+            helper.ConsoleCommands.Add("aa_remove_furniture", "Removes all furniture of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [FURNITURE_ID]", this.DebugRemoveFurniture);
 
             // Hook into GameLoop events
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
@@ -108,6 +109,7 @@ namespace AnythingAnywhere
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Placing_Title);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnablePlacing, value => modConfig.EnablePlacing = value, I18n.Config_AnythingAnywhere_EnablePlacing_Name, I18n.Config_AnythingAnywhere_EnablePlacing_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableWallFurnitureIndoors, value => modConfig.EnableWallFurnitureIndoors = value, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Name, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableRugRemovalBypass, value => modConfig.EnableRugRemovalBypass = value, I18n.Config_AnythingAnywhere_EnableRugRemovalBypass_Name, I18n.Config_AnythingAnywhere_EnableRugRemovalBypass_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreePlace, value => modConfig.EnableFreePlace = value, I18n.Config_AnythingAnywhere_EnableFreePlace_Name, I18n.Config_AnythingAnywhere_EnableFreePlace_Description);
 
                 // Register the build settings
@@ -137,9 +139,6 @@ namespace AnythingAnywhere
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableJukeboxFunctionality, value => modConfig.EnableJukeboxFunctionality = value, I18n.Config_AnythingAnywhere_UseJukeboxFunctionality_Name, I18n.Config_AnythingAnywhere_UseJukeboxFunctionality_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableCabinsAnywhere, value => modConfig.EnableCabinsAnywhere = value, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Name, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.MultipleMiniObelisks, value => modConfig.MultipleMiniObelisks = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Description);
-
-
-
             }
         }
         
@@ -192,6 +191,51 @@ namespace AnythingAnywhere
             // If none of the above conditions are met, activate the BuildAnywhereMenu
             Game1.activeClickableMenu = new BuildAnywhereMenu(builder);
         }
+
+        private void DebugRemoveFurniture(string command, string[] args)
+        {
+            if (args.Length <= 1)
+            {
+                Monitor.Log($"Missing required arguments: [LOCATION] [FURNITURE_ID]", LogLevel.Warn);
+                return;
+            }
+
+            // check context
+            if (!Context.IsWorldReady)
+            {
+                monitor.Log("You need to load a save to use this command.", LogLevel.Error);
+                return;
+            }
+
+            // get target location
+            var location = Game1.locations.FirstOrDefault(p => p.Name != null && p.Name.Equals(args[0], StringComparison.OrdinalIgnoreCase));
+            if (location == null && args[0] == "current")
+            {
+                location = Game1.currentLocation;
+            }
+            if (location == null)
+            {
+                string[] locationNames = (from loc in Game1.locations where !string.IsNullOrWhiteSpace(loc.Name) orderby loc.Name select loc.Name).ToArray();
+                monitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
+                return;
+            }
+
+            // remove objects
+            int removed = 0;
+            foreach (var pair in location.furniture.ToArray())
+            {
+                if (pair.QualifiedItemId == args[1])
+                {
+                    location.furniture.Remove(pair);
+                    removed++;
+                }
+            }
+
+            monitor.Log($"Command removed {removed} furniture objects at {location.NameOrUniqueName}", LogLevel.Info);
+            return;
+        }
+
+
 
         private void DebugRemoveObjects(string command, string[] args)
         {

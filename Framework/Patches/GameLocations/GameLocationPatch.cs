@@ -24,6 +24,7 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.isBuildable), new[] { typeof(Vector2), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(IsBuildablePostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.doesTileHaveProperty), new [] { typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(DoesTileHavePropertyPostfix)));
+            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanFreePlaceFurniture)), postfix: new HarmonyMethod(GetType(), nameof(CanFreePlaceFurniturePostfix)));
 
         }
 
@@ -109,6 +110,12 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             {
                 __result = "T";
             }
+        }
+
+        private static void CanFreePlaceFurniturePostfix(GameLocation __instance, ref bool __result)
+        {
+            if (ModEntry.modConfig.EnablePlacing)
+                __result = true;
         }
     }
 }

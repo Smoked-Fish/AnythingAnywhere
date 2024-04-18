@@ -22,6 +22,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         {
             harmony.Patch(AccessTools.Method(_object, nameof(Furniture.GetAdditionalFurniturePlacementStatus), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(GetAdditionalFurniturePlacementStatusPostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePostfix)));
+            harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBeRemoved), new[] { typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(CanBeRemovedPostfix)));
         }
 
         // Enables disabling wall furniture in all places in decortable locations. It can be annoying indoors.
@@ -55,5 +56,18 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = true;
         }
 
+
+        private static void CanBeRemovedPostfix(Furniture __instance, Farmer who, ref bool __result)
+        {
+            if (!ModEntry.modConfig.EnableRugRemovalBypass)
+                return;
+
+            GameLocation location = __instance.Location;
+            if (location == null)
+                return;
+
+            if (__instance.isPassable())
+                __result = true;
+        }
     }
 }
