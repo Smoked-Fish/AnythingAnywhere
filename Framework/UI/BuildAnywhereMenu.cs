@@ -7,6 +7,9 @@ namespace AnythingAnywhere.Framework.UI
 {
     internal class BuildAnywhereMenu : CarpenterMenu
     {
+        // Prevents Better Juminos from spamming errors
+        public bool magicalConstruction;
+
         public BuildAnywhereMenu(string builder, GameLocation targetLocation = null) : base(builder, targetLocation)
         {
 
