@@ -13,6 +13,11 @@ using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using System.Linq;
 using System;
+using StardewValley.Menus;
+using StardewValley.GameData.Buildings;
+using System.Collections.Generic;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace AnythingAnywhere
 {
@@ -27,6 +32,9 @@ namespace AnythingAnywhere
 
         // Managers
         internal static ApiManager apiManager;
+
+        // Building Data
+        CustomBuildingData customData;
 
         public override void Entry(IModHelper helper)
         {
@@ -53,6 +61,7 @@ namespace AnythingAnywhere
                 new FarmHousePatch(monitor, helper).Apply(harmony);
 
                 // Apply Menu patches
+                new CarpenterMenuPatch(monitor, helper).Apply(harmony);
                 new AnimalQueryMenuPatch(monitor, helper).Apply(harmony);
 
                 // Apply StandardObject patches
@@ -98,6 +107,11 @@ namespace AnythingAnywhere
                 modConfig.MultipleMiniObelisks = true;
             }
 
+            if (Helper.ModRegistry.IsLoaded("mouahrara.RelocateFarmAnimals"))
+            {
+                modConfig.EnableAnimalRelocate = false;
+            }
+
             if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu") && apiManager.HookIntoGenericModConfigMenu(Helper))
             {
                 var configApi = apiManager.GetGenericModConfigMenuApi();
@@ -123,6 +137,7 @@ namespace AnythingAnywhere
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuilding, value => modConfig.EnableBuilding = value, I18n.Config_AnythingAnywhere_EnableBuilding_Name, I18n.Config_AnythingAnywhere_EnableBuilding_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.BuildMenu, value => modConfig.BuildMenu = value, I18n.Config_AnythingAnywhere_BuildMenu_Name, I18n.Config_AnythingAnywhere_BuildMenu_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.WizardBuildMenu, value => modConfig.WizardBuildMenu = value, I18n.Config_AnythingAnywhere_WizardBuildMenu_Name, I18n.Config_AnythingAnywhere_WizardBuildMenu_Description);
+                configApi.AddKeybindList(ModManifest, () => modConfig.BuildModifier, value => modConfig.BuildModifier = value, I18n.Config_AnythingAnywhere_BuildModifier_Name, I18n.Config_AnythingAnywhere_BuildModifier_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableAnimalRelocate, value => modConfig.EnableAnimalRelocate = value, I18n.Config_AnythingAnywhere_AnimalRelocate_Name, I18n.Config_AnythingAnywhere_AnimalRelocate_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildingIndoors, value => modConfig.EnableBuildingIndoors = value, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Name, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableInstantBuild, value => modConfig.EnableInstantBuild = value, I18n.Config_AnythingAnywhere_EnableInstantBuild_Name, I18n.Config_AnythingAnywhere_EnableInstantBuild_Description);
@@ -145,6 +160,8 @@ namespace AnythingAnywhere
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableCabinsAnywhere, value => modConfig.EnableCabinsAnywhere = value, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Name, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.MultipleMiniObelisks, value => modConfig.MultipleMiniObelisks = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Description);
             }
+
+            customData = new CustomBuildingData(Game1.buildingData);
         }
         
         private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
@@ -193,8 +210,18 @@ namespace AnythingAnywhere
                 return;
             }
 
+            if (modConfig.EnableInstantBuild)
+            {
+                Game1.buildingData = customData.ModifiedBuildingData;
+            } 
+            else
+            {
+                Game1.buildingData = customData.DefaultBuildData;
+            }
+            
+
             // If none of the above conditions are met, activate the BuildAnywhereMenu
-            Game1.activeClickableMenu = new BuildAnywhereMenu(builder);
+            Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
         }
 
         private void DebugRemoveFurniture(string command, string[] args)
@@ -240,8 +267,6 @@ namespace AnythingAnywhere
             return;
         }
 
-
-
         private void DebugRemoveObjects(string command, string[] args)
         {
             if (args.Length <= 1)
@@ -283,6 +308,44 @@ namespace AnythingAnywhere
 
             monitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
             return;
+        }
+    }
+
+    public class CustomBuildingData
+    {
+        public readonly IDictionary<string, BuildingData> DefaultBuildData;
+        public readonly IDictionary<string, BuildingData> ModifiedBuildingData;
+
+        public CustomBuildingData(IDictionary<string, BuildingData> buildingData)
+        {
+            DefaultBuildData = buildingData;
+            ModifiedBuildingData = new Dictionary<string, BuildingData>();
+
+            foreach (KeyValuePair<string, BuildingData> data in buildingData)
+            {
+                // Create a copy so you don't need to reset game to disable
+                BuildingData copyData = DeepCopy(data.Value);
+
+                copyData.MagicalConstruction = true;
+                copyData.BuildCost = 0;
+                copyData.BuildDays = 0;
+                copyData.BuildMaterials = [];
+
+                // Enable the Island Obelisk even if not unlocked
+                if (copyData.BuildCondition == "PLAYER_HAS_MAIL Any Visited_Island")
+                    copyData.BuildCondition = "";
+
+                ModifiedBuildingData.Add(data.Key, copyData);
+            }
+        }
+
+        private BuildingData DeepCopy(BuildingData source)
+        {
+            if (source == null)
+                return null;
+
+            string serializedObject = JsonConvert.SerializeObject(source);
+            return JsonConvert.DeserializeObject<BuildingData>(serializedObject);
         }
     }
 }
