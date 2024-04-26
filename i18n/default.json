@@ -18,6 +18,8 @@
   "Config.AnythingAnywhere.BuildMenu.Description": "Opens up the carpenter menu anywhere",
   "Config.AnythingAnywhere.WizardBuildMenu.Name": "Wizard Build Menu",
   "Config.AnythingAnywhere.WizardBuildMenu.Description": "Opens up the Wizards build menu anywhere",
+  "Config.AnythingAnywhere.BuildModifier.Name": "Building Modifier Key",
+  "Config.AnythingAnywhere.BuildModifier.Description": "When held while placing, destroying or upgrading a building you won't exit back into the build menu.'",
   "Config.AnythingAnywhere.AnimalRelocate.Name": "Animal Relocation",
   "Config.AnythingAnywhere.AnimalRelocate.Description": "Enables relocating animals from location to location",
   "Config.AnythingAnywhere.EnableBuildingIndoors.Name": "Build Indoors",
