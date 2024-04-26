@@ -1,7 +1,7 @@
 {
   "Name": "Anything Anywhere",
   "Author": "Espy",
-  "Version": "1.6.10",
+  "Version": "1.6.11",
   "Description": "Build and place anything anywhere.",
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
@@ -15,6 +15,10 @@
     },
     {
       "UniqueID": "furyx639.CustomBush",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "mouahrara.FlipBuildings",
       "IsRequired": false
     }
   ]
