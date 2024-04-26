@@ -16,10 +16,6 @@
     {
       "UniqueID": "furyx639.CustomBush",
       "IsRequired": false
-    },
-    {
-      "UniqueID": "PeacefulEnd.MultipleMiniObelisks",
-      "IsRequired": false
     }
   ]
 }
