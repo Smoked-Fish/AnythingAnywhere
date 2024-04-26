@@ -93,6 +93,11 @@ namespace AnythingAnywhere
                 customBushApi = apiManager.GetCustomBushApi();
             }
 
+            if (Helper.ModRegistry.IsLoaded("PeacefulEnd.MultipleMiniObelisks"))
+            {
+                modConfig.MultipleMiniObelisks = true;
+            }
+
             if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu") && apiManager.HookIntoGenericModConfigMenu(Helper))
             {
                 var configApi = apiManager.GetGenericModConfigMenuApi();
