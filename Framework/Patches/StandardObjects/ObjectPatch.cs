@@ -258,7 +258,54 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             }
             if (!__instance.performDropDownAction(who))
             {
-                return true;
+                Object toPlace = (Object)__instance.getOne();
+                bool place_furniture_instance_instead = false;
+                if (toPlace.GetType() == typeof(Furniture) && Furniture.GetFurnitureInstance(__instance.ItemId, new Vector2(x / 64, y / 64)).GetType() != toPlace.GetType())
+                {
+                    StorageFurniture storageFurniture = new StorageFurniture(__instance.ItemId, new Vector2(x / 64, y / 64));
+                    storageFurniture.currentRotation.Value = (__instance as Furniture).currentRotation.Value;
+                    storageFurniture.updateRotation();
+                    toPlace = storageFurniture;
+                    place_furniture_instance_instead = true;
+                }
+                toPlace.shakeTimer = 50;
+                toPlace.Location = location;
+                toPlace.TileLocation = placementTile;
+                toPlace.performDropDownAction(who);
+                if (toPlace.QualifiedItemId == "(BC)TextSign")
+                {
+                    toPlace.signText.Value = null;
+                    toPlace.showNextIndex.Value = true;
+                }
+                if (toPlace.name.Contains("Seasonal"))
+                {
+                    int baseIndex = toPlace.ParentSheetIndex - toPlace.ParentSheetIndex % 4;
+                    toPlace.ParentSheetIndex = baseIndex + location.GetSeasonIndex();
+                }
+                if (!(toPlace is Furniture) && location.objects.TryGetValue(placementTile, out var tileObj))
+                {
+                    if (tileObj.QualifiedItemId != __instance.QualifiedItemId)
+                    {
+                        Game1.createItemDebris(tileObj, placementTile * 64f, Game1.random.Next(4));
+                        location.objects[placementTile] = toPlace;
+                    }
+                }
+                else if (toPlace is Furniture furniture)
+                {
+                    if (place_furniture_instance_instead)
+                    {
+                        location.furniture.Add(furniture);
+                    }
+                    else
+                    {
+                        location.furniture.Add(__instance as Furniture);
+                    }
+                }
+                else
+                {
+                    location.objects.Add(placementTile, toPlace);
+                }
+                toPlace.initializeLightSource(placementTile);
             }
             location.playSound("woodyStep");
             __result = true;
@@ -273,6 +320,11 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 
             if (ModEntry.modConfig.EnableFreePlace)
             {
+                if (l.objects.ContainsKey(tile))
+                {
+                    __result = false;
+                    return false;
+                }
                 __result = true;
                 return false;
             }
