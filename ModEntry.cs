@@ -83,7 +83,7 @@ namespace AnythingAnywhere
 
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
-            helper.ConsoleCommands.Add("aa_remove_furniture", "Removes all furniture of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [FURNITURE_ID]", this.DebugRemoveFurniture);
+            helper.ConsoleCommands.Add("aa_remove_furniture", "Removes all furniture of a specified ID at a specified location.\n\nUsage: aa_remove_furniture [LOCATION] [FURNITURE_ID]", this.DebugRemoveFurniture);
 
             // Hook into GameLoop events
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
@@ -372,8 +372,7 @@ namespace AnythingAnywhere
                 // Ignore most build conditions.
                 if (ModEntry.modConfig.RemoveBuildConditions)
                 {
-                    if (copyData.BuildCondition != "CAN_BUILD_CABIN" && copyData.BuildCondition != "CAN_BUILD_FOR_CABINS Stable")
-                        copyData.BuildCondition = "";
+                    copyData.BuildCondition = "";
                 }
 
                 //ModEntry.monitor.Log($"Building Data Name: {TokenParser.ParseText(copyData.Name)}\nBuild Conditions: {copyData.BuildMaterials}\n", LogLevel.Info);
