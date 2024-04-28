@@ -3,7 +3,7 @@
   "Config.AnythingAnywhere.Placing.Title": "Placing",
 
   "Config.AnythingAnywhere.EnablePlacing.Name": "Enable Placing",
-  "Config.AnythingAnywhere.EnablePlacing.Description": "Enables placing objects(furniture, chests, ect) at any location",
+  "Config.AnythingAnywhere.EnablePlacing.Description": "Enables placing objects(furniture, chests, etc) at any location",
 
   "Config.AnythingAnywhere.EnableFreePlace.Name": "Place Anywhere",
   "Config.AnythingAnywhere.EnableFreePlace.Description": "Enables placing furniture at any location, even in walls",
@@ -74,8 +74,8 @@
   "Config.AnythingAnywhere.UseJukeboxFunctionality.Name": "Jukebox Functionality",
   "Config.AnythingAnywhere.UseJukeboxFunctionality.Description": "Enables jukebox functionality anywhere. (except in the rain)",
 
-  "Config.AnythingAnywhere.EnableMiniObilisk.Name": "Multiple Mini-Obilisk",
-  "Config.AnythingAnywhere.EnableMiniObilisk.Description": "Enables placing more than 2 mini-obilisks per location",
+  "Config.AnythingAnywhere.EnableMiniObelisk.Name": "Multiple Mini-Obelisk",
+  "Config.AnythingAnywhere.EnableMiniObelisk.Description": "Enables placing more than 2 mini-obelisks per location",
 
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "House/Cabin Bypass",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "THIS WILL CAUSE ERRORS! Disables the Cabins and Farm House checks",
