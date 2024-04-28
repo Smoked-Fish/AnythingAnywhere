@@ -341,8 +341,6 @@ namespace AnythingAnywhere
                 new BuildingMaterial { ItemId = "(O)390", Amount = 200 },
             ];
 
-            ModEntry.monitor.Log("Test", LogLevel.Info);
-
             //ModEntry.monitor.Log($"{Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name")}", LogLevel.Info);
             foreach (KeyValuePair<string, BuildingData> data in buildingData)
             {

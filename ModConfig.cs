@@ -20,7 +20,7 @@ namespace AnythingAnywhere
         public KeybindList BuildMenu { get; set; } = new KeybindList(SButton.OemComma);
         public KeybindList WizardBuildMenu { get; set; } = new KeybindList(SButton.OemPeriod);
         public KeybindList BuildModifier { get; set; } = new KeybindList(SButton.LeftShift);
-        public bool EnableGreenhouse { get; set; } = false;
+        public bool EnableGreenhouse { get; set; } = true;
         public bool RemoveBuildConditions { get; set; } = false;
         public bool EnableBuildingIndoors { get; set; } = false;
         public bool BypassMagicInk { get; set; } = false;
