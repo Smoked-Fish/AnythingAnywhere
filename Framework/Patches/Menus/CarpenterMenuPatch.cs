@@ -129,7 +129,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     toUpgrade.daysUntilUpgrade.Value = Math.Max(__instance.Blueprint.BuildDays, 1);
                     toUpgrade.showUpgradeAnimation(__instance.TargetLocation);
                     Game1.playSound("axe");
-                    if (!ModEntry.modConfig.BuildModifier.IsDown())
+                    if (!ModEntry.modConfig.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
                     {
                         DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenuAfterSuccessfulBuild, 1500);
                         __instance.freeze = true;
@@ -164,7 +164,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     if (__instance.tryToBuild())
                     {
                         __instance.ConsumeResources();
-                        if (!ModEntry.modConfig.BuildModifier.IsDown())
+                        if (!ModEntry.modConfig.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
                         {
                             DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenuAfterSuccessfulBuild, 2000);
                             __instance.freeze = true;
