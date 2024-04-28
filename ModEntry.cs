@@ -209,8 +209,14 @@ namespace AnythingAnywhere
                 return;
             }
 
+            bool needsUpdate = 
+                customData == null || 
+                modConfig.EnableInstantBuild != customData.EnableInstantBuild || 
+                modConfig.RemoveBuildConditions != customData.RemoveBuildConditions ||
+                modConfig.EnableGreenhouse != customData.EnableGreenhouse;
 
-            customData = new CustomBuildingData(customData != null ? customData.DefaultBuildData : Game1.buildingData);
+            if (needsUpdate && (modConfig.EnableInstantBuild || modConfig.RemoveBuildConditions || modConfig.EnableGreenhouse))
+                customData = new CustomBuildingData(customData != null ? customData.DefaultBuildData : Game1.buildingData, modConfig.EnableInstantBuild, modConfig.EnableGreenhouse, modConfig.RemoveBuildConditions);
 
             if (modConfig.EnableInstantBuild || modConfig.RemoveBuildConditions || modConfig.EnableGreenhouse)
             {
@@ -317,9 +323,16 @@ namespace AnythingAnywhere
     {
         public readonly IDictionary<string, BuildingData> DefaultBuildData;
         public readonly IDictionary<string, BuildingData> ModifiedBuildingData;
+        public readonly bool EnableInstantBuild;
+        public readonly bool EnableGreenhouse;
+        public readonly bool RemoveBuildConditions;
 
-        public CustomBuildingData(IDictionary<string, BuildingData> buildingData)
+        public CustomBuildingData(IDictionary<string, BuildingData> buildingData, bool enableInstantBuild, bool enableGreenhouse, bool removeBuildConditions)
         {
+            this.EnableInstantBuild = enableInstantBuild;
+            this.EnableGreenhouse = enableGreenhouse;
+            this.RemoveBuildConditions = removeBuildConditions;
+
             DefaultBuildData = buildingData;
             ModifiedBuildingData = new Dictionary<string, BuildingData>();
             List<BuildingMaterial> greenhouseMaterials =
@@ -327,6 +340,8 @@ namespace AnythingAnywhere
                 new BuildingMaterial { ItemId = "(O)388", Amount = 500 },
                 new BuildingMaterial { ItemId = "(O)390", Amount = 200 },
             ];
+
+            ModEntry.monitor.Log("Test", LogLevel.Info);
 
             //ModEntry.monitor.Log($"{Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name")}", LogLevel.Info);
             foreach (KeyValuePair<string, BuildingData> data in buildingData)
