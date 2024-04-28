@@ -18,6 +18,10 @@ using StardewValley.GameData.Buildings;
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
+using Microsoft.VisualBasic;
+using StardewValley.Buildings;
+using StardewValley.TokenizableStrings;
+using System.Threading;
 
 namespace AnythingAnywhere
 {
@@ -127,21 +131,23 @@ namespace AnythingAnywhere
                 configApi.AddPage(ModManifest, "PlacingPage", I18n.Config_AnythingAnywhere_Placing_Title);
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Placing_Title);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnablePlacing, value => modConfig.EnablePlacing = value, I18n.Config_AnythingAnywhere_EnablePlacing_Name, I18n.Config_AnythingAnywhere_EnablePlacing_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreePlace, value => modConfig.EnableFreePlace = value, I18n.Config_AnythingAnywhere_EnableFreePlace_Name, I18n.Config_AnythingAnywhere_EnableFreePlace_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableWallFurnitureIndoors, value => modConfig.EnableWallFurnitureIndoors = value, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Name, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableRugRemovalBypass, value => modConfig.EnableRugRemovalBypass = value, I18n.Config_AnythingAnywhere_EnableRugRemovalBypass_Name, I18n.Config_AnythingAnywhere_EnableRugRemovalBypass_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreePlace, value => modConfig.EnableFreePlace = value, I18n.Config_AnythingAnywhere_EnableFreePlace_Name, I18n.Config_AnythingAnywhere_EnableFreePlace_Description);
 
                 // Register the build settings
                 configApi.AddPage(ModManifest, "BuildingsPage", I18n.Config_AnythingAnywhere_Building_Title);
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Building_Title);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuilding, value => modConfig.EnableBuilding = value, I18n.Config_AnythingAnywhere_EnableBuilding_Name, I18n.Config_AnythingAnywhere_EnableBuilding_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildAnywhere, value => modConfig.EnableBuildAnywhere = value, I18n.Config_AnythingAnywhere_EnableBuildAnywhere_Name, I18n.Config_AnythingAnywhere_EnableBuildAnywhere_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableInstantBuild, value => modConfig.EnableInstantBuild = value, I18n.Config_AnythingAnywhere_EnableInstantBuild_Name, I18n.Config_AnythingAnywhere_EnableInstantBuild_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.BuildMenu, value => modConfig.BuildMenu = value, I18n.Config_AnythingAnywhere_BuildMenu_Name, I18n.Config_AnythingAnywhere_BuildMenu_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.WizardBuildMenu, value => modConfig.WizardBuildMenu = value, I18n.Config_AnythingAnywhere_WizardBuildMenu_Name, I18n.Config_AnythingAnywhere_WizardBuildMenu_Description);
                 configApi.AddKeybindList(ModManifest, () => modConfig.BuildModifier, value => modConfig.BuildModifier = value, I18n.Config_AnythingAnywhere_BuildModifier_Name, I18n.Config_AnythingAnywhere_BuildModifier_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableAnimalRelocate, value => modConfig.EnableAnimalRelocate = value, I18n.Config_AnythingAnywhere_AnimalRelocate_Name, I18n.Config_AnythingAnywhere_AnimalRelocate_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableGreenhouse, value => modConfig.EnableGreenhouse = value, I18n.Config_AnythingAnywhere_EnableGreenhouse_Name, I18n.Config_AnythingAnywhere_EnableGreenhouse_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.RemoveBuildConditions, value => modConfig.RemoveBuildConditions = value, I18n.Config_AnythingAnywhere_RemoveBuildConditions_Name, I18n.Config_AnythingAnywhere_RemoveBuildConditions_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildingIndoors, value => modConfig.EnableBuildingIndoors = value, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Name, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableInstantBuild, value => modConfig.EnableInstantBuild = value, I18n.Config_AnythingAnywhere_EnableInstantBuild_Name, I18n.Config_AnythingAnywhere_EnableInstantBuild_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildAnywhere, value => modConfig.EnableBuildAnywhere = value, I18n.Config_AnythingAnywhere_EnableBuildAnywhere_Name, I18n.Config_AnythingAnywhere_EnableBuildAnywhere_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.BypassMagicInk, value => modConfig.BypassMagicInk = value, I18n.Config_AnythingAnywhere_BypassMagicInk_Name, I18n.Config_AnythingAnywhere_BypassMagicInk_Description);
 
                 // Register the farming settings
                 configApi.AddPage(ModManifest, "FarmingPage", I18n.Config_AnythingAnywhere_Farming_Title);
@@ -154,11 +160,11 @@ namespace AnythingAnywhere
                 // Register the other settings
                 configApi.AddPage(ModManifest, "OtherPage", I18n.Config_AnythingAnywhere_Other_Title);
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Other_Title);
-                configApi.AddBoolOption(ModManifest, () => modConfig.BypassMagicInk, value => modConfig.BypassMagicInk = value, I18n.Config_AnythingAnywhere_BypassMagicInk_Name, I18n.Config_AnythingAnywhere_BypassMagicInk_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableAnimalRelocate, value => modConfig.EnableAnimalRelocate = value, I18n.Config_AnythingAnywhere_AnimalRelocate_Name, I18n.Config_AnythingAnywhere_AnimalRelocate_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableCaskFunctionality, value => modConfig.EnableCaskFunctionality = value, I18n.Config_AnythingAnywhere_EnableCaskFunctionality_Name, I18n.Config_AnythingAnywhere_EnableCaskFunctionality_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableJukeboxFunctionality, value => modConfig.EnableJukeboxFunctionality = value, I18n.Config_AnythingAnywhere_UseJukeboxFunctionality_Name, I18n.Config_AnythingAnywhere_UseJukeboxFunctionality_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableCabinsAnywhere, value => modConfig.EnableCabinsAnywhere = value, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Name, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.MultipleMiniObelisks, value => modConfig.MultipleMiniObelisks = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Description);
+                configApi.AddBoolOption(ModManifest, () => modConfig.EnableCabinsAnywhere, value => modConfig.EnableCabinsAnywhere = value, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Name, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Description);
             }
         }
         
@@ -211,7 +217,7 @@ namespace AnythingAnywhere
 
             customData = new CustomBuildingData(customData != null ? customData.DefaultBuildData : Game1.buildingData);
 
-            if (modConfig.EnableInstantBuild)
+            if (modConfig.EnableInstantBuild || modConfig.RemoveBuildConditions || modConfig.EnableGreenhouse)
             {
                 Game1.buildingData = customData.ModifiedBuildingData;
             }
@@ -321,21 +327,48 @@ namespace AnythingAnywhere
         {
             DefaultBuildData = buildingData;
             ModifiedBuildingData = new Dictionary<string, BuildingData>();
+            List<BuildingMaterial> greenhouseMaterials =
+            [
+                new BuildingMaterial { ItemId = "(O)388", Amount = 500 },
+                new BuildingMaterial { ItemId = "(O)390", Amount = 200 },
+            ];
 
+            //ModEntry.monitor.Log($"{Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name")}", LogLevel.Info);
             foreach (KeyValuePair<string, BuildingData> data in buildingData)
             {
                 // Create a copy so you don't need to reset game to disable
                 BuildingData copyData = DeepCopy(data.Value);
 
-                copyData.MagicalConstruction = true;
-                copyData.BuildCost = 0;
-                copyData.BuildDays = 0;
-                copyData.BuildMaterials = [];
+                // Adds the greenhosue as a blueprint for Robin
+                if (ModEntry.modConfig.EnableGreenhouse)
+                {
+                    if (TokenParser.ParseText(copyData.Name) == Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name"))
+                    {
+                        copyData.Builder = "Robin";
+                        copyData.BuildCost = 60000;
+                        copyData.BuildDays = 3;
+                        copyData.BuildMaterials = greenhouseMaterials;
+                        copyData.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
+                    }
+                }
 
-                // Enable the Island Obelisk even if not unlocked
-                if (copyData.BuildCondition == "PLAYER_HAS_MAIL Any Visited_Island")
-                    copyData.BuildCondition = "";
+                // Make blueprints free and build instantly
+                if (ModEntry.modConfig.EnableInstantBuild)
+                {
+                    copyData.MagicalConstruction = true;
+                    copyData.BuildCost = 0;
+                    copyData.BuildDays = 0;
+                    copyData.BuildMaterials = [];
+                }
 
+                // Ignore most build conditions.
+                if (ModEntry.modConfig.RemoveBuildConditions)
+                {
+                    if (copyData.BuildCondition != "CAN_BUILD_CABIN" && copyData.BuildCondition != "CAN_BUILD_FOR_CABINS Stable")
+                        copyData.BuildCondition = "";
+                }
+
+                //ModEntry.monitor.Log($"Building Data Name: {TokenParser.ParseText(copyData.Name)}\nBuild Conditions: {copyData.BuildMaterials}\n", LogLevel.Info);
                 ModifiedBuildingData.Add(data.Key, copyData);
             }
         }
