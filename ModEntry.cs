@@ -2,7 +2,8 @@
 using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using Microsoft.Xna.Framework;
+using StardewValley.GameData.Buildings;
+using StardewValley.TokenizableStrings;
 using AnythingAnywhere.Framework.UI;
 using AnythingAnywhere.Framework.Managers;
 using AnythingAnywhere.Framework.Interfaces;
@@ -11,17 +12,11 @@ using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Linq;
 using System;
-using StardewValley.Menus;
-using StardewValley.GameData.Buildings;
-using System.Collections.Generic;
-using System.Reflection;
-using Newtonsoft.Json;
-using Microsoft.VisualBasic;
-using StardewValley.Buildings;
-using StardewValley.TokenizableStrings;
-using System.Threading;
 
 namespace AnythingAnywhere
 {
@@ -174,13 +169,13 @@ namespace AnythingAnywhere
                 return;
 
             if (modConfig.BuildMenu.JustPressed() && modConfig.EnableBuilding)
-                HandleInstantBuildButtonClick("Robin");
+                HandleBuildButtonPress("Robin");
 
             if (modConfig.WizardBuildMenu.JustPressed() && modConfig.EnableBuilding)
-                HandleInstantBuildButtonClick("Wizard");
+                HandleBuildButtonPress("Wizard");
         }
 
-        private void HandleInstantBuildButtonClick(string builder)
+        private void HandleBuildButtonPress(string builder)
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
             {
