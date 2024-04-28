@@ -160,8 +160,6 @@ namespace AnythingAnywhere
                 configApi.AddBoolOption(ModManifest, () => modConfig.EnableCabinsAnywhere, value => modConfig.EnableCabinsAnywhere = value, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Name, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Description);
                 configApi.AddBoolOption(ModManifest, () => modConfig.MultipleMiniObelisks, value => modConfig.MultipleMiniObelisks = value, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObilisk_Description);
             }
-
-            customData = new CustomBuildingData(Game1.buildingData);
         }
         
         private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
@@ -210,15 +208,18 @@ namespace AnythingAnywhere
                 return;
             }
 
+
+            customData = new CustomBuildingData(customData != null ? customData.DefaultBuildData : Game1.buildingData);
+
             if (modConfig.EnableInstantBuild)
             {
                 Game1.buildingData = customData.ModifiedBuildingData;
-            } 
+            }
             else
             {
-                Game1.buildingData = customData.DefaultBuildData;
+                Game1.buildingData = customData != null ? customData.DefaultBuildData : Game1.buildingData;
+                customData = null;
             }
-            
 
             // If none of the above conditions are met, activate the BuildAnywhereMenu
             Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
