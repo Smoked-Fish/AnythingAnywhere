@@ -135,7 +135,7 @@ This toggle enables using the jukebox in all locations it can be placed.\
 The jukebox does not work outside while it is raining.
 
 ##### `Gold Clock Tweaks`
-This toggle lets the gold clock building work in any location, rather than just the farm.\
+This toggle lets the gold clock building work in any location, rather than just the farm.
 
 ##### `Multiple Mini-Obelisk`
 This toggle lets you place more than two mini-obelisks per location.\
