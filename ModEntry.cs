@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
 using System;
+using System.Reflection;
+using System.Xml.Linq;
+using StardewModdingAPI.Utilities;
 
 namespace AnythingAnywhere
 {
@@ -125,42 +128,42 @@ namespace AnythingAnywhere
                 // Register the placing settings
                 configApi.AddPage(ModManifest, "PlacingPage", I18n.Config_AnythingAnywhere_Placing_Title);
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Placing_Title);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnablePlacing, value => modConfig.EnablePlacing = value, I18n.Config_AnythingAnywhere_EnablePlacing_Name, I18n.Config_AnythingAnywhere_EnablePlacing_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFreePlace, value => modConfig.EnableFreePlace = value, I18n.Config_AnythingAnywhere_EnableFreePlace_Name, I18n.Config_AnythingAnywhere_EnableFreePlace_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableWallFurnitureIndoors, value => modConfig.EnableWallFurnitureIndoors = value, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Name, I18n.Config_AnythingAnywhere_EnableWallFurnitureIndoors_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableRugRemovalBypass, value => modConfig.EnableRugRemovalBypass = value, I18n.Config_AnythingAnywhere_EnableRugRemovalBypass_Name, I18n.Config_AnythingAnywhere_EnableRugRemovalBypass_Description);
+                AddOption(configApi, nameof(ModConfig.EnablePlacing));
+                AddOption(configApi, nameof(ModConfig.EnableFreePlace));
+                AddOption(configApi, nameof(ModConfig.EnableWallFurnitureIndoors));
+                AddOption(configApi, nameof(ModConfig.EnableRugRemovalBypass));
 
                 // Register the build settings
                 configApi.AddPage(ModManifest, "BuildingsPage", I18n.Config_AnythingAnywhere_Building_Title);
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Building_Title);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuilding, value => modConfig.EnableBuilding = value, I18n.Config_AnythingAnywhere_EnableBuilding_Name, I18n.Config_AnythingAnywhere_EnableBuilding_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildAnywhere, value => modConfig.EnableBuildAnywhere = value, I18n.Config_AnythingAnywhere_EnableBuildAnywhere_Name, I18n.Config_AnythingAnywhere_EnableBuildAnywhere_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableInstantBuild, value => modConfig.EnableInstantBuild = value, I18n.Config_AnythingAnywhere_EnableInstantBuild_Name, I18n.Config_AnythingAnywhere_EnableInstantBuild_Description);
-                configApi.AddKeybindList(ModManifest, () => modConfig.BuildMenu, value => modConfig.BuildMenu = value, I18n.Config_AnythingAnywhere_BuildMenu_Name, I18n.Config_AnythingAnywhere_BuildMenu_Description);
-                configApi.AddKeybindList(ModManifest, () => modConfig.WizardBuildMenu, value => modConfig.WizardBuildMenu = value, I18n.Config_AnythingAnywhere_WizardBuildMenu_Name, I18n.Config_AnythingAnywhere_WizardBuildMenu_Description);
-                configApi.AddKeybindList(ModManifest, () => modConfig.BuildModifier, value => modConfig.BuildModifier = value, I18n.Config_AnythingAnywhere_BuildModifier_Name, I18n.Config_AnythingAnywhere_BuildModifier_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableGreenhouse, value => modConfig.EnableGreenhouse = value, I18n.Config_AnythingAnywhere_EnableGreenhouse_Name, I18n.Config_AnythingAnywhere_EnableGreenhouse_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.RemoveBuildConditions, value => modConfig.RemoveBuildConditions = value, I18n.Config_AnythingAnywhere_RemoveBuildConditions_Name, I18n.Config_AnythingAnywhere_RemoveBuildConditions_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableBuildingIndoors, value => modConfig.EnableBuildingIndoors = value, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Name, I18n.Config_AnythingAnywhere_EnableBuildingIndoors_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.BypassMagicInk, value => modConfig.BypassMagicInk = value, I18n.Config_AnythingAnywhere_BypassMagicInk_Name, I18n.Config_AnythingAnywhere_BypassMagicInk_Description);
+                AddOption(configApi, nameof(ModConfig.EnableBuilding));
+                AddOption(configApi, nameof(ModConfig.EnableBuildAnywhere));
+                AddOption(configApi, nameof(ModConfig.EnableInstantBuild));
+                AddOption(configApi, nameof(ModConfig.BuildMenu));
+                AddOption(configApi, nameof(ModConfig.WizardBuildMenu));
+                AddOption(configApi, nameof(ModConfig.BuildModifier));
+                AddOption(configApi, nameof(ModConfig.EnableGreenhouse));
+                AddOption(configApi, nameof(ModConfig.RemoveBuildConditions));
+                AddOption(configApi, nameof(ModConfig.EnableBuildingIndoors));
+                AddOption(configApi, nameof(ModConfig.BypassMagicInk));
 
                 // Register the farming settings
                 configApi.AddPage(ModManifest, "FarmingPage", I18n.Config_AnythingAnywhere_Farming_Title);
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Farming_Title);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnablePlanting, value => modConfig.EnablePlanting = value, I18n.Config_AnythingAnywhere_EnablePlanting_Name, I18n.Config_AnythingAnywhere_EnablePlanting_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableDiggingAll, value => modConfig.EnableDiggingAll = value, I18n.Config_AnythingAnywhere_EnableDiggingAll_Name, I18n.Config_AnythingAnywhere_EnableDiggingAll_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableFruitTreeTweaks, value => modConfig.EnableFruitTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableFruitTreeTweaks_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableWildTreeTweaks, value => modConfig.EnableWildTreeTweaks = value, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Name, I18n.Config_AnythingAnywhere_EnableWildTreeTweaks_Description);
+                AddOption(configApi, nameof(ModConfig.EnablePlanting));
+                AddOption(configApi, nameof(ModConfig.EnableDiggingAll));
+                AddOption(configApi, nameof(ModConfig.EnableFruitTreeTweaks));
+                AddOption(configApi, nameof(ModConfig.EnableWildTreeTweaks));
 
                 // Register the other settings
                 configApi.AddPage(ModManifest, "OtherPage", I18n.Config_AnythingAnywhere_Other_Title);
                 configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Other_Title);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableAnimalRelocate, value => modConfig.EnableAnimalRelocate = value, I18n.Config_AnythingAnywhere_AnimalRelocate_Name, I18n.Config_AnythingAnywhere_AnimalRelocate_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableCaskFunctionality, value => modConfig.EnableCaskFunctionality = value, I18n.Config_AnythingAnywhere_EnableCaskFunctionality_Name, I18n.Config_AnythingAnywhere_EnableCaskFunctionality_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableJukeboxFunctionality, value => modConfig.EnableJukeboxFunctionality = value, I18n.Config_AnythingAnywhere_EnableJukeboxFunctionality_Name, I18n.Config_AnythingAnywhere_EnableJukeboxFunctionality_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableGoldClockAnywhere, value => modConfig.EnableGoldClockAnywhere = value, I18n.Config_AnythingAnywhere_EnableGoldClockAnywhere_Name, I18n.Config_AnythingAnywhere_EnableGoldClockAnywhere_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.MultipleMiniObelisks, value => modConfig.MultipleMiniObelisks = value, I18n.Config_AnythingAnywhere_EnableMiniObelisk_Name, I18n.Config_AnythingAnywhere_EnableMiniObelisk_Description);
-                configApi.AddBoolOption(ModManifest, () => modConfig.EnableCabinsAnywhere, value => modConfig.EnableCabinsAnywhere = value, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Name, I18n.Config_AnythingAnywhere_EnableCabinsAnywhere_Description);
+                AddOption(configApi, nameof(ModConfig.EnableAnimalRelocate));
+                AddOption(configApi, nameof(ModConfig.EnableCaskFunctionality));
+                AddOption(configApi, nameof(ModConfig.EnableJukeboxFunctionality));
+                AddOption(configApi, nameof(ModConfig.EnableGoldClockAnywhere));
+                AddOption(configApi, nameof(ModConfig.MultipleMiniObelisks));
+                AddOption(configApi, nameof(ModConfig.EnableCabinsAnywhere));
             }
         }
         
@@ -317,6 +320,33 @@ namespace AnythingAnywhere
 
             monitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
             return;
+        }
+
+
+        private void AddOption(IGenericModConfigMenuApi configApi, string name)
+        {
+            PropertyInfo propertyInfo = typeof(ModConfig).GetProperty(name);
+            if (propertyInfo == null)
+                return;
+
+            Func<string> getName = () => I18n.GetByKey($"Config.AnythingAnywhere.{name}.Name");
+            Func<string> getDescription = () => I18n.GetByKey($"Config.AnythingAnywhere.{name}.Description");
+
+            if (getName == null || getDescription == null)
+                return;
+
+            if (propertyInfo.PropertyType == typeof(bool))
+            {
+                Func<bool> getter = () => (bool)propertyInfo.GetValue(modConfig);
+                Action<bool> setter = value => propertyInfo.SetValue(modConfig, value);
+                configApi.AddBoolOption(ModManifest, getter, setter, getName, getDescription);
+            }
+            else if (propertyInfo.PropertyType == typeof(KeybindList))
+            {
+                Func<KeybindList> getter = () => (KeybindList)propertyInfo.GetValue(modConfig);
+                Action<KeybindList> setter = value => propertyInfo.SetValue(modConfig, value);
+                configApi.AddKeybindList(ModManifest, getter, setter, getName, getDescription);
+            }
         }
     }
 
