@@ -142,7 +142,7 @@ If you have the Multiple Mini-Obelisk mod, this toggle will be enabled by defaul
 ##### `House/Cabin Bypass`
 This toggle will enable building cabins outside of the farm.\
 This exists for testing or decoration purposes.\
-THEY WILL NOT FUNCTION AS INTENDED AND NEW PLAYER LOADING INTO A CABIN NOT LOCATED ON THE FARM WILL BE SOFT-LOCKED
+THEY WILL NOT FUNCTION AS INTENDED AND NEW PLAYERS LOADING INTO A CABIN NOT LOCATED ON THE FARM WILL BE SOFT-LOCKED
 
 
 ## Debug Commands
