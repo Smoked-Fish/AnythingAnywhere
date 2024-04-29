@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using xTile.ObjectModel;
 using xTile.Tiles;
 using System;
+using System.Linq;
 
 namespace AnythingAnywhere.Framework.Patches.GameLocations
 {
@@ -25,6 +26,10 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.doesTileHaveProperty), new [] { typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(DoesTileHavePropertyPostfix)));
             harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanFreePlaceFurniture)), postfix: new HarmonyMethod(GetType(), nameof(CanFreePlaceFurniturePostfix)));
+
+            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.spawnWeedsAndStones), [typeof(int), typeof(bool), typeof(bool)]), prefix: new HarmonyMethod(GetType(), nameof(SpawnWeedsAndStonesPrefix)));
+            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.loadWeeds)), prefix: new HarmonyMethod(GetType(), nameof(LoadWeedsPrefix)));
+
 
         }
 
@@ -112,10 +117,35 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             }
         }
 
+        // Allows longer reach when placing furniture
         private static void CanFreePlaceFurniturePostfix(GameLocation __instance, ref bool __result)
         {
             if (ModEntry.modConfig.EnablePlacing)
                 __result = true;
+        }
+
+        private static bool SpawnWeedsAndStonesPrefix(GameLocation __instance, int numDebris = -1, bool weedsOnly = false, bool spawnFromOldWeeds = true)
+        {
+            if (!ModEntry.modConfig.EnableGoldClockAnywhere)
+                return true;
+
+            bool hasGoldClock = __instance.buildings.Any(building => building.buildingType.Value == "Gold Clock");
+            if (hasGoldClock && !Game1.netWorldState.Value.goldenClocksTurnedOff.Value)
+                return false;
+
+            return true;
+        }
+
+        private static bool LoadWeedsPrefix(GameLocation __instance)
+        {
+            if (!ModEntry.modConfig.EnableGoldClockAnywhere)
+                return true;
+
+            bool hasGoldClock = __instance.buildings.Any(building => building.buildingType.Value == "Gold Clock");
+            if (hasGoldClock && !Game1.netWorldState.Value.goldenClocksTurnedOff.Value)
+                return false;
+
+            return true;
         }
     }
 }
