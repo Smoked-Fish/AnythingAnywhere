@@ -12,13 +12,13 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
     {
         private readonly Type _object = typeof(Cask);
 
-        internal CaskPatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal CaskPatch(Harmony harmony) : base(harmony)
         {
 
         }
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(Cask.IsValidCaskLocation)), prefix: new HarmonyMethod(GetType(), nameof(IsValidCaskLocationPrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(Cask.IsValidCaskLocation)), prefix: new HarmonyMethod(GetType(), nameof(IsValidCaskLocationPrefix)));
         }
 
         // Enable jukebox functionality outside of the farm

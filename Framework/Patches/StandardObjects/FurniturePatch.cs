@@ -13,16 +13,16 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
     {
         private readonly Type _object = typeof(Furniture);
 
-        internal FurniturePatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal FurniturePatch(Harmony harmony) : base(harmony)
         {
 
         }
 
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(Furniture.GetAdditionalFurniturePlacementStatus), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(GetAdditionalFurniturePlacementStatusPostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBeRemoved), new[] { typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(CanBeRemovedPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(Furniture.GetAdditionalFurniturePlacementStatus), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(GetAdditionalFurniturePlacementStatusPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBeRemoved), new[] { typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(CanBeRemovedPostfix)));
         }
 
         // Enables disabling wall furniture in all places in decortable locations. It can be annoying indoors.

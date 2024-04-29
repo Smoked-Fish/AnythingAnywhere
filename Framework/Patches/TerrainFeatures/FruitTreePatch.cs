@@ -11,13 +11,13 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
     {
         private readonly Type _object = typeof(FruitTree);
 
-        internal FruitTreePatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal FruitTreePatch(Harmony harmony) : base(harmony)
         {
 
         }
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(FruitTree.IsGrowthBlocked), new[] { typeof(Vector2), typeof(GameLocation) }), postfix: new HarmonyMethod(GetType(), nameof(IsGrowthBlockedPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(FruitTree.IsGrowthBlocked), new[] { typeof(Vector2), typeof(GameLocation) }), postfix: new HarmonyMethod(GetType(), nameof(IsGrowthBlockedPostfix)));
         }
 
         public static void IsGrowthBlockedPostfix(FruitTree __instance, Vector2 tileLocation, GameLocation environment, ref bool __result)

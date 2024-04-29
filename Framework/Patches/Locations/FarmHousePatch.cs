@@ -17,14 +17,14 @@ namespace AnythingAnywhere.Framework.Patches.Locations
     internal class FarmHousePatch : PatchTemplate
     {
         private readonly Type _object = typeof(FarmHouse);
-        internal FarmHousePatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal FarmHousePatch(Harmony harmony) : base(harmony)
         {
 
         }
 
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, "resetLocalState"), prefix: new HarmonyMethod(GetType(), nameof(ResetLocalStatePrefix)));
+            _harmony.Patch(AccessTools.Method(_object, "resetLocalState"), prefix: new HarmonyMethod(GetType(), nameof(ResetLocalStatePrefix)));
         }
 
         private static bool ResetLocalStatePrefix(FarmHouse __instance)

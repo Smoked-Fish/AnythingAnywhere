@@ -17,17 +17,17 @@ namespace AnythingAnywhere.Framework.Patches.Menus
     {
         private readonly Type _object = typeof(AnimalQueryMenu);
         private static GameLocation TargetLocation = null;
-        internal AnimalQueryMenuPatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal AnimalQueryMenuPatch(Harmony harmony) : base(harmony)
         {
 
         }
 
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.receiveLeftClick), new [] { typeof(int), typeof(int), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(ReceiveLeftClickPrefix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.performHoverAction), new[] { typeof(int), typeof(int) }), postfix: new HarmonyMethod(GetType(), nameof(PerformHoverActionPostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.prepareForAnimalPlacement)), postfix: new HarmonyMethod(GetType(), nameof(PrepareForAnimalPlacementPostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.receiveKeyPress), new[] { typeof(Keys) }), postfix: new HarmonyMethod(GetType(), nameof(ReceiveKeyPressPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.receiveLeftClick), new [] { typeof(int), typeof(int), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(ReceiveLeftClickPrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.performHoverAction), new[] { typeof(int), typeof(int) }), postfix: new HarmonyMethod(GetType(), nameof(PerformHoverActionPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.prepareForAnimalPlacement)), postfix: new HarmonyMethod(GetType(), nameof(PrepareForAnimalPlacementPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.receiveKeyPress), new[] { typeof(Keys) }), postfix: new HarmonyMethod(GetType(), nameof(ReceiveKeyPressPostfix)));
 
         }
 
@@ -124,7 +124,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     }
                     else
                     {
-                        _monitor.Log("Can't find location '" + value + "' for animal relocate menu.", LogLevel.Error);
+                        ModEntry.monitor.Log("Can't find location '" + value + "' for animal relocate menu.", LogLevel.Error);
                     }
                 }, auto_select_single_choice: true);
                 return false;

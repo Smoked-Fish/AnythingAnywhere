@@ -9,13 +9,13 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
     {
         private readonly Type _object = typeof(Tree);
 
-        internal TreePatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal TreePatch(Harmony harmony) : base(harmony)
         {
 
         }
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(Tree.IsGrowthBlockedByNearbyTree)), postfix: new HarmonyMethod(GetType(), nameof(IsGrowthBlockedByNearbyTreePostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(Tree.IsGrowthBlockedByNearbyTree)), postfix: new HarmonyMethod(GetType(), nameof(IsGrowthBlockedByNearbyTreePostfix)));
         }
 
         public static void IsGrowthBlockedByNearbyTreePostfix(Tree __instance, ref bool __result)

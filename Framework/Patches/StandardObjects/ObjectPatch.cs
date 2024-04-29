@@ -21,15 +21,15 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
     {
         private readonly Type _object = typeof(Object);
 
-        internal ObjectPatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal ObjectPatch(Harmony harmony) : base(harmony)
         {
 
         }
 
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(Object.placementAction), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(PlacementActionPrefix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(Object.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(Object.placementAction), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(PlacementActionPrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(Object.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePrefix)));
 
         }
 

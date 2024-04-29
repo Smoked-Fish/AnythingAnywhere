@@ -14,21 +14,21 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
     {
         private readonly Type _object = typeof(GameLocation);
 
-        internal GameLocationPatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal GameLocationPatch(Harmony harmony) : base(harmony)
         {
 
         }
 
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanPlaceThisFurnitureHere), new[] { typeof(Furniture)}), postfix: new HarmonyMethod(GetType(), nameof(CanPlaceThisFurnitureHerePostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.isBuildable), new[] { typeof(Vector2), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(IsBuildablePostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.doesTileHaveProperty), new [] { typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(DoesTileHavePropertyPostfix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanFreePlaceFurniture)), postfix: new HarmonyMethod(GetType(), nameof(CanFreePlaceFurniturePostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanPlaceThisFurnitureHere), new[] { typeof(Furniture)}), postfix: new HarmonyMethod(GetType(), nameof(CanPlaceThisFurnitureHerePostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.isBuildable), new[] { typeof(Vector2), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(IsBuildablePostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.doesTileHaveProperty), [typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool)]), postfix: new HarmonyMethod(GetType(), nameof(DoesTileHavePropertyPostfix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanFreePlaceFurniture)), postfix: new HarmonyMethod(GetType(), nameof(CanFreePlaceFurniturePostfix)));
 
-            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.spawnWeedsAndStones), [typeof(int), typeof(bool), typeof(bool)]), prefix: new HarmonyMethod(GetType(), nameof(SpawnWeedsAndStonesPrefix)));
-            harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.loadWeeds)), prefix: new HarmonyMethod(GetType(), nameof(LoadWeedsPrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.spawnWeedsAndStones), [typeof(int), typeof(bool), typeof(bool)]), prefix: new HarmonyMethod(GetType(), nameof(SpawnWeedsAndStonesPrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.loadWeeds)), prefix: new HarmonyMethod(GetType(), nameof(LoadWeedsPrefix)));
 
 
         }

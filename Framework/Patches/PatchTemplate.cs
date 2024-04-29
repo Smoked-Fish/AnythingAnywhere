@@ -1,17 +1,18 @@
-﻿using StardewModdingAPI;
+﻿using HarmonyLib;
+using StardewModdingAPI;
+using StardewValley;
+using System;
 
 
 namespace AnythingAnywhere.Framework.Patches
 {
     internal class PatchTemplate
     {
-        internal static IMonitor _monitor;
-        internal static IModHelper _helper;
-
-        internal PatchTemplate(IMonitor modMonitor, IModHelper modHelper)
+        internal static Harmony _harmony;
+        
+        internal PatchTemplate(Harmony modHarmony)
         {
-            _monitor = modMonitor;
-            _helper = modHelper;
+            _harmony = modHarmony;
         }
     }
 }

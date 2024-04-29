@@ -56,25 +56,25 @@ namespace AnythingAnywhere
                 var harmony = new Harmony(this.ModManifest.UniqueID);
 
                 // Apply GameLocation patches
-                new GameLocationPatch(monitor, helper).Apply(harmony);
+                new GameLocationPatch(harmony).Apply();
 
                 // Apply Location patches
-                new FarmHousePatch(monitor, helper).Apply(harmony);
+                new FarmHousePatch(harmony).Apply();
 
                 // Apply Menu patches
-                new CarpenterMenuPatch(monitor, helper).Apply(harmony);
-                new AnimalQueryMenuPatch(monitor, helper).Apply(harmony);
+                new CarpenterMenuPatch(harmony).Apply();
+                new AnimalQueryMenuPatch(harmony).Apply();
 
                 // Apply StandardObject patches
-                new CaskPatch(monitor, helper).Apply(harmony);
-                new FurniturePatch(monitor, helper).Apply(harmony);
-                new MiniJukeboxPatch(monitor, helper).Apply(harmony);
-                new ObjectPatch(monitor, helper).Apply(harmony);
+                new CaskPatch(harmony).Apply();
+                new FurniturePatch(harmony).Apply();
+                new MiniJukeboxPatch(harmony).Apply();
+                new ObjectPatch(harmony).Apply();
 
                 // Apply TerrainFeature patches
-                new FruitTreePatch(monitor, helper).Apply(harmony);
-                new TreePatch(monitor, helper).Apply(harmony);
-                new HoeDirtPatch(monitor, helper).Apply(harmony);
+                new FruitTreePatch(harmony).Apply();
+                new TreePatch(harmony).Apply();
+                new HoeDirtPatch(harmony).Apply();
 
             }
             catch (Exception e)

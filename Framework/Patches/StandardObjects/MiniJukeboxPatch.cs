@@ -12,13 +12,13 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
     {
         private readonly Type _object = typeof(MiniJukebox);
 
-        internal MiniJukeboxPatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal MiniJukeboxPatch(Harmony harmony) : base(harmony)
         {
 
         }
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(MiniJukebox.checkForAction), new[] { typeof(Farmer), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(CheckForActionPrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(MiniJukebox.checkForAction), new[] { typeof(Farmer), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(CheckForActionPrefix)));
         }
 
         // Enable jukebox functionality outside of the farm

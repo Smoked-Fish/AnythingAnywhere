@@ -10,13 +10,13 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
     {
         private readonly Type _object = typeof(HoeDirt);
 
-        internal HoeDirtPatch(IMonitor modMonitor, IModHelper modHelper) : base(modMonitor, modHelper)
+        internal HoeDirtPatch(Harmony harmony) : base(harmony)
         {
-
+            
         }
-        internal void Apply(Harmony harmony)
+        internal void Apply()
         {
-            harmony.Patch(AccessTools.Method(_object, nameof(HoeDirt.plant),  new[] { typeof(string), typeof(Farmer), typeof(bool) } ), prefix: new HarmonyMethod(GetType(), nameof(PlantPrefix)));
+            _harmony.Patch(AccessTools.Method(_object, nameof(HoeDirt.plant),  new[] { typeof(string), typeof(Farmer), typeof(bool) } ), prefix: new HarmonyMethod(GetType(), nameof(PlantPrefix)));
         }
 
         public static bool PlantPrefix(HoeDirt __instance, string itemId, Farmer who, bool isFertilizer, ref bool __result)
