@@ -35,6 +35,7 @@ namespace AnythingAnywhere
         public bool EnableAnimalRelocate { get; set; } = true;
         public bool EnableCaskFunctionality { get; set; } = false;
         public bool EnableJukeboxFunctionality { get; set; } = true;
+        public bool EnableGoldClockAnywhere { get; set; } = true;
         public bool MultipleMiniObelisks { get; set; } = false;
         public bool EnableCabinsAnywhere { get; set; } = false;
     }
