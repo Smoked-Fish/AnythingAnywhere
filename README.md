@@ -126,13 +126,16 @@ This toggle will enable the animal relocation menu.\
 This is here so you can relocate animals to any location that has a building for them.\
 If disabled animals can only be relocated to the main farm.
 
-##### `Cask Functionality`
+##### `Cask Tweaks`
 This toggle will let the player use the cask outside of the cellar.\
 Its disabled by default as it can be seen as 'cheating' by some players.
 
-##### `Jukebox Functionality`
+##### `Jukebox Tweaks`
 This toggle enables using the jukebox in all locations it can be placed.\
 The jukebox does not work outside while it is raining.
+
+##### `Gold Clock Tweaks`
+This toggle lets the gold clock building work in any location, rather than just the farm.\
 
 ##### `Multiple Mini-Obelisk`
 This toggle lets you place more than two mini-obelisks per location.\
