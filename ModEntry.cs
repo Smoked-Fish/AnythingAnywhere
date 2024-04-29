@@ -2,6 +2,7 @@
 using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley.GameData.Buildings;
 using StardewValley.TokenizableStrings;
 using AnythingAnywhere.Framework.UI;
@@ -13,13 +14,11 @@ using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using System;
-using System.Reflection;
-using System.Xml.Linq;
-using StardewModdingAPI.Utilities;
 
 namespace AnythingAnywhere
 {
@@ -321,7 +320,6 @@ namespace AnythingAnywhere
             monitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
             return;
         }
-
 
         private void AddOption(IGenericModConfigMenuApi configApi, string name)
         {
