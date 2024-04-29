@@ -9,8 +9,8 @@ namespace AnythingAnywhere
         // PLACING
         public bool EnablePlacing { get; set; } = true;
         public bool EnableFreePlace { get; set; } = false;
-        public bool EnableWallFurnitureIndoors { get; set; } = false;
         public bool EnableRugRemovalBypass { get; set; } = false;
+        public bool EnableWallFurnitureIndoors { get; set; } = false;
 
 
         // BUILDING
