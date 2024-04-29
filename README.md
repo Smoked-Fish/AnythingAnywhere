@@ -36,7 +36,7 @@ This enables placing wall furniture anywhere indoors. The default is off so deco
 ## Building
 - [Enable Building](#enable-building)
 - [Build Anywhere](#build-anywhere)
-- [Build Free & Instantly](#build-free-and-instantly)
+- [Build Free & Instantly](#build-free--instantly)
 - [Build Anywhere Menu](#build-anywhere-menu)
 - [Wizard Build Menu](#wizard-build-menu)
 - [Building Modifier Key](#building-modifier-key)
