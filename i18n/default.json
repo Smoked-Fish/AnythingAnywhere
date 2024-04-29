@@ -65,8 +65,8 @@
   // Other Config
   "Config.AnythingAnywhere.Other.Title": "Misc",
 
-  "Config.AnythingAnywhere.AnimalRelocate.Name": "Animal Relocation",
-  "Config.AnythingAnywhere.AnimalRelocate.Description": "Enables relocating animals from location to location",
+  "Config.AnythingAnywhere.EnableAnimalRelocate.Name": "Animal Relocation",
+  "Config.AnythingAnywhere.EnableAnimalRelocate.Description": "Enables relocating animals from location to location",
 
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Cask Tweaks",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Enables cask functionality anywhere",
@@ -77,8 +77,8 @@
   "Config.AnythingAnywhere.EnableGoldClockAnywhere.Name": "Gold Clock Tweaks",
   "Config.AnythingAnywhere.EnableGoldClockAnywhere.Description": "Enables Gold Clock functionality anywhere.",
 
-  "Config.AnythingAnywhere.EnableMiniObelisk.Name": "Multiple Mini-Obelisk",
-  "Config.AnythingAnywhere.EnableMiniObelisk.Description": "Enables placing more than 2 mini-obelisks per location",
+  "Config.AnythingAnywhere.MultipleMiniObelisks.Name": "Multiple Mini-Obelisk",
+  "Config.AnythingAnywhere.MultipleMiniObelisks.Description": "Enables placing more than 2 mini-obelisks per location",
 
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "House/Cabin Bypass",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "THIS WILL CAUSE ERRORS! Disables the Cabins and Farm House checks",
