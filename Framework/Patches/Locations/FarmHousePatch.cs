@@ -16,15 +16,10 @@ namespace AnythingAnywhere.Framework.Patches.Locations
 {
     internal class FarmHousePatch : PatchTemplate
     {
-        private readonly Type _object = typeof(FarmHouse);
-        internal FarmHousePatch(Harmony harmony) : base(harmony)
-        {
-
-        }
-
+        internal FarmHousePatch(Harmony harmony) : base(harmony, typeof(FarmHouse)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, "resetLocalState"), prefix: new HarmonyMethod(GetType(), nameof(ResetLocalStatePrefix)));
+            Patch(false, "resetLocalState", nameof(ResetLocalStatePrefix));
         }
 
         private static bool ResetLocalStatePrefix(FarmHouse __instance)

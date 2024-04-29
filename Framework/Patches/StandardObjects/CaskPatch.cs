@@ -10,18 +10,13 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal class CaskPatch : PatchTemplate
     {
-        private readonly Type _object = typeof(Cask);
-
-        internal CaskPatch(Harmony harmony) : base(harmony)
-        {
-
-        }
+        internal CaskPatch(Harmony harmony) : base(harmony, typeof(Cask)) { } 
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(Cask.IsValidCaskLocation)), prefix: new HarmonyMethod(GetType(), nameof(IsValidCaskLocationPrefix)));
+            Patch(false, nameof(Cask.IsValidCaskLocation), nameof(IsValidCaskLocationPrefix));
         }
 
-        // Enable jukebox functionality outside of the farm
+        // Enable cask functionality outside of the farm
         private static bool IsValidCaskLocationPrefix(Cask __instance, ref bool __result)
         {
             if (ModEntry.modConfig.EnableCaskFunctionality)

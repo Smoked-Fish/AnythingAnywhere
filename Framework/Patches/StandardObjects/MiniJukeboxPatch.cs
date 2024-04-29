@@ -10,15 +10,10 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal class MiniJukeboxPatch : PatchTemplate
     {
-        private readonly Type _object = typeof(MiniJukebox);
-
-        internal MiniJukeboxPatch(Harmony harmony) : base(harmony)
-        {
-
-        }
+        internal MiniJukeboxPatch(Harmony harmony) : base(harmony, typeof(MiniJukebox)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(MiniJukebox.checkForAction), new[] { typeof(Farmer), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(CheckForActionPrefix)));
+            Patch(false, nameof(MiniJukebox.checkForAction), nameof(CheckForActionPrefix), [typeof(Farmer), typeof(bool)]);
         }
 
         // Enable jukebox functionality outside of the farm

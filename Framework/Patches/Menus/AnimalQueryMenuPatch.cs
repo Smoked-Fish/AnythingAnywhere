@@ -15,20 +15,14 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 {
     internal class AnimalQueryMenuPatch : PatchTemplate
     {
-        private readonly Type _object = typeof(AnimalQueryMenu);
         private static GameLocation TargetLocation = null;
-        internal AnimalQueryMenuPatch(Harmony harmony) : base(harmony)
-        {
-
-        }
-
+        internal AnimalQueryMenuPatch(Harmony harmony) : base(harmony, typeof(AnimalQueryMenu)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.receiveLeftClick), new [] { typeof(int), typeof(int), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(ReceiveLeftClickPrefix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.performHoverAction), new[] { typeof(int), typeof(int) }), postfix: new HarmonyMethod(GetType(), nameof(PerformHoverActionPostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.prepareForAnimalPlacement)), postfix: new HarmonyMethod(GetType(), nameof(PrepareForAnimalPlacementPostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(AnimalQueryMenu.receiveKeyPress), new[] { typeof(Keys) }), postfix: new HarmonyMethod(GetType(), nameof(ReceiveKeyPressPostfix)));
-
+            Patch(false, nameof(AnimalQueryMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
+            Patch(true, nameof(AnimalQueryMenu.performHoverAction), nameof(PerformHoverActionPostfix), [typeof(int), typeof(int)]);
+            Patch(true, nameof(AnimalQueryMenu.prepareForAnimalPlacement), nameof(PrepareForAnimalPlacementPostfix));
+            Patch(true, nameof(AnimalQueryMenu.receiveKeyPress), nameof(ReceiveKeyPressPostfix), [typeof(Keys)]);
         }
 
         private static bool ReceiveLeftClickPrefix(AnimalQueryMenu __instance, int x, int y, bool playSound = true)

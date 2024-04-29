@@ -19,18 +19,11 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal class ObjectPatch : PatchTemplate
     {
-        private readonly Type _object = typeof(Object);
-
-        internal ObjectPatch(Harmony harmony) : base(harmony)
-        {
-
-        }
-
+        internal ObjectPatch(Harmony harmony) : base(harmony, typeof(Object)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(Object.placementAction), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), prefix: new HarmonyMethod(GetType(), nameof(PlacementActionPrefix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(Object.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), prefix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePrefix)));
-
+            Patch(false, nameof(Object.placementAction), nameof(PlacementActionPrefix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
+            Patch(false, nameof(Object.canBePlacedHere), nameof(CanBePlacedHerePrefix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
         }
 
         // Object placment action

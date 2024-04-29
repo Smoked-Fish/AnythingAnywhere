@@ -24,17 +24,12 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 {
     internal class CarpenterMenuPatch : PatchTemplate
     {
-        private readonly Type _object = typeof(CarpenterMenu);
-        internal CarpenterMenuPatch(Harmony harmony) : base(harmony)
-        {
-
-        }
-
+        internal CarpenterMenuPatch(Harmony harmony) : base(harmony, typeof(CarpenterMenu)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(CarpenterMenu.receiveLeftClick), [typeof(int), typeof(int), typeof(bool)]), prefix: new HarmonyMethod(GetType(), nameof(ReceiveLeftClickPrefix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(CarpenterMenu.GetInitialBuildingPlacementViewport), [typeof(GameLocation)]), prefix: new HarmonyMethod(GetType(), nameof(GetInitialBuildingPlacementViewportPrefix)));
-            _harmony.Patch(original: AccessTools.Method(_object, nameof(CarpenterMenu.draw), [typeof(SpriteBatch)]), transpiler: new HarmonyMethod(GetType(), nameof(DrawTranspiler)));
+            Patch(false, nameof(CarpenterMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
+            Patch(false, nameof(CarpenterMenu.GetInitialBuildingPlacementViewport), nameof(GetInitialBuildingPlacementViewportPrefix), [typeof(GameLocation)]);
+            _harmony.Patch(original: AccessTools.Method(typeof(CarpenterMenu), nameof(CarpenterMenu.draw), [typeof(SpriteBatch)]), transpiler: new HarmonyMethod(GetType(), nameof(DrawTranspiler)));
         }
 
         private static bool ReceiveLeftClickPrefix(CarpenterMenu __instance, int x, int y, bool playSound = true)

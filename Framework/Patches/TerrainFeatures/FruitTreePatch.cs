@@ -9,15 +9,10 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
     internal class FruitTreePatch : PatchTemplate
     {
-        private readonly Type _object = typeof(FruitTree);
-
-        internal FruitTreePatch(Harmony harmony) : base(harmony)
-        {
-
-        }
+        internal FruitTreePatch(Harmony harmony) : base(harmony, typeof(FruitTree)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(FruitTree.IsGrowthBlocked), new[] { typeof(Vector2), typeof(GameLocation) }), postfix: new HarmonyMethod(GetType(), nameof(IsGrowthBlockedPostfix)));
+            Patch(true, nameof(FruitTree.IsGrowthBlocked), nameof(IsGrowthBlockedPostfix), [typeof(Vector2), typeof(GameLocation)]);
         }
 
         public static void IsGrowthBlockedPostfix(FruitTree __instance, Vector2 tileLocation, GameLocation environment, ref bool __result)

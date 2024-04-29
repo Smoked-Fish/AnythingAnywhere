@@ -11,18 +11,12 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal class FurniturePatch : PatchTemplate
     {
-        private readonly Type _object = typeof(Furniture);
-
-        internal FurniturePatch(Harmony harmony) : base(harmony)
-        {
-
-        }
-
+        internal FurniturePatch(Harmony harmony) : base(harmony, typeof(Furniture)) { } 
         internal void Apply()
-        {
-            _harmony.Patch(AccessTools.Method(_object, nameof(Furniture.GetAdditionalFurniturePlacementStatus), new[] { typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(GetAdditionalFurniturePlacementStatusPostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBePlacedHere), new[] { typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(CanBePlacedHerePostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(Furniture.canBeRemoved), new[] { typeof(Farmer) }), postfix: new HarmonyMethod(GetType(), nameof(CanBeRemovedPostfix)));
+        {   
+            Patch(true, nameof(Furniture.GetAdditionalFurniturePlacementStatus), nameof(GetAdditionalFurniturePlacementStatusPostfix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
+            Patch(true, nameof(Furniture.canBePlacedHere), nameof(CanBePlacedHerePostfix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
+            Patch(true, nameof(Furniture.canBeRemoved), nameof(CanBeRemovedPostfix), [typeof(Farmer)]);
         }
 
         // Enables disabling wall furniture in all places in decortable locations. It can be annoying indoors.
@@ -55,7 +49,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             if (ModEntry.modConfig.EnableFreePlace)
                 __result = true;
         }
-
 
         private static void CanBeRemovedPostfix(Furniture __instance, Farmer who, ref bool __result)
         {

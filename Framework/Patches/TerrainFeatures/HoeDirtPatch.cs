@@ -8,15 +8,10 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
     internal class HoeDirtPatch : PatchTemplate
     {
-        private readonly Type _object = typeof(HoeDirt);
-
-        internal HoeDirtPatch(Harmony harmony) : base(harmony)
-        {
-            
-        }
+        internal HoeDirtPatch(Harmony harmony) : base(harmony, typeof(HoeDirt)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(HoeDirt.plant),  new[] { typeof(string), typeof(Farmer), typeof(bool) } ), prefix: new HarmonyMethod(GetType(), nameof(PlantPrefix)));
+            Patch(false, nameof(HoeDirt.plant), nameof(PlantPrefix), [typeof(string), typeof(Farmer), typeof(bool)]);
         }
 
         public static bool PlantPrefix(HoeDirt __instance, string itemId, Farmer who, bool isFertilizer, ref bool __result)

@@ -7,15 +7,10 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
     internal class TreePatch : PatchTemplate
     {
-        private readonly Type _object = typeof(Tree);
-
-        internal TreePatch(Harmony harmony) : base(harmony)
-        {
-
-        }
+        internal TreePatch(Harmony harmony) : base(harmony, typeof(Tree)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(Tree.IsGrowthBlockedByNearbyTree)), postfix: new HarmonyMethod(GetType(), nameof(IsGrowthBlockedByNearbyTreePostfix)));
+            Patch(true, nameof(Tree.IsGrowthBlockedByNearbyTree), nameof(IsGrowthBlockedByNearbyTreePostfix));
         }
 
         public static void IsGrowthBlockedByNearbyTreePostfix(Tree __instance, ref bool __result)

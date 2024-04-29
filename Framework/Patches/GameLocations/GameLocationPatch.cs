@@ -12,25 +12,16 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
 {
     internal class GameLocationPatch : PatchTemplate
     {
-        private readonly Type _object = typeof(GameLocation);
-
-        internal GameLocationPatch(Harmony harmony) : base(harmony)
-        {
-
-        }
-
+        internal GameLocationPatch(Harmony harmony) : base(harmony, typeof(GameLocation)) { }
         internal void Apply()
         {
-            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanPlaceThisFurnitureHere), new[] { typeof(Furniture)}), postfix: new HarmonyMethod(GetType(), nameof(CanPlaceThisFurnitureHerePostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.isBuildable), new[] { typeof(Vector2), typeof(bool) }), postfix: new HarmonyMethod(GetType(), nameof(IsBuildablePostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.IsBuildableLocation)), postfix: new HarmonyMethod(GetType(), nameof(IsBuildableLocationPostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.doesTileHaveProperty), [typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool)]), postfix: new HarmonyMethod(GetType(), nameof(DoesTileHavePropertyPostfix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.CanFreePlaceFurniture)), postfix: new HarmonyMethod(GetType(), nameof(CanFreePlaceFurniturePostfix)));
-
-            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.spawnWeedsAndStones), [typeof(int), typeof(bool), typeof(bool)]), prefix: new HarmonyMethod(GetType(), nameof(SpawnWeedsAndStonesPrefix)));
-            _harmony.Patch(AccessTools.Method(_object, nameof(GameLocation.loadWeeds)), prefix: new HarmonyMethod(GetType(), nameof(LoadWeedsPrefix)));
-
-
+            Patch(true, nameof(GameLocation.CanPlaceThisFurnitureHere), nameof(CanPlaceThisFurnitureHerePostfix), [typeof(Furniture)]);
+            Patch(true, nameof(GameLocation.isBuildable), nameof(IsBuildablePostfix), [typeof(Vector2), typeof(bool)]);
+            Patch(true, nameof(GameLocation.IsBuildableLocation), nameof(IsBuildableLocationPostfix));
+            Patch(true, nameof(GameLocation.doesTileHaveProperty), nameof(DoesTileHavePropertyPostfix), [typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool)]);
+            Patch(true, nameof(GameLocation.CanFreePlaceFurniture), nameof(CanFreePlaceFurniturePostfix));
+            Patch(false, nameof(GameLocation.spawnWeedsAndStones), nameof(SpawnWeedsAndStonesPrefix), [typeof(int), typeof(bool), typeof(bool)]);
+            Patch(false, nameof(GameLocation.loadWeeds), nameof(LoadWeedsPrefix));
         }
 
         // Sets all furniture types as placeable in all locations.
