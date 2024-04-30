@@ -366,8 +366,9 @@ namespace AnythingAnywhere
             ModifiedBuildingData = new Dictionary<string, BuildingData>();
             List<BuildingMaterial> greenhouseMaterials =
             [
-                new BuildingMaterial { ItemId = "(O)388", Amount = 500 },
-                new BuildingMaterial { ItemId = "(O)390", Amount = 200 },
+                new BuildingMaterial { ItemId = "(O)709", Amount = 100 },
+                new BuildingMaterial { ItemId = "(O)338", Amount = 20 },
+                new BuildingMaterial { ItemId = "(O)337", Amount = 10 },
             ];
 
             //ModEntry.monitor.Log($"{Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name")}", LogLevel.Info);
@@ -382,7 +383,7 @@ namespace AnythingAnywhere
                     if (TokenParser.ParseText(copyData.Name) == Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name"))
                     {
                         copyData.Builder = "Robin";
-                        copyData.BuildCost = 60000;
+                        copyData.BuildCost = 150000;
                         copyData.BuildDays = 3;
                         copyData.BuildMaterials = greenhouseMaterials;
                         copyData.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
