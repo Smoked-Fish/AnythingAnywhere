@@ -70,9 +70,10 @@ Building or upgrading multiple buildings will still consume resources, you will 
 ##### `Enable Greenhouse`
 This toggle adds the Greenhouse as a blueprint that you can build. To unlock the blueprint you need to have the Greenhouse unlocked in the Community Center or the Joja path.\
 The blueprint costs:
-* 60000 gold
-* 500 wood
-* 200 stone
+* 150,000 Gold
+* 100 Hardwood
+* 20 Refined Quartz
+* 10 Iridium Bars
 
 ##### `Remove Build Conditions`
 This toggle removes the build conditions on all blueprints. This lets you build things like the Island Obelisk without ever visiting the island.\
@@ -114,8 +115,9 @@ Enabling this WILL make wild trees quickly grow out of control and you will be t
 
 ## Miscellaneous
 - [Animal Relocation](#animal-relocation)
-- [Cask Functionality](#cask-functionality)
-- [Jukebox Functionality](#jukebox-functionality)
+- [Cask Tweaks](#cask-tweaks)
+- [Jukebox Tweaks](#jukebox-tweaks)
+- [Gold Clock Tweaks](#gold-clock-tweaks)
 - [Multiple Mini-Obelisk](#multiple-mini-obelisk)
 - [House/Cabin Bypass](#housecabin-bypass)
 
