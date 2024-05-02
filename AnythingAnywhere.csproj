@@ -10,6 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="images\**" />
+      <EmbeddedResource Remove="images\**" />
+      <None Remove="images\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <AdditionalFiles Remove="i18n\default.json" />
     </ItemGroup>
 
