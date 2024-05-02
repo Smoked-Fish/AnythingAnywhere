@@ -19,7 +19,7 @@ namespace AnythingAnywhere.Framework.Patches.Locations
         internal FarmHousePatch(Harmony harmony) : base(harmony, typeof(FarmHouse)) { }
         internal void Apply()
         {
-            Patch(false, "resetLocalState", nameof(ResetLocalStatePrefix));
+            Patch(PatchType.Prefix, "resetLocalState", nameof(ResetLocalStatePrefix));
         }
 
         private static bool ResetLocalStatePrefix(FarmHouse __instance)

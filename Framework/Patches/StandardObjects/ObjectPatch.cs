@@ -22,8 +22,8 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         internal ObjectPatch(Harmony harmony) : base(harmony, typeof(Object)) { }
         internal void Apply()
         {
-            Patch(false, nameof(Object.placementAction), nameof(PlacementActionPrefix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
-            Patch(false, nameof(Object.canBePlacedHere), nameof(CanBePlacedHerePrefix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
+            Patch(PatchType.Prefix, nameof(Object.placementAction), nameof(PlacementActionPrefix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
+            Patch(PatchType.Prefix, nameof(Object.canBePlacedHere), nameof(CanBePlacedHerePrefix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
         }
 
         // Object placment action

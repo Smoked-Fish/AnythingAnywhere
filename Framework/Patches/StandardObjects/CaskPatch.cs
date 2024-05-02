@@ -13,7 +13,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         internal CaskPatch(Harmony harmony) : base(harmony, typeof(Cask)) { } 
         internal void Apply()
         {
-            Patch(false, nameof(Cask.IsValidCaskLocation), nameof(IsValidCaskLocationPrefix));
+            Patch(PatchType.Prefix, nameof(Cask.IsValidCaskLocation), nameof(IsValidCaskLocationPrefix));
         }
 
         // Enable cask functionality outside of the farm

@@ -27,9 +27,9 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         internal CarpenterMenuPatch(Harmony harmony) : base(harmony, typeof(CarpenterMenu)) { }
         internal void Apply()
         {
-            Patch(false, nameof(CarpenterMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
-            Patch(false, nameof(CarpenterMenu.GetInitialBuildingPlacementViewport), nameof(GetInitialBuildingPlacementViewportPrefix), [typeof(GameLocation)]);
-            _harmony.Patch(original: AccessTools.Method(typeof(CarpenterMenu), nameof(CarpenterMenu.draw), [typeof(SpriteBatch)]), transpiler: new HarmonyMethod(GetType(), nameof(DrawTranspiler)));
+            Patch(PatchType.Prefix, nameof(CarpenterMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
+            Patch(PatchType.Prefix, nameof(CarpenterMenu.GetInitialBuildingPlacementViewport), nameof(GetInitialBuildingPlacementViewportPrefix), [typeof(GameLocation)]);
+            Patch(PatchType.Transpiler, nameof(CarpenterMenu.draw), nameof(DrawTranspiler), [typeof(SpriteBatch)]);
         }
 
         private static bool ReceiveLeftClickPrefix(CarpenterMenu __instance, int x, int y, bool playSound = true)

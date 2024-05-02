@@ -13,7 +13,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         internal MiniJukeboxPatch(Harmony harmony) : base(harmony, typeof(MiniJukebox)) { }
         internal void Apply()
         {
-            Patch(false, nameof(MiniJukebox.checkForAction), nameof(CheckForActionPrefix), [typeof(Farmer), typeof(bool)]);
+            Patch(PatchType.Prefix, nameof(MiniJukebox.checkForAction), nameof(CheckForActionPrefix), [typeof(Farmer), typeof(bool)]);
         }
 
         // Enable jukebox functionality outside of the farm

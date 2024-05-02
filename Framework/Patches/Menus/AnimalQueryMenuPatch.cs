@@ -19,10 +19,10 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         internal AnimalQueryMenuPatch(Harmony harmony) : base(harmony, typeof(AnimalQueryMenu)) { }
         internal void Apply()
         {
-            Patch(false, nameof(AnimalQueryMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
-            Patch(true, nameof(AnimalQueryMenu.performHoverAction), nameof(PerformHoverActionPostfix), [typeof(int), typeof(int)]);
-            Patch(true, nameof(AnimalQueryMenu.prepareForAnimalPlacement), nameof(PrepareForAnimalPlacementPostfix));
-            Patch(true, nameof(AnimalQueryMenu.receiveKeyPress), nameof(ReceiveKeyPressPostfix), [typeof(Keys)]);
+            Patch(PatchType.Prefix, nameof(AnimalQueryMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
+            Patch(PatchType.Postfix, nameof(AnimalQueryMenu.performHoverAction), nameof(PerformHoverActionPostfix), [typeof(int), typeof(int)]);
+            Patch(PatchType.Postfix, nameof(AnimalQueryMenu.prepareForAnimalPlacement), nameof(PrepareForAnimalPlacementPostfix));
+            Patch(PatchType.Postfix, nameof(AnimalQueryMenu.receiveKeyPress), nameof(ReceiveKeyPressPostfix), [typeof(Keys)]);
         }
 
         private static bool ReceiveLeftClickPrefix(AnimalQueryMenu __instance, int x, int y, bool playSound = true)

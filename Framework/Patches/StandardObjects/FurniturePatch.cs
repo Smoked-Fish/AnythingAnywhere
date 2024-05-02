@@ -14,9 +14,9 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         internal FurniturePatch(Harmony harmony) : base(harmony, typeof(Furniture)) { } 
         internal void Apply()
         {   
-            Patch(true, nameof(Furniture.GetAdditionalFurniturePlacementStatus), nameof(GetAdditionalFurniturePlacementStatusPostfix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
-            Patch(true, nameof(Furniture.canBePlacedHere), nameof(CanBePlacedHerePostfix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
-            Patch(true, nameof(Furniture.canBeRemoved), nameof(CanBeRemovedPostfix), [typeof(Farmer)]);
+            Patch(PatchType.Postfix, nameof(Furniture.GetAdditionalFurniturePlacementStatus), nameof(GetAdditionalFurniturePlacementStatusPostfix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
+            Patch(PatchType.Postfix, nameof(Furniture.canBePlacedHere), nameof(CanBePlacedHerePostfix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
+            Patch(PatchType.Postfix, nameof(Furniture.canBeRemoved), nameof(CanBeRemovedPostfix), [typeof(Farmer)]);
         }
 
         // Enables disabling wall furniture in all places in decortable locations. It can be annoying indoors.

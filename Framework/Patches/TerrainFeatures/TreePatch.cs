@@ -10,7 +10,7 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
         internal TreePatch(Harmony harmony) : base(harmony, typeof(Tree)) { }
         internal void Apply()
         {
-            Patch(true, nameof(Tree.IsGrowthBlockedByNearbyTree), nameof(IsGrowthBlockedByNearbyTreePostfix));
+            Patch(PatchType.Postfix, nameof(Tree.IsGrowthBlockedByNearbyTree), nameof(IsGrowthBlockedByNearbyTreePostfix));
         }
 
         public static void IsGrowthBlockedByNearbyTreePostfix(Tree __instance, ref bool __result)

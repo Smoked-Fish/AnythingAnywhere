@@ -15,13 +15,13 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
         internal GameLocationPatch(Harmony harmony) : base(harmony, typeof(GameLocation)) { }
         internal void Apply()
         {
-            Patch(true, nameof(GameLocation.CanPlaceThisFurnitureHere), nameof(CanPlaceThisFurnitureHerePostfix), [typeof(Furniture)]);
-            Patch(true, nameof(GameLocation.isBuildable), nameof(IsBuildablePostfix), [typeof(Vector2), typeof(bool)]);
-            Patch(true, nameof(GameLocation.IsBuildableLocation), nameof(IsBuildableLocationPostfix));
-            Patch(true, nameof(GameLocation.doesTileHaveProperty), nameof(DoesTileHavePropertyPostfix), [typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool)]);
-            Patch(true, nameof(GameLocation.CanFreePlaceFurniture), nameof(CanFreePlaceFurniturePostfix));
-            Patch(false, nameof(GameLocation.spawnWeedsAndStones), nameof(SpawnWeedsAndStonesPrefix), [typeof(int), typeof(bool), typeof(bool)]);
-            Patch(false, nameof(GameLocation.loadWeeds), nameof(LoadWeedsPrefix));
+            Patch(PatchType.Postfix, nameof(GameLocation.CanPlaceThisFurnitureHere), nameof(CanPlaceThisFurnitureHerePostfix), [typeof(Furniture)]);
+            Patch(PatchType.Postfix, nameof(GameLocation.isBuildable), nameof(IsBuildablePostfix), [typeof(Vector2), typeof(bool)]);
+            Patch(PatchType.Postfix, nameof(GameLocation.IsBuildableLocation), nameof(IsBuildableLocationPostfix));
+            Patch(PatchType.Postfix, nameof(GameLocation.doesTileHaveProperty), nameof(DoesTileHavePropertyPostfix), [typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool)]);
+            Patch(PatchType.Postfix, nameof(GameLocation.CanFreePlaceFurniture), nameof(CanFreePlaceFurniturePostfix));
+            Patch(PatchType.Prefix, nameof(GameLocation.spawnWeedsAndStones), nameof(SpawnWeedsAndStonesPrefix), [typeof(int), typeof(bool), typeof(bool)]);
+            Patch(PatchType.Prefix, nameof(GameLocation.loadWeeds), nameof(LoadWeedsPrefix));
         }
 
         // Sets all furniture types as placeable in all locations.
