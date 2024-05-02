@@ -28,8 +28,8 @@ namespace AnythingAnywhere
         internal static IMonitor monitor;
         internal static IModHelper modHelper;
         internal static ICustomBushApi customBushApi;
-        internal static Multiplayer multiplayer;
         internal static ModConfig modConfig;
+        internal static Multiplayer multiplayer;
 
         // Managers
         internal static ApiManager apiManager;
@@ -45,43 +45,36 @@ namespace AnythingAnywhere
             // Setup the monitor, helper and multiplayer
             monitor = Monitor;
             modHelper = helper;
+            modConfig = Helper.ReadConfig<ModConfig>();
             multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
             // Setup the manager
             apiManager = new ApiManager(monitor);
 
             // Load the Harmony patches
-            try
-            {
-                var harmony = new Harmony(this.ModManifest.UniqueID);
+            var harmony = new Harmony(this.ModManifest.UniqueID);
 
-                // Apply GameLocation patches
-                new GameLocationPatch(harmony).Apply();
+            // Apply GameLocation patches
+            new GameLocationPatch(harmony).Apply();
 
-                // Apply Location patches
-                new FarmHousePatch(harmony).Apply();
+            // Apply Location patches
+            new FarmHousePatch(harmony).Apply();
 
-                // Apply Menu patches
-                new CarpenterMenuPatch(harmony).Apply();
-                new AnimalQueryMenuPatch(harmony).Apply();
+            // Apply Menu patches
+            new CarpenterMenuPatch(harmony).Apply();
+            new AnimalQueryMenuPatch(harmony).Apply();
 
-                // Apply StandardObject patches
-                new CaskPatch(harmony).Apply();
-                new FurniturePatch(harmony).Apply();
-                new MiniJukeboxPatch(harmony).Apply();
-                new ObjectPatch(harmony).Apply();
+            // Apply StandardObject patches
+            new CaskPatch(harmony).Apply();
+            new FurniturePatch(harmony).Apply();
+            new MiniJukeboxPatch(harmony).Apply();
+            new ObjectPatch(harmony).Apply();
 
-                // Apply TerrainFeature patches
-                new FruitTreePatch(harmony).Apply();
-                new TreePatch(harmony).Apply();
-                new HoeDirtPatch(harmony).Apply();
+            // Apply TerrainFeature patches
+            new FruitTreePatch(harmony).Apply();
+            new TreePatch(harmony).Apply();
+            new HoeDirtPatch(harmony).Apply();
 
-            }
-            catch (Exception e)
-            {
-                Monitor.Log($"Issue with Harmony patching: {e}", LogLevel.Error);
-                return;
-            }
 
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
@@ -96,8 +89,6 @@ namespace AnythingAnywhere
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            modConfig = Helper.ReadConfig<ModConfig>();
-
             if (Helper.ModRegistry.IsLoaded("furyx639.CustomBush") && apiManager.HookIntoCustomBush(Helper))
             {
                 customBushApi = apiManager.GetCustomBushApi();
