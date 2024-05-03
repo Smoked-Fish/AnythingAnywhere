@@ -1,55 +1,44 @@
 ﻿using StardewModdingAPI;
 using AnythingAnywhere.Framework.Interfaces;
+using System.Collections.Generic;
 using System;
 
 namespace AnythingAnywhere.Framework.Managers
 {
     internal class ApiManager
     {
-        private IMonitor _monitor;
-        private IGenericModConfigMenuApi _genericModConfigMenuApi;
-        private ICustomBushApi _customBushApi;
+        private readonly Dictionary<Type, object> _apis;
 
-        public ApiManager(IMonitor monitor)
+        public ApiManager() 
         {
-            _monitor = monitor;
+            _apis = new Dictionary<Type, object>();
         }
-        internal bool HookIntoGenericModConfigMenu(IModHelper helper)
-        {
-            _genericModConfigMenuApi = helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
 
-            if (_genericModConfigMenuApi is null)
+        public T GetApi<T>(string apiName, bool logError = true) where T : class
+        {
+            if (_apis.TryGetValue(typeof(T), out var api) && api is T typedApi)
             {
-                _monitor.Log("Failed to hook into spacechase0.GenericModConfigMenu.", LogLevel.Error);
-                return false;
+                return typedApi;
             }
 
-            _monitor.Log("Successfully hooked into spacechase0.GenericModConfigMenu.", LogLevel.Trace);
-            return true;
-        }
+            api = ModEntry.modHelper.ModRegistry.GetApi<T>(apiName);
 
-        internal bool HookIntoCustomBush(IModHelper helper)
-        {
-            _customBushApi = helper.ModRegistry.GetApi<ICustomBushApi>("furyx639.CustomBush");
-
-            if (_customBushApi is null)
+            if (api == null)
             {
-                _monitor.Log("Failed to hook into furyx639.CustomBush.", LogLevel.Error);
-                return false;
+                if (logError)
+                {
+                    ModEntry.monitor.Log($"Failed to hook into {apiName}.", LogLevel.Error);
+                }
+                else 
+                {
+                    ModEntry.monitor.Log($"Failed to hook into {apiName}.", LogLevel.Trace);
+                }
+                return null;
             }
 
-            _monitor.Log("Successfully hooked into furyx639.CustomBush.", LogLevel.Debug);
-            return true;
-        }
-
-        public IGenericModConfigMenuApi GetGenericModConfigMenuApi()
-        {
-            return _genericModConfigMenuApi;
-        }
-
-        public ICustomBushApi GetCustomBushApi()
-        {
-            return _customBushApi;
+            _apis[typeof(T)] = api;
+            ModEntry.monitor.Log($"Successfully hooked into {apiName}.", LogLevel.Trace);
+            return (T)api;
         }
     }
 }
