@@ -1,10 +1,7 @@
 ﻿using AnythingAnywhere.Framework.Interfaces;
 using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Object = StardewValley.Object;
 
 namespace AnythingAnywhere.Framework.External.CustomBush
@@ -16,16 +13,16 @@ namespace AnythingAnywhere.Framework.External.CustomBush
 
         public static Bush AddBushModData(Bush bush, Object __instance)
         {
-            if (!ModEntry.modHelper.ModRegistry.IsLoaded("furyx639.CustomBush"))
-                return bush;
+            if (ModEntry.customBushApi != null && ModEntry.modHelper.ModRegistry.IsLoaded("furyx639.CustomBush"))
+            {
+                IEnumerable<(string Id, ICustomBush Data)> customBushData = ModEntry.customBushApi.GetData();
+                if (customBushData.Any(item => item.Id == __instance.QualifiedItemId))
+                {
+                    bush.modData[modDataId] = __instance.QualifiedItemId;
+                    bush.setUpSourceRect();
+                }
+            }
 
-            IEnumerable<(string Id, ICustomBush Data)> customBushData = ModEntry.customBushApi.GetData();
-            if (!customBushData.Any(item => item.Id == __instance.QualifiedItemId))
-                return bush;
-
-
-            bush.modData[modDataId] = __instance.QualifiedItemId;
-            bush.setUpSourceRect();
             return bush;
         }
     }
