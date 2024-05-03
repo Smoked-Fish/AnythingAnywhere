@@ -1,11 +1,5 @@
 ﻿using HarmonyLib;
 using StardewValley;
-using StardewModdingAPI;
-using StardewValley.GameData.Fences;
-using StardewValley.GameData.WildTrees;
-using StardewValley.GameData;
-using StardewValley.Inventories;
-using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Extensions;

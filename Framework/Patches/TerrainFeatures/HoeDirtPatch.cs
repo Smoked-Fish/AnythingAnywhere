@@ -1,8 +1,6 @@
 ﻿using HarmonyLib;
 using StardewValley;
-using StardewModdingAPI;
 using StardewValley.TerrainFeatures;
-using System;
 
 namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {

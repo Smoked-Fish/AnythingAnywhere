@@ -1,3 +1,4 @@
+#nullable disable
 using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;

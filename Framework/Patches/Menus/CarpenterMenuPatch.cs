@@ -4,20 +4,15 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HarmonyLib;
-using Microsoft.Xna.Framework.Input;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using System.Reflection.Emit;
-using Sickhead.Engine.Util;
 using Microsoft.Xna.Framework;
 using xTile.Dimensions;
 using AnythingAnywhere.Framework.UI;
-using static StardewValley.Minigames.MineCart;
 using StardewValley.Objects;
 
 namespace AnythingAnywhere.Framework.Patches.Menus

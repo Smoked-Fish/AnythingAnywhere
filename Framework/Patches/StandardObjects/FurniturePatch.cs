@@ -1,11 +1,8 @@
 ﻿using HarmonyLib;
 using StardewValley;
-using StardewModdingAPI;
 using StardewValley.Objects;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework;
-using System;
-using StardewValley.Menus;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects    
 {

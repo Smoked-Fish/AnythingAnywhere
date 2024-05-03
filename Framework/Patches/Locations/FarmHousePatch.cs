@@ -1,16 +1,6 @@
 ﻿using HarmonyLib;
-using Microsoft.Xna.Framework.Input;
-using StardewModdingAPI;
-using StardewValley.Menus;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewValley.Locations;
-using StardewValley.Minigames;
-using Microsoft.Xna.Framework;
 
 namespace AnythingAnywhere.Framework.Patches.Locations
 {

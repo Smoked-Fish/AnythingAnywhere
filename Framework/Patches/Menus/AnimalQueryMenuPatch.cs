@@ -9,7 +9,6 @@ using xTile.Dimensions;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
-using System;
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
