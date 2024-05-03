@@ -34,9 +34,6 @@ namespace AnythingAnywhere
         // Managers
         internal static ApiManager apiManager;
 
-        // Building Data
-        CustomBuildingData customData;
-
         public override void Entry(IModHelper helper)
         {
             // Setup i18n
@@ -203,25 +200,6 @@ namespace AnythingAnywhere
                 return;
             }
 
-            bool needsUpdate = 
-                customData == null || 
-                modConfig.EnableInstantBuild != customData.EnableInstantBuild || 
-                modConfig.RemoveBuildConditions != customData.RemoveBuildConditions ||
-                modConfig.EnableGreenhouse != customData.EnableGreenhouse;
-
-            if (needsUpdate && (modConfig.EnableInstantBuild || modConfig.RemoveBuildConditions || modConfig.EnableGreenhouse))
-                customData = new CustomBuildingData(customData != null ? customData.DefaultBuildData : Game1.buildingData, modConfig.EnableInstantBuild, modConfig.EnableGreenhouse, modConfig.RemoveBuildConditions);
-
-            if (modConfig.EnableInstantBuild || modConfig.RemoveBuildConditions || modConfig.EnableGreenhouse)
-            {
-                Game1.buildingData = customData.ModifiedBuildingData;
-            }
-            else
-            {
-                Game1.buildingData = customData != null ? customData.DefaultBuildData : Game1.buildingData;
-                customData = null;
-            }
-
             // If none of the above conditions are met, activate the BuildAnywhereMenu
             Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
         }
@@ -339,75 +317,5 @@ namespace AnythingAnywhere
         }
     }
 
-    public class CustomBuildingData
-    {
-        public readonly IDictionary<string, BuildingData> DefaultBuildData;
-        public readonly IDictionary<string, BuildingData> ModifiedBuildingData;
-        public readonly bool EnableInstantBuild;
-        public readonly bool EnableGreenhouse;
-        public readonly bool RemoveBuildConditions;
 
-        public CustomBuildingData(IDictionary<string, BuildingData> buildingData, bool enableInstantBuild, bool enableGreenhouse, bool removeBuildConditions)
-        {
-            this.EnableInstantBuild = enableInstantBuild;
-            this.EnableGreenhouse = enableGreenhouse;
-            this.RemoveBuildConditions = removeBuildConditions;
-
-            DefaultBuildData = buildingData;
-            ModifiedBuildingData = new Dictionary<string, BuildingData>();
-            List<BuildingMaterial> greenhouseMaterials =
-            [
-                new BuildingMaterial { ItemId = "(O)709", Amount = 100 },
-                new BuildingMaterial { ItemId = "(O)338", Amount = 20 },
-                new BuildingMaterial { ItemId = "(O)337", Amount = 10 },
-            ];
-
-            //ModEntry.monitor.Log($"{Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name")}", LogLevel.Info);
-            foreach (KeyValuePair<string, BuildingData> data in buildingData)
-            {
-                // Create a copy so you don't need to reset game to disable
-                BuildingData copyData = DeepCopy(data.Value);
-
-                // Adds the greenhosue as a blueprint for Robin
-                if (ModEntry.modConfig.EnableGreenhouse)
-                {
-                    if (TokenParser.ParseText(copyData.Name) == Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name"))
-                    {
-                        copyData.Builder = "Robin";
-                        copyData.BuildCost = 150000;
-                        copyData.BuildDays = 3;
-                        copyData.BuildMaterials = greenhouseMaterials;
-                        copyData.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
-                    }
-                }
-
-                // Make blueprints free and build instantly
-                if (ModEntry.modConfig.EnableInstantBuild)
-                {
-                    copyData.MagicalConstruction = true;
-                    copyData.BuildCost = 0;
-                    copyData.BuildDays = 0;
-                    copyData.BuildMaterials = [];
-                }
-
-                // Ignore most build conditions.
-                if (ModEntry.modConfig.RemoveBuildConditions)
-                {
-                    copyData.BuildCondition = "";
-                }
-
-                //ModEntry.monitor.Log($"Building Data Name: {TokenParser.ParseText(copyData.Name)}\nBuild Conditions: {copyData.BuildMaterials}\n", LogLevel.Info);
-                ModifiedBuildingData.Add(data.Key, copyData);
-            }
-        }
-
-        private BuildingData DeepCopy(BuildingData source)
-        {
-            if (source == null)
-                return null;
-
-            string serializedObject = JsonConvert.SerializeObject(source);
-            return JsonConvert.DeserializeObject<BuildingData>(serializedObject);
-        }
-    }
 }
