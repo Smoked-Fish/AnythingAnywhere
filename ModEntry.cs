@@ -3,8 +3,6 @@ using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
-using StardewValley.GameData.Buildings;
-using StardewValley.TokenizableStrings;
 using AnythingAnywhere.Framework.UI;
 using AnythingAnywhere.Framework.Managers;
 using AnythingAnywhere.Framework.Interfaces;
@@ -14,8 +12,6 @@ using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System;
@@ -46,7 +42,7 @@ namespace AnythingAnywhere
             multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
             // Setup the manager
-            apiManager = new ApiManager(monitor);
+            apiManager = new ApiManager();
 
             // Load the Harmony patches
             var harmony = new Harmony(this.ModManifest.UniqueID);
@@ -86,9 +82,9 @@ namespace AnythingAnywhere
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            if (Helper.ModRegistry.IsLoaded("furyx639.CustomBush") && apiManager.HookIntoCustomBush(Helper))
+            if (Helper.ModRegistry.IsLoaded("furyx639.CustomBush"))
             {
-                customBushApi = apiManager.GetCustomBushApi();
+                customBushApi = apiManager.GetApi<ICustomBushApi>("furyx639.CustomBush");
             }
 
             if (Helper.ModRegistry.IsLoaded("PeacefulEnd.MultipleMiniObelisks"))
@@ -101,9 +97,9 @@ namespace AnythingAnywhere
                 modConfig.EnableAnimalRelocate = false;
             }
 
-            if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu") && apiManager.HookIntoGenericModConfigMenu(Helper))
+            var configApi = apiManager.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu", false);
+            if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu") && configApi != null)
             {
-                var configApi = apiManager.GetGenericModConfigMenuApi();
                 configApi.Register(ModManifest, () => modConfig = new ModConfig(), () => Helper.WriteConfig(modConfig));
 
                 // Register the main page
@@ -294,28 +290,56 @@ namespace AnythingAnywhere
         {
             PropertyInfo propertyInfo = typeof(ModConfig).GetProperty(name);
             if (propertyInfo == null)
+            {
+                Monitor.Log($"Error: Property '{name}' not found in ModConfig.", LogLevel.Error);
                 return;
+            }
 
-            Func<string> getName = () => I18n.GetByKey($"Config.AnythingAnywhere.{name}.Name");
-            Func<string> getDescription = () => I18n.GetByKey($"Config.AnythingAnywhere.{name}.Description");
+            Func<string> getName = () => I18n.GetByKey($"Config.{typeof(ModEntry).Namespace}.{name}.Name");
+            Func<string> getDescription = () => I18n.GetByKey($"Config.{typeof(ModEntry).Namespace}.{name}.Description");
 
             if (getName == null || getDescription == null)
+            {
+                Monitor.Log($"Error: Localization keys for '{name}' not found.", LogLevel.Error);
                 return;
-
-            if (propertyInfo.PropertyType == typeof(bool))
-            {
-                Func<bool> getter = () => (bool)propertyInfo.GetValue(modConfig);
-                Action<bool> setter = value => propertyInfo.SetValue(modConfig, value);
-                configApi.AddBoolOption(ModManifest, getter, setter, getName, getDescription);
             }
-            else if (propertyInfo.PropertyType == typeof(KeybindList))
+
+            var getterMethod = propertyInfo.GetGetMethod();
+            var setterMethod = propertyInfo.GetSetMethod();
+
+            if (getterMethod == null || setterMethod == null)
             {
-                Func<KeybindList> getter = () => (KeybindList)propertyInfo.GetValue(modConfig);
-                Action<KeybindList> setter = value => propertyInfo.SetValue(modConfig, value);
-                configApi.AddKeybindList(ModManifest, getter, setter, getName, getDescription);
+                Monitor.Log($"Error: The get/set methods are null for property '{name}'.", LogLevel.Error);
+                return;
+            }
+
+            var getter = Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(propertyInfo.PropertyType), modConfig, getterMethod);
+            var setter = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(propertyInfo.PropertyType), modConfig, setterMethod);
+
+            switch (propertyInfo.PropertyType.Name)
+            {
+                case nameof(Boolean):
+                    configApi.AddBoolOption(ModManifest, (Func<bool>)getter, (Action<bool>)setter, getName, getDescription);
+                    break;
+                case nameof(Int32):
+                    configApi.AddNumberOption(ModManifest, (Func<int>)getter, (Action<int>)setter, getName, getDescription);
+                    break;
+                case nameof(Single):
+                    configApi.AddNumberOption(ModManifest, (Func<float>)getter, (Action<float>)setter, getName, getDescription);
+                    break;
+                case nameof(String):
+                    configApi.AddTextOption(ModManifest, (Func<string>)getter, (Action<string>)setter, getName, getDescription);
+                    break;
+                case nameof(SButton):
+                    configApi.AddKeybind(ModManifest, (Func<SButton>)getter, (Action<SButton>)setter, getName, getDescription);
+                    break;
+                case nameof(KeybindList):
+                    configApi.AddKeybindList(ModManifest, (Func<KeybindList>)getter, (Action<KeybindList>)setter, getName, getDescription);
+                    break;
+                default:
+                    Monitor.Log($"Error: Unsupported property type '{propertyInfo.PropertyType.Name}' for '{name}'.", LogLevel.Error);
+                    break;
             }
         }
     }
-
-
 }
