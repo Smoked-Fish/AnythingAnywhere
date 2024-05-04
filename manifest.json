@@ -6,6 +6,7 @@
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
   "MinimumApiVersion": "4.0.0",
+  "MinimumGameVersion": "1.6.8",
   "UpdateKeys": [ "Nexus:21233" ],
   "Dependencies": [
     {
