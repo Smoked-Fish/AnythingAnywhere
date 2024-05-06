@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using StardewValley;
+using StardewValley.GameData.Buildings;
+using StardewValley.TokenizableStrings;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -12,6 +14,7 @@ using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System;
@@ -78,6 +81,9 @@ namespace AnythingAnywhere
 
             // Hook into Input events
             helper.Events.Input.ButtonsChanged += this.OnButtonsChanged;
+
+            // Hook into Content events
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -149,10 +155,10 @@ namespace AnythingAnywhere
                 AddOption(configApi, nameof(ModConfig.EnableCabinsAnywhere));
             }
         }
-        
+
         private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
-            if (!Context.IsWorldReady)
+            if (!Context.IsWorldReady || !modConfig.EnableBuilding)
                 return;
 
             if (modConfig.BuildMenu.JustPressed() && modConfig.EnableBuilding)
@@ -162,10 +168,78 @@ namespace AnythingAnywhere
                 HandleBuildButtonPress("Wizard");
         }
 
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            if (e.Name.IsEquivalentTo("Data/Buildings"))
+            {
+                e.Edit(
+                    asset =>
+                    {
+                        var data = asset.AsDictionary<string, BuildingData>().Data;
+                        foreach (var buildingDataKey in data.Keys.ToList()) 
+                        {
+                            data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], modConfig.EnableInstantBuild, modConfig.EnableGreenhouse, modConfig.RemoveBuildConditions);
+                        }
+                    }, AssetEditPriority.Late);
+
+                return;
+            }
+        }
+        private static BuildingData ModifyBuildingData(BuildingData data, bool enableInstantBuild, bool enableGreenhouse, bool removeBuildConditions)
+        {
+            if (enableGreenhouse && IsGreenhouse(data))
+                SetGreenhouseAttributes(data);
+
+            if (enableInstantBuild)
+                SetInstantBuildAttributes(data);
+
+            if (removeBuildConditions)
+                RemoveBuildConditions(data);
+
+            return data;
+        }
+
+        private static bool IsGreenhouse(BuildingData data)
+        {
+            return TokenParser.ParseText(data.Name) == Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name");
+        }
+
+        private static void SetGreenhouseAttributes(BuildingData data)
+        {
+            // Define greenhouse materials
+            List<BuildingMaterial> greenhouseMaterials = new List<BuildingMaterial>
+            {
+                new BuildingMaterial { ItemId = "(O)709", Amount = 100 },
+                new BuildingMaterial { ItemId = "(O)338", Amount = 20 },
+                new BuildingMaterial { ItemId = "(O)337", Amount = 10 },
+            };
+
+            // Set greenhouse attributes
+            data.Builder = Game1.builder_robin;
+            data.BuildCost = 150000;
+            data.BuildDays = 3;
+            data.BuildMaterials = greenhouseMaterials;
+            data.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
+        }
+
+        private static void SetInstantBuildAttributes(BuildingData data)
+        {
+            data.MagicalConstruction = true;
+            data.BuildCost = 0;
+            data.BuildDays = 0;
+            data.BuildMaterials = [];
+        }
+
+        private static void RemoveBuildConditions(BuildingData data)
+        {
+            data.BuildCondition = "";
+        }
+
         private void HandleBuildButtonPress(string builder)
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
             {
+                modHelper.GameContent.InvalidateCache("Data/Buildings");
                 ActivateBuildAnywhereMenu(builder);
             }
             else if (Game1.activeClickableMenu is BuildAnywhereMenu)
@@ -178,17 +252,11 @@ namespace AnythingAnywhere
 
         private void ActivateBuildAnywhereMenu(string builder)
         {
-            // Check if building is disabled
-            if (!modConfig.EnableBuilding)
-                return;
-
-            // Check if indoors and building indoors is disabled
             if (!Game1.currentLocation.IsOutdoors && !modConfig.EnableBuildingIndoors)
             {
                 Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoBuildingIndoors(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
-            // Check if the builder is the Wizard and either the player doesn't have magic ink or the magic ink bypass is disabled
             bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || modConfig.BypassMagicInk);
             if (builder == "Wizard" && magicInkCheck && !modConfig.EnableInstantBuild)
             {
@@ -196,7 +264,6 @@ namespace AnythingAnywhere
                 return;
             }
 
-            // If none of the above conditions are met, activate the BuildAnywhereMenu
             Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
         }
 
