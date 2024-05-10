@@ -83,6 +83,10 @@
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "Maison de ferme et cabanes sans restrictions",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "CELA PROVOQUERA DES ERREURS ! Désactive les restrictions de la maison de ferme et des cabanes.",
 
+  // TODO
+  // Button
+  "Config.AnythingAnywhere.ResetPage.Button": "Reset Page",
+
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "La construction en intérieur est désactivée",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} ne peut pas être déplacé vers un autre lieu",

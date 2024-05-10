@@ -83,6 +83,9 @@
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "House/Cabin Bypass",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "THIS WILL CAUSE ERRORS! Disables the Cabins and Farm House checks",
 
+  // Button
+  "Config.AnythingAnywhere.ResetPage.Button": "Reset Page",
+
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "Building indoors is disabled",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} cannot be moved to another map",

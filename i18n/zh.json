@@ -56,6 +56,11 @@
   "Config.AnythingAnywhere.MultipleMiniObelisks.Description": "允许在每个位置放置超过2个小方尖碑",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "房屋/小屋绕过",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "这将导致错误！禁用小屋和农舍检查",
+
+  // TODO
+  // Button
+  "Config.AnythingAnywhere.ResetPage.Button": "Reset Page",
+
   // 玩家消息
   "Message.AnythingAnywhere.NoBuildingIndoors": "禁用了室内建筑",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} 无法移动到另一张地图",
