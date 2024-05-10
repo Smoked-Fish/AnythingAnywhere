@@ -40,14 +40,14 @@ namespace AnythingAnywhere.Framework.Patches
                         _harmony.Patch(AccessTools.Method(_object, originalMethod, parameters), transpiler: new HarmonyMethod(GetType(), newMethod));
                         break;
                     default:
-                        ModEntry.monitor.Log($"Unknown patch type: {patchType}", LogLevel.Error);
+                        ModEntry.ModMonitor.Log($"Unknown patch type: {patchType}", LogLevel.Error);
                         return;
                 }
             }
             catch (Exception e)
             {
                 string errorMessage = $"Issue with Harmony patching for method {originalMethod} with {newMethod}: {e}";
-                ModEntry.monitor.Log(errorMessage, LogLevel.Error);
+                ModEntry.ModMonitor.Log(errorMessage, LogLevel.Error);
             }
         }
 

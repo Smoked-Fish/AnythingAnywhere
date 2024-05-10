@@ -17,7 +17,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         // Enable jukebox functionality outside of the farm
         private static bool CheckForActionPrefix(MiniJukebox __instance, Farmer who, ref bool __result, bool justCheckingForActivity = false)
         {
-            if (!ModEntry.modConfig.EnableJukeboxFunctionality)
+            if (!ModEntry.Config.EnableJukeboxFunctionality)
             {
                 return true; //run the original method
             }

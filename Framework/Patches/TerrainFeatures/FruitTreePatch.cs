@@ -15,7 +15,7 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 
         public static void IsGrowthBlockedPostfix(FruitTree __instance, Vector2 tileLocation, GameLocation environment, ref bool __result)
         {
-            if (ModEntry.modConfig.EnableFruitTreeTweaks)
+            if (ModEntry.Config.EnableFruitTreeTweaks)
                 __result = false;
         }
     }

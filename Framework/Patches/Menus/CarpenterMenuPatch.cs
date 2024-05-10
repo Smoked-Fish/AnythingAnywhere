@@ -29,7 +29,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
         private static bool ReceiveLeftClickPrefix(CarpenterMenu __instance, int x, int y, bool playSound = true)
         {
-            if (!ModEntry.modConfig.EnableBuilding)
+            if (!ModEntry.Config.EnableBuilding)
                 return true;
 
             if (__instance.freeze)
@@ -119,12 +119,12 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     toUpgrade.daysUntilUpgrade.Value = Math.Max(__instance.Blueprint.BuildDays, 1);
                     toUpgrade.showUpgradeAnimation(__instance.TargetLocation);
                     Game1.playSound("axe");
-                    if (!ModEntry.modConfig.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
+                    if (!ModEntry.Config.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
                     {
                         DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenuAfterSuccessfulBuild, 1500);
                         __instance.freeze = true;
                     }
-                    ModEntry.multiplayer.globalChatInfoMessage("BuildingBuild", Game1.player.Name, "aOrAn:" + __instance.Blueprint.TokenizedDisplayName, __instance.Blueprint.TokenizedDisplayName, Game1.player.farmName.Value);
+                    ModEntry.Multiplayer.globalChatInfoMessage("BuildingBuild", Game1.player.Name, "aOrAn:" + __instance.Blueprint.TokenizedDisplayName, __instance.Blueprint.TokenizedDisplayName, Game1.player.farmName.Value);
                     if (__instance.Blueprint.BuildDays < 1)
                     {
                         toUpgrade.FinishConstruction();
@@ -154,7 +154,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     if (__instance.tryToBuild())
                     {
                         __instance.ConsumeResources();
-                        if (!ModEntry.modConfig.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
+                        if (!ModEntry.Config.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
                         {
                             DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenuAfterSuccessfulBuild, 2000);
                             __instance.freeze = true;
@@ -228,7 +228,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                             destroyed.showDestroyedAnimation(__instance.TargetLocation);
                             Game1.playSound("explosion");
                             Utility.spreadAnimalsAround(destroyed, farm);
-                            if (!ModEntry.modConfig.BuildModifier.IsDown())
+                            if (!ModEntry.Config.BuildModifier.IsDown())
                             {
                                 DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenu, 1500);
                                 __instance.freeze = true;
@@ -247,7 +247,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
         private static bool GetInitialBuildingPlacementViewportPrefix(CarpenterMenu __instance, GameLocation location, ref Location __result)
         {
-            if (!ModEntry.modConfig.EnableBuilding)
+            if (!ModEntry.Config.EnableBuilding)
                 return true;
 
             if (Game1.activeClickableMenu is BuildAnywhereMenu)
@@ -284,7 +284,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             }
             catch (Exception e)
             {
-                ModEntry.monitor.Log($"There was an issue modifying the instructions for {typeof(CarpenterMenu)}.{original.Name}: {e}", LogLevel.Error);
+                ModEntry.ModMonitor.Log($"There was an issue modifying the instructions for {typeof(CarpenterMenu)}.{original.Name}: {e}", LogLevel.Error);
                 return instructions;
             }
         }

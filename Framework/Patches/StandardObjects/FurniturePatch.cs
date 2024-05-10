@@ -26,7 +26,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __instance.furniture_type.Value == 13 ||
                 __instance.QualifiedItemId == "(F)1293");   
 
-            if (!ModEntry.modConfig.EnableWallFurnitureIndoors && location is DecoratableLocation decoratableLocation && !ModEntry.modConfig.EnableBuildAnywhere)
+            if (!ModEntry.Config.EnableWallFurnitureIndoors && location is DecoratableLocation decoratableLocation && !ModEntry.Config.EnableBuildAnywhere)
             {
                 if (!isWallFurniture)
                 {
@@ -43,13 +43,13 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         //Enable placing furniture in walls
         private static void CanBePlacedHerePostfix(Furniture __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
         {
-            if (ModEntry.modConfig.EnableFreePlace)
+            if (ModEntry.Config.EnableFreePlace)
                 __result = true;
         }
 
         private static void CanBeRemovedPostfix(Furniture __instance, Farmer who, ref bool __result)
         {
-            if (!ModEntry.modConfig.EnableRugRemovalBypass)
+            if (!ModEntry.Config.EnableRugRemovalBypass)
                 return;
 
             GameLocation location = __instance.Location;

@@ -13,7 +13,7 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 
         public static void IsGrowthBlockedByNearbyTreePostfix(Tree __instance, ref bool __result)
         {
-            if (ModEntry.modConfig.EnableWildTreeTweaks)
+            if (ModEntry.Config.EnableWildTreeTweaks)
                 __result = false;
         }
     }

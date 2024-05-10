@@ -15,7 +15,7 @@ namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
         public static bool PlantPrefix(HoeDirt __instance, string itemId, Farmer who, bool isFertilizer, ref bool __result)
         {
             GameLocation location = __instance.Location;
-            if (ModEntry.modConfig.EnablePlanting)
+            if (ModEntry.Config.EnablePlanting)
             {
                 location.IsFarm = true;
                 return true;

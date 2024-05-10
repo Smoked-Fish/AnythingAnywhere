@@ -13,9 +13,9 @@ namespace AnythingAnywhere.Framework.External.CustomBush
 
         public static Bush AddBushModData(Bush bush, Object __instance)
         {
-            if (ModEntry.customBushApi != null && ModEntry.modHelper.ModRegistry.IsLoaded("furyx639.CustomBush"))
+            if (ModEntry.CustomBushApi != null && ModEntry.ModHelper.ModRegistry.IsLoaded("furyx639.CustomBush"))
             {
-                IEnumerable<(string Id, ICustomBush Data)> customBushData = ModEntry.customBushApi.GetData();
+                IEnumerable<(string Id, ICustomBush Data)> customBushData = ModEntry.CustomBushApi.GetData();
                 if (customBushData.Any(item => item.Id == __instance.QualifiedItemId))
                 {
                     bush.modData[modDataId] = __instance.QualifiedItemId;

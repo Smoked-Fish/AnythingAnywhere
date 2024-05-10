@@ -9,6 +9,7 @@ using xTile.Dimensions;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using Common.Managers;
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
@@ -26,7 +27,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
         private static bool ReceiveLeftClickPrefix(AnimalQueryMenu __instance, int x, int y, bool playSound = true)
         {
-            if (!ModEntry.modConfig.EnableAnimalRelocate)
+            if (!ModEntry.Config.EnableAnimalRelocate)
                 return true;
 
             if (Game1.globalFade)
@@ -101,7 +102,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
                     validLocations.Add(new KeyValuePair<string, string>(farm.NameOrUniqueName, farm.DisplayName));
                 }
-                Game1.currentLocation.ShowPagedResponses(I18n.Message_AnythingAnywhere_ChooseAnimalLocation(), validLocations, delegate (string value)
+                Game1.currentLocation.ShowPagedResponses(TranslationHelper.GetByKey("Message.AnythingAnywhere.ChooseAnimalLocation"), validLocations, delegate (string value)
                 {
                     GameLocation locationFromName = Game1.getLocationFromName(value);
 
@@ -117,7 +118,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     }
                     else
                     {
-                        ModEntry.monitor.Log("Can't find location '" + value + "' for animal relocate menu.", LogLevel.Error);
+                        ModEntry.ModMonitor.Log("Can't find location '" + value + "' for animal relocate menu.", LogLevel.Error);
                     }
                 }, auto_select_single_choice: true);
                 return false;
@@ -128,7 +129,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         // Update current location to TargetLocation
         private static void PrepareForAnimalPlacementPostfix(AnimalQueryMenu __instance)
         {
-            if (!ModEntry.modConfig.EnableAnimalRelocate)
+            if (!ModEntry.Config.EnableAnimalRelocate)
                 return;
 
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
@@ -151,7 +152,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         // Show correct hover colors
         private static void PerformHoverActionPostfix(AnimalQueryMenu __instance, int x, int y)
         {
-            if (!ModEntry.modConfig.EnableAnimalRelocate)
+            if (!ModEntry.Config.EnableAnimalRelocate)
                 return;
 
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
@@ -182,7 +183,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         // Enable WASD on move animal menu
         private static void ReceiveKeyPressPostfix(AnimalQueryMenu __instance, Keys key)
         {
-            if (!ModEntry.modConfig.EnableAnimalRelocate)
+            if (!ModEntry.Config.EnableAnimalRelocate)
                 return;
 
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
