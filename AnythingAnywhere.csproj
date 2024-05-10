@@ -7,6 +7,7 @@
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
     <EnableHarmony>true</EnableHarmony>
+    <NoWarn>$(NoWarn);NU1803</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,8 @@
 
   <ItemGroup>
     <None Remove=".gitignore" />
+    <None Remove=".gitmodules" />
+    <None Remove="Framework\Common\.git" />
     <None Remove="LICENSE" />
     <None Remove="README.md" />
   </ItemGroup>
@@ -27,7 +30,6 @@
 
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.1" />
   </ItemGroup>
 
   <ProjectExtensions>
