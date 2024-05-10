@@ -6,7 +6,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using AnythingAnywhere.Framework.UI;
-using AnythingAnywhere.Framework.Managers;
 using AnythingAnywhere.Framework.Interfaces;
 using AnythingAnywhere.Framework.Patches.Menus;
 using AnythingAnywhere.Framework.Patches.Locations;
@@ -18,37 +17,35 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System;
+using Common.Managers;
+using Common.Util;
 
 namespace AnythingAnywhere
 {
     public class ModEntry : Mod
     {
-        // Shared static helpers
-        internal static IMonitor monitor;
-        internal static IModHelper modHelper;
-        internal static ICustomBushApi customBushApi;
-        internal static ModConfig modConfig;
-        internal static Multiplayer multiplayer;
+        internal static IModHelper ModHelper { get; set; }
+        internal static IMonitor ModMonitor { get; set; }
+        internal static ModConfig Config { get; set; }
+        internal static Multiplayer Multiplayer { get; set; }
+        internal static ApiManager ApiManager { get; set; }
+        internal static ICustomBushApi CustomBushApi { get; set; }
 
-        // Managers
-        internal static ApiManager apiManager;
+        private static Harmony harmony;
 
         public override void Entry(IModHelper helper)
         {
-            // Setup i18n
-            I18n.Init(helper.Translation);
-
-            // Setup the monitor, helper and multiplayer
-            monitor = Monitor;
-            modHelper = helper;
-            modConfig = Helper.ReadConfig<ModConfig>();
-            multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
+            // Setup the monitor, helper, config and multiplayer
+            ModMonitor = Monitor;
+            ModHelper = helper;
+            Config = Helper.ReadConfig<ModConfig>();
+            Multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
             // Setup the manager
-            apiManager = new ApiManager();
+            ApiManager = new ApiManager(helper, ModMonitor);
 
             // Load the Harmony patches
-            var harmony = new Harmony(this.ModManifest.UniqueID);
+            harmony = new Harmony(this.ModManifest.UniqueID);
 
             // Apply GameLocation patches
             new GameLocationPatch(harmony).Apply();
@@ -84,87 +81,92 @@ namespace AnythingAnywhere
 
             // Hook into Content events
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
+
+            // Hook into Custom Button events
+            ButtonOptions.Click += this.OnClick;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             if (Helper.ModRegistry.IsLoaded("furyx639.CustomBush"))
             {
-                customBushApi = apiManager.GetApi<ICustomBushApi>("furyx639.CustomBush");
+                CustomBushApi = ApiManager.GetApi<ICustomBushApi>("furyx639.CustomBush");
             }
 
             if (Helper.ModRegistry.IsLoaded("PeacefulEnd.MultipleMiniObelisks"))
             {
-                modConfig.MultipleMiniObelisks = true;
+                Config.MultipleMiniObelisks = true;
             }
 
             if (Helper.ModRegistry.IsLoaded("mouahrara.RelocateFarmAnimals"))
             {
-                modConfig.EnableAnimalRelocate = false;
+                Config.EnableAnimalRelocate = false;
             }
 
-            var configApi = apiManager.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu", false);
-            if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu") && configApi != null)
+            ConfigManager.Initialize(ModManifest, Config, ModHelper, ModMonitor, harmony, true);
+            if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu"))
             {
-                configApi.Register(ModManifest, () => modConfig = new ModConfig(), () => Helper.WriteConfig(modConfig));
-
                 // Register the main page
-                configApi.AddPageLink(ModManifest, "PlacingPage", () => String.Concat("> ", I18n.Config_AnythingAnywhere_Placing_Title()));
-                configApi.AddPageLink(ModManifest, "BuildingsPage", () => String.Concat("> ", I18n.Config_AnythingAnywhere_Building_Title()));
-                configApi.AddPageLink(ModManifest, "FarmingPage", () => String.Concat("> ", I18n.Config_AnythingAnywhere_Farming_Title()));
-                configApi.AddPageLink(ModManifest, "OtherPage", () => String.Concat("> ", I18n.Config_AnythingAnywhere_Other_Title()));
+                ConfigManager.AddPageLink("Placing");
+                ConfigManager.AddPageLink("Building");
+                ConfigManager.AddPageLink("Farming");
+                ConfigManager.AddPageLink("Other");
 
                 // Register the placing settings
-                configApi.AddPage(ModManifest, "PlacingPage", I18n.Config_AnythingAnywhere_Placing_Title);
-                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Placing_Title);
-                AddOption(configApi, nameof(ModConfig.EnablePlacing));
-                AddOption(configApi, nameof(ModConfig.EnableFreePlace));
-                AddOption(configApi, nameof(ModConfig.EnableWallFurnitureIndoors));
-                AddOption(configApi, nameof(ModConfig.EnableRugRemovalBypass));
+                ConfigManager.AddPage("Placing");
+                ConfigManager.AddButtonOption("Placing", "ResetPage", "Placing");
+                ConfigManager.AddHorizontalSeparator();
+                ConfigManager.AddOption(nameof(ModConfig.EnablePlacing));
+                ConfigManager.AddOption(nameof(ModConfig.EnableFreePlace));
+                ConfigManager.AddOption(nameof(ModConfig.EnableWallFurnitureIndoors));
+                ConfigManager.AddOption(nameof(ModConfig.EnableRugRemovalBypass));
 
                 // Register the build settings
-                configApi.AddPage(ModManifest, "BuildingsPage", I18n.Config_AnythingAnywhere_Building_Title);
-                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Building_Title);
-                AddOption(configApi, nameof(ModConfig.EnableBuilding));
-                AddOption(configApi, nameof(ModConfig.EnableBuildAnywhere));
-                AddOption(configApi, nameof(ModConfig.EnableInstantBuild));
-                AddOption(configApi, nameof(ModConfig.BuildMenu));
-                AddOption(configApi, nameof(ModConfig.WizardBuildMenu));
-                AddOption(configApi, nameof(ModConfig.BuildModifier));
-                AddOption(configApi, nameof(ModConfig.EnableGreenhouse));
-                AddOption(configApi, nameof(ModConfig.RemoveBuildConditions));
-                AddOption(configApi, nameof(ModConfig.EnableBuildingIndoors));
-                AddOption(configApi, nameof(ModConfig.BypassMagicInk));
+                ConfigManager.AddPage("Building");
+                ConfigManager.AddButtonOption("Building", "ResetPage", "Building");
+                ConfigManager.AddHorizontalSeparator();
+                ConfigManager.AddOption(nameof(ModConfig.EnableBuilding));
+                ConfigManager.AddOption(nameof(ModConfig.EnableBuildAnywhere));
+                ConfigManager.AddOption(nameof(ModConfig.EnableInstantBuild));
+                ConfigManager.AddOption(nameof(ModConfig.BuildMenu));
+                ConfigManager.AddOption(nameof(ModConfig.WizardBuildMenu));
+                ConfigManager.AddOption(nameof(ModConfig.BuildModifier));
+                ConfigManager.AddOption(nameof(ModConfig.EnableGreenhouse));
+                ConfigManager.AddOption(nameof(ModConfig.RemoveBuildConditions));
+                ConfigManager.AddOption(nameof(ModConfig.EnableBuildingIndoors));
+                ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
 
                 // Register the farming settings
-                configApi.AddPage(ModManifest, "FarmingPage", I18n.Config_AnythingAnywhere_Farming_Title);
-                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Farming_Title);
-                AddOption(configApi, nameof(ModConfig.EnablePlanting));
-                AddOption(configApi, nameof(ModConfig.EnableDiggingAll));
-                AddOption(configApi, nameof(ModConfig.EnableFruitTreeTweaks));
-                AddOption(configApi, nameof(ModConfig.EnableWildTreeTweaks));
+                ConfigManager.AddPage("Farming");
+                ConfigManager.AddButtonOption("Farming", "ResetPage", "Farming");
+                ConfigManager.AddHorizontalSeparator();
+                ConfigManager.AddOption(nameof(ModConfig.EnablePlanting));
+                ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
+                ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
+                ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));
 
                 // Register the other settings
-                configApi.AddPage(ModManifest, "OtherPage", I18n.Config_AnythingAnywhere_Other_Title);
-                configApi.AddSectionTitle(ModManifest, I18n.Config_AnythingAnywhere_Other_Title);
-                AddOption(configApi, nameof(ModConfig.EnableAnimalRelocate));
-                AddOption(configApi, nameof(ModConfig.EnableCaskFunctionality));
-                AddOption(configApi, nameof(ModConfig.EnableJukeboxFunctionality));
-                AddOption(configApi, nameof(ModConfig.EnableGoldClockAnywhere));
-                AddOption(configApi, nameof(ModConfig.MultipleMiniObelisks));
-                AddOption(configApi, nameof(ModConfig.EnableCabinsAnywhere));
+                ConfigManager.AddPage("Other");
+                ConfigManager.AddButtonOption("Other", "ResetPage", "Other");
+                ConfigManager.AddHorizontalSeparator();
+                ConfigManager.AddOption(nameof(ModConfig.EnableAnimalRelocate));
+                ConfigManager.AddOption(nameof(ModConfig.EnableCaskFunctionality));
+                ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
+                ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
+                ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
+                ConfigManager.AddOption(nameof(ModConfig.EnableCabinsAnywhere));
             }
         }
 
         private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
-            if (!Context.IsWorldReady || !modConfig.EnableBuilding)
+            if (!Context.IsWorldReady || !Config.EnableBuilding)
                 return;
 
-            if (modConfig.BuildMenu.JustPressed() && modConfig.EnableBuilding)
+            if (Config.BuildMenu.JustPressed() && Config.EnableBuilding)
                 HandleBuildButtonPress("Robin");
 
-            if (modConfig.WizardBuildMenu.JustPressed() && modConfig.EnableBuilding)
+            if (Config.WizardBuildMenu.JustPressed() && Config.EnableBuilding)
                 HandleBuildButtonPress("Wizard");
         }
 
@@ -178,13 +180,20 @@ namespace AnythingAnywhere
                         var data = asset.AsDictionary<string, BuildingData>().Data;
                         foreach (var buildingDataKey in data.Keys.ToList()) 
                         {
-                            data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], modConfig.EnableInstantBuild, modConfig.EnableGreenhouse, modConfig.RemoveBuildConditions);
+                            data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], Config.EnableInstantBuild, Config.EnableGreenhouse, Config.RemoveBuildConditions);
                         }
                     }, AssetEditPriority.Late);
 
                 return;
             }
         }
+
+        private void OnClick(ButtonClickEventArgs e)
+        {
+            Config.InitializeDefaultConfig(e.FieldID);
+            PageHelper.OpenPage(PageHelper.CurrPage);
+        }
+
         private static BuildingData ModifyBuildingData(BuildingData data, bool enableInstantBuild, bool enableGreenhouse, bool removeBuildConditions)
         {
             if (enableGreenhouse && IsGreenhouse(data))
@@ -239,7 +248,7 @@ namespace AnythingAnywhere
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
             {
-                modHelper.GameContent.InvalidateCache("Data/Buildings");
+                ModHelper.GameContent.InvalidateCache("Data/Buildings");
                 ActivateBuildAnywhereMenu(builder);
             }
             else if (Game1.activeClickableMenu is BuildAnywhereMenu)
@@ -252,15 +261,15 @@ namespace AnythingAnywhere
 
         private void ActivateBuildAnywhereMenu(string builder)
         {
-            if (!Game1.currentLocation.IsOutdoors && !modConfig.EnableBuildingIndoors)
+            if (!Game1.currentLocation.IsOutdoors && !Config.EnableBuildingIndoors)
             {
-                Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoBuildingIndoors(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                Game1.addHUDMessage(new HUDMessage(TranslationHelper.GetByKey("Message.AnythingAnywhere.NoBuildingIndoors"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
-            bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || modConfig.BypassMagicInk);
-            if (builder == "Wizard" && magicInkCheck && !modConfig.EnableInstantBuild)
+            bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || Config.BypassMagicInk);
+            if (builder == "Wizard" && magicInkCheck && !Config.EnableInstantBuild)
             {
-                Game1.addHUDMessage(new HUDMessage(I18n.Message_AnythingAnywhere_NoMagicInk(), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                Game1.addHUDMessage(new HUDMessage(TranslationHelper.GetByKey("Message.AnythingAnywhere.NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
 
@@ -278,7 +287,7 @@ namespace AnythingAnywhere
             // check context
             if (!Context.IsWorldReady)
             {
-                monitor.Log("You need to load a save to use this command.", LogLevel.Error);
+                ModMonitor.Log("You need to load a save to use this command.", LogLevel.Error);
                 return;
             }
 
@@ -291,7 +300,7 @@ namespace AnythingAnywhere
             if (location == null)
             {
                 string[] locationNames = (from loc in Game1.locations where !string.IsNullOrWhiteSpace(loc.Name) orderby loc.Name select loc.Name).ToArray();
-                monitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
+                ModMonitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
                 return;
             }
 
@@ -306,7 +315,7 @@ namespace AnythingAnywhere
                 }
             }
 
-            monitor.Log($"Command removed {removed} furniture objects at {location.NameOrUniqueName}", LogLevel.Info);
+            ModMonitor.Log($"Command removed {removed} furniture objects at {location.NameOrUniqueName}", LogLevel.Info);
             return;
         }
 
@@ -321,7 +330,7 @@ namespace AnythingAnywhere
             // check context
             if (!Context.IsWorldReady)
             {
-                monitor.Log("You need to load a save to use this command.", LogLevel.Error);
+                ModMonitor.Log("You need to load a save to use this command.", LogLevel.Error);
                 return;
             }
 
@@ -334,7 +343,7 @@ namespace AnythingAnywhere
             if (location == null)
             {
                 string[] locationNames = (from loc in Game1.locations where !string.IsNullOrWhiteSpace(loc.Name) orderby loc.Name select loc.Name).ToArray();
-                monitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
+                ModMonitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
                 return;
             }
 
@@ -349,64 +358,8 @@ namespace AnythingAnywhere
                 }
             }
 
-            monitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
+            ModMonitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
             return;
-        }
-
-        private void AddOption(IGenericModConfigMenuApi configApi, string name)
-        {
-            PropertyInfo propertyInfo = typeof(ModConfig).GetProperty(name);
-            if (propertyInfo == null)
-            {
-                Monitor.Log($"Error: Property '{name}' not found in ModConfig.", LogLevel.Error);
-                return;
-            }
-
-            Func<string> getName = () => I18n.GetByKey($"Config.{typeof(ModEntry).Namespace}.{name}.Name");
-            Func<string> getDescription = () => I18n.GetByKey($"Config.{typeof(ModEntry).Namespace}.{name}.Description");
-
-            if (getName == null || getDescription == null)
-            {
-                Monitor.Log($"Error: Localization keys for '{name}' not found.", LogLevel.Error);
-                return;
-            }
-
-            var getterMethod = propertyInfo.GetGetMethod();
-            var setterMethod = propertyInfo.GetSetMethod();
-
-            if (getterMethod == null || setterMethod == null)
-            {
-                Monitor.Log($"Error: The get/set methods are null for property '{name}'.", LogLevel.Error);
-                return;
-            }
-
-            var getter = Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(propertyInfo.PropertyType), modConfig, getterMethod);
-            var setter = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(propertyInfo.PropertyType), modConfig, setterMethod);
-
-            switch (propertyInfo.PropertyType.Name)
-            {
-                case nameof(Boolean):
-                    configApi.AddBoolOption(ModManifest, (Func<bool>)getter, (Action<bool>)setter, getName, getDescription);
-                    break;
-                case nameof(Int32):
-                    configApi.AddNumberOption(ModManifest, (Func<int>)getter, (Action<int>)setter, getName, getDescription);
-                    break;
-                case nameof(Single):
-                    configApi.AddNumberOption(ModManifest, (Func<float>)getter, (Action<float>)setter, getName, getDescription);
-                    break;
-                case nameof(String):
-                    configApi.AddTextOption(ModManifest, (Func<string>)getter, (Action<string>)setter, getName, getDescription);
-                    break;
-                case nameof(SButton):
-                    configApi.AddKeybind(ModManifest, (Func<SButton>)getter, (Action<SButton>)setter, getName, getDescription);
-                    break;
-                case nameof(KeybindList):
-                    configApi.AddKeybindList(ModManifest, (Func<KeybindList>)getter, (Action<KeybindList>)setter, getName, getDescription);
-                    break;
-                default:
-                    Monitor.Log($"Error: Unsupported property type '{propertyInfo.PropertyType.Name}' for '{name}'.", LogLevel.Error);
-                    break;
-            }
         }
     }
 }
