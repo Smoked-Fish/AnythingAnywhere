@@ -16,9 +16,6 @@ namespace AnythingAnywhere.Framework.UI
         // Check if a building is valid for a location
         public override bool IsValidBuildingForLocation(string typeId, BuildingData data, GameLocation targetLocation)
         {
-            if ((typeId == "Cabin" && TargetLocation.Name != "Farm") && !ModEntry.Config.EnableCabinsAnywhere)
-                return false;
-
             return true;
         }
     }
