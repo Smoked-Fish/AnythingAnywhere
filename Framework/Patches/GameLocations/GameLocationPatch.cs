@@ -16,7 +16,6 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
         {
             Patch(PatchType.Postfix, nameof(GameLocation.CanPlaceThisFurnitureHere), nameof(CanPlaceThisFurnitureHerePostfix), [typeof(Furniture)]);
             Patch(PatchType.Postfix, nameof(GameLocation.isBuildable), nameof(IsBuildablePostfix), [typeof(Vector2), typeof(bool)]);
-            Patch(PatchType.Postfix, nameof(GameLocation.IsBuildableLocation), nameof(IsBuildableLocationPostfix));
             Patch(PatchType.Postfix, nameof(GameLocation.doesTileHaveProperty), nameof(DoesTileHavePropertyPostfix), [typeof(int), typeof(int), typeof(string), typeof(string), typeof(bool)]);
             Patch(PatchType.Postfix, nameof(GameLocation.CanFreePlaceFurniture), nameof(CanFreePlaceFurniturePostfix));
             Patch(PatchType.Prefix, nameof(GameLocation.spawnWeedsAndStones), nameof(SpawnWeedsAndStonesPrefix), [typeof(int), typeof(bool), typeof(bool)]);
@@ -52,22 +51,6 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
                     __result = false; // Set to false if the tile is not passable
                 }
             }
-        }
-
-        // Set all locations buildable.
-        private static void IsBuildableLocationPostfix(GameLocation __instance, ref bool __result)
-        {
-            if (ModEntry.Config.EnableBuilding)
-            {
-                if (ModEntry.Config.EnableBuildingIndoors)
-                    __result = true;
-
-                if (__instance.IsOutdoors)
-                    __result = true;
-            }
-
-            if (ModEntry.Config.EnableBuildAnywhere)
-                __result = true;
         }
 
         // Set all tiles as diggable
