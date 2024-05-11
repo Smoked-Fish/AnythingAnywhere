@@ -2,12 +2,14 @@
 using StardewModdingAPI.Utilities;
 using System.Reflection;
 using System;
-using System.ComponentModel;
+using Common.Interfaces;
 
 namespace AnythingAnywhere
 {
-    internal class ModConfig
+    internal class ModConfig : IConfigurable
     {
+        public event EventHandler<ConfigChangedEventArgs> ConfigChanged;
+
 
         // PLACING
 
@@ -96,6 +98,11 @@ namespace AnythingAnywhere
             InitializeDefaultConfig();
         }
 
+        private void OnConfigChanged(string propertyName, object oldValue, object newValue)
+        {
+            ConfigChanged?.Invoke(this, new ConfigChangedEventArgs(propertyName, oldValue, newValue));
+        }
+
         public void InitializeDefaultConfig(string category = null)
         {
             PropertyInfo[] properties = GetType().GetProperties();
@@ -117,10 +124,34 @@ namespace AnythingAnywhere
                         continue;
                     }
 
+                    OnConfigChanged(property.Name, property.GetValue(this), defaultValue);
                     property.SetValue(this, defaultValue);
                 }
             }
         }
+
+        public void SetConfig(string propertyName, object value)
+        {
+            PropertyInfo property = GetType().GetProperty(propertyName);
+            if (property != null)
+            {
+                try
+                {
+                    object convertedValue = Convert.ChangeType(value, property.PropertyType);
+                    OnConfigChanged(property.Name, property.GetValue(this), convertedValue);
+                    property.SetValue(this, convertedValue);
+                }
+                catch (Exception ex)
+                {
+                    ModEntry.ModMonitor.Log($"Error setting property '{propertyName}': {ex.Message}", LogLevel.Error);
+                }
+            }
+            else
+            {
+                ModEntry.ModMonitor.Log($"Property '{propertyName}' not found in config.", LogLevel.Error);
+            }
+        }
+
     }
 
     [AttributeUsage(AttributeTargets.Property)]
@@ -133,6 +164,20 @@ namespace AnythingAnywhere
         {
             Value = value;
             Category = category;
+        }
+    }
+
+    internal class ConfigChangedEventArgs : EventArgs
+    {
+        public string ConfigName { get; }
+        public object OldValue { get; }
+        public object NewValue { get; }
+
+        public ConfigChangedEventArgs(string configName, object oldValue, object newValue)
+        {
+            ConfigName = configName;
+            OldValue = oldValue;
+            NewValue = newValue;
         }
     }
 }
