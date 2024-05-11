@@ -200,7 +200,8 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             // Bypass fruit tree placement checks
             if (__instance.isSapling())
             {
-                if ((__instance.IsWildTreeSapling() && !ModEntry.Config.EnableWildTreeTweaks) || (__instance.IsFruitTreeSapling() && !ModEntry.Config.EnablePlacing))
+                if ((__instance.IsWildTreeSapling() && !ModEntry.Config.EnablePlacing && !ModEntry.Config.EnablePlanting) || 
+                    (__instance.IsFruitTreeSapling() && !ModEntry.Config.EnablePlacing && !ModEntry.Config.EnablePlanting))
                 {
                     if (FruitTree.IsTooCloseToAnotherTree(new Vector2(x / 64, y / 64), location))
                     {
