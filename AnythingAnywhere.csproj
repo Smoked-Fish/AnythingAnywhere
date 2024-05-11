@@ -7,7 +7,8 @@
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
     <EnableHarmony>true</EnableHarmony>
-    <NoWarn>$(NoWarn);NU1803</NoWarn>
+    <DefineConstants>EnableCommonPatches</DefineConstants>
+    <EnableCommonPatches>true</EnableCommonPatches>
   </PropertyGroup>
 
   <ItemGroup>
