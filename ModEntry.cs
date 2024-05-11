@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using StardewValley;
 using StardewValley.GameData.Buildings;
+using StardewValley.GameData.Locations;
 using StardewValley.TokenizableStrings;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -17,9 +18,6 @@ using System.Linq;
 using System;
 using Common.Managers;
 using Common.Util;
-using StardewValley.GameData.Locations;
-using StardewValley.Buildings;
-using StardewValley.Locations;
 
 namespace AnythingAnywhere
 {
@@ -135,6 +133,9 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.RemoveBuildConditions));
                 ConfigManager.AddOption(nameof(ModConfig.EnableBuildingIndoors));
                 ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
+                ConfigManager.AddHorizontalSeparator();
+                ConfigManager.AddButtonOption("BlacklistedLocations", "BlacklistedLocations", "BlacklistCurrentLocation");
+
 
                 // Register the farming settings
                 ConfigManager.AddPage("Farming");
@@ -156,15 +157,22 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
             }
         }
-
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             foreach (GameLocation location in Game1.locations)
             {
-                if ((location.buildings.Any((Building p) => p.GetIndoors() is Cabin) || 
-                    location.buildings.Any((Building p) => p.GetIndoors() is FarmHouse)) && 
-                    location.isAlwaysActive.Value == false)
+                if (Config.BlacklistedLocations != null && Config.BlacklistedLocations.Contains(location.NameOrUniqueName)) continue;
+                if (location.buildings.Any() && location.isAlwaysActive.Value == false)
                 {
+                    location.Map.Properties.TryGetValue("CanBuildHere", out var value);
+                    if (value == null)
+                    {
+                        location.Map.Properties.Add("CanBuildHere", "T");
+                    }
+                    else
+                    {
+                        value = "T";
+                    }
                     location.isAlwaysActive.Value = true;
                 }
             }
@@ -184,12 +192,11 @@ namespace AnythingAnywhere
 
         private void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
         {
-            foreach (var building in e.Added)
+            foreach (GameLocation location in Game1.locations)
             {
-                if (building.buildingType.Value == "Cabin")
+                if (location.buildings.Any() && location.isAlwaysActive.Value == true)
                 {
-                    e.Location.isAlwaysActive.Value = true;
-                    Monitor.Log($"Location Name: {e.Location.NameOrUniqueName}, Active: {e.Location.isAlwaysActive}", LogLevel.Debug);
+                    ModMonitor.Log($"Location Name: {location.DisplayName}, Active: {location.isAlwaysActive.Value}", LogLevel.Debug);
                 }
             }
         }
@@ -242,8 +249,39 @@ namespace AnythingAnywhere
 
         private void OnClick(ButtonClickEventArgs e)
         {
-            Config.InitializeDefaultConfig(e.FieldID);
-            PageHelper.OpenPage(PageHelper.CurrPage);
+            if (e.FieldID.Equals("BlacklistCurrentLocation"))
+            {
+                if (!Context.IsWorldReady)
+                {
+                    Game1.playSound("thudStep");
+                    return;
+                }
+                else if (Game1.player.currentLocation.IsFarm)
+                {
+                    Game1.playSound("thudStep");
+                    return;
+                }
+                else if (Config.BlacklistedLocations.Contains(Game1.player.currentLocation.NameOrUniqueName))
+                {
+                    Game1.playSound("thudStep");
+                    return;
+                }
+                else
+                {
+                    Game1.playSound("backpackIN");
+                    Config.BlacklistedLocations.Add(Game1.player.currentLocation.NameOrUniqueName);
+                    if (Game1.player.currentLocation.IsBuildableLocation())
+                    {
+                        Game1.currentLocation.Map.Properties.Remove("CanBuildHere");
+                    }
+                }
+            }
+            else
+            {
+                Game1.playSound("backpackIN");
+                Config.InitializeDefaultConfig(e.FieldID);
+                PageHelper.OpenPage(PageHelper.CurrPage);
+            }
         }
 
         private static BuildingData ModifyBuildingData(BuildingData data, bool enableInstantBuild, bool enableGreenhouse, bool removeBuildConditions)
@@ -300,7 +338,7 @@ namespace AnythingAnywhere
         {
             if (enablePlanting)
             {
-                data.CanPlantHere = enablePlanting;
+                data.CanPlantHere = true;
             }
 
             return data;
@@ -337,6 +375,12 @@ namespace AnythingAnywhere
             {
                 Game1.addHUDMessage(new HUDMessage(TranslationHelper.GetByKey("Message.AnythingAnywhere.NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
+            }
+
+            if (!Game1.currentLocation.IsBuildableLocation())
+            {
+                Game1.currentLocation.Map.Properties.Add("CanBuildHere", "T");
+                Game1.currentLocation.isAlwaysActive.Value = true;
             }
 
             Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
