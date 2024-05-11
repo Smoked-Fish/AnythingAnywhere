@@ -62,6 +62,12 @@
   // Button
   "Config.AnythingAnywhere.ResetPage.Button": "重置页面",
 
+  // TODO
+  // Buildable Locations Config
+  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Blacklist Location",
+  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
+
   // 玩家消息
   "Message.AnythingAnywhere.NoBuildingIndoors": "禁用了室内建筑",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} 无法移动到另一张地图",
