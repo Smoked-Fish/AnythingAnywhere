@@ -4,7 +4,6 @@ using StardewValley.GameData.Buildings;
 using StardewValley.TokenizableStrings;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
 using AnythingAnywhere.Framework.UI;
 using AnythingAnywhere.Framework.Interfaces;
 using AnythingAnywhere.Framework.Patches.Menus;
@@ -14,11 +13,13 @@ using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
 using System;
 using Common.Managers;
 using Common.Util;
+using StardewValley.GameData.Locations;
+using StardewValley.Buildings;
+using StardewValley.Locations;
 
 namespace AnythingAnywhere
 {
@@ -32,6 +33,7 @@ namespace AnythingAnywhere
         internal static ICustomBushApi CustomBushApi { get; set; }
 
         private static Harmony harmony;
+        private static bool buildingConfigChanged = false;
 
         public override void Entry(IModHelper helper)
         {
@@ -66,24 +68,22 @@ namespace AnythingAnywhere
             // Apply TerrainFeature patches
             new FruitTreePatch(harmony).Apply();
             new TreePatch(harmony).Apply();
-            new HoeDirtPatch(harmony).Apply();
 
 
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
             helper.ConsoleCommands.Add("aa_remove_furniture", "Removes all furniture of a specified ID at a specified location.\n\nUsage: aa_remove_furniture [LOCATION] [FURNITURE_ID]", this.DebugRemoveFurniture);
 
-            // Hook into GameLoop events
+            // Hook into Game events
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
-
-            // Hook into Input events
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.Input.ButtonsChanged += this.OnButtonsChanged;
-
-            // Hook into Content events
+            helper.Events.World.BuildingListChanged += this.OnBuildingListChanged;
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
-            // Hook into Custom Button events
+            // Hook into Custom events
             ButtonOptions.Click += this.OnClick;
+            Config.ConfigChanged += OnConfigChanged;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -103,7 +103,7 @@ namespace AnythingAnywhere
                 Config.EnableAnimalRelocate = false;
             }
 
-            ConfigManager.Initialize(ModManifest, Config, ModHelper, ModMonitor, harmony, true);
+            ConfigManager.Initialize(ModManifest, Config, ModHelper, ModMonitor, harmony);
             if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu"))
             {
                 // Register the main page
@@ -154,7 +154,19 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
                 ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
                 ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
-                ConfigManager.AddOption(nameof(ModConfig.EnableCabinsAnywhere));
+            }
+        }
+
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            foreach (GameLocation location in Game1.locations)
+            {
+                if ((location.buildings.Any((Building p) => p.GetIndoors() is Cabin) || 
+                    location.buildings.Any((Building p) => p.GetIndoors() is FarmHouse)) && 
+                    location.isAlwaysActive.Value == false)
+                {
+                    location.isAlwaysActive.Value = true;
+                }
             }
         }
 
@@ -170,6 +182,18 @@ namespace AnythingAnywhere
                 HandleBuildButtonPress("Wizard");
         }
 
+        private void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
+        {
+            foreach (var building in e.Added)
+            {
+                if (building.buildingType.Value == "Cabin")
+                {
+                    e.Location.isAlwaysActive.Value = true;
+                    Monitor.Log($"Location Name: {e.Location.NameOrUniqueName}, Active: {e.Location.isAlwaysActive}", LogLevel.Debug);
+                }
+            }
+        }
+
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
             if (e.Name.IsEquivalentTo("Data/Buildings"))
@@ -183,8 +207,36 @@ namespace AnythingAnywhere
                             data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], Config.EnableInstantBuild, Config.EnableGreenhouse, Config.RemoveBuildConditions);
                         }
                     }, AssetEditPriority.Late);
-
                 return;
+            }
+
+            if (e.Name.IsEquivalentTo("Data/Locations"))
+            {
+                e.Edit(
+                    asset =>
+                    {
+                        var data = asset.AsDictionary<string, LocationData>().Data;
+                        foreach (var LocationDataKey in data.Keys.ToList())
+                        {
+                            data[LocationDataKey] = ModifyLocationData(data[LocationDataKey], Config.EnablePlanting);
+                        }
+                    }, AssetEditPriority.Late);
+                return;
+            }
+        }
+
+        private void OnConfigChanged(object sender, ConfigChangedEventArgs e)
+        {
+            if (Equals(e.OldValue, e.NewValue)) return;
+
+            if (e.ConfigName == nameof(ModConfig.EnablePlanting))
+            {
+                ModHelper.GameContent.InvalidateCache("Data/Locations");
+            }
+
+            if (e.ConfigName == nameof(ModConfig.RemoveBuildConditions) || e.ConfigName == nameof(ModConfig.EnableInstantBuild) || e.ConfigName == nameof(ModConfig.EnableGreenhouse))
+            {
+                buildingConfigChanged = true; // Doesn't work if I don't do this
             }
         }
 
@@ -244,11 +296,25 @@ namespace AnythingAnywhere
             data.BuildCondition = "";
         }
 
+        private static LocationData ModifyLocationData(LocationData data, bool enablePlanting)
+        {
+            if (enablePlanting)
+            {
+                data.CanPlantHere = enablePlanting;
+            }
+
+            return data;
+        }
+
         private void HandleBuildButtonPress(string builder)
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
             {
-                ModHelper.GameContent.InvalidateCache("Data/Buildings");
+                if (buildingConfigChanged)
+                {
+                    ModHelper.GameContent.InvalidateCache("Data/Buildings");
+                    buildingConfigChanged = false;
+                }
                 ActivateBuildAnywhereMenu(builder);
             }
             else if (Game1.activeClickableMenu is BuildAnywhereMenu)
