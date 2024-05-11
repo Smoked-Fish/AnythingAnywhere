@@ -3,6 +3,7 @@ using StardewModdingAPI.Utilities;
 using System.Reflection;
 using System;
 using Common.Interfaces;
+using System.Collections.Generic;
 
 namespace AnythingAnywhere
 {
@@ -57,6 +58,9 @@ namespace AnythingAnywhere
 
         [DefaultValue(false, "Building")]
         public bool BypassMagicInk { get; set; }
+
+        [DefaultValue(null, "Building")]
+        public List<string> BlacklistedLocations { get; set; }
 
 
         // FARMING
@@ -122,6 +126,13 @@ namespace AnythingAnywhere
                     if (category != null && defaultValueAttribute.Category != category)
                     {
                         continue;
+                    }
+
+
+                    // Handle BlacklistedLocations default value
+                    if (property.Name == "BlacklistedLocations")
+                    {
+                        defaultValue ??= new List<string>();
                     }
 
                     OnConfigChanged(property.Name, property.GetValue(this), defaultValue);
