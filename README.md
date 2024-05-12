@@ -82,11 +82,16 @@ This works with mods that add buildings locked behind certain events too.
 ##### `Build Indoors`
 This toggle enables building structures indoors. This can lead to errors.\
 For example entering a building that you built inside of the coop will soft lock the game, requiring a restart.\
-Building inside of the farmhouse does work though. If you have the Farmhouse Fixes mod make sure you enable `Non-Hardcoded Warps` in that mod.
+Building inside of the farmhouse and greenhouse does work though. If you have the Farmhouse Fixes mod make sure you enable `Non-Hardcoded Warps` in that mod.
 
 ##### `Magic Ink Bypass`
 This toggle skips the check for magic ink when opening the Wizards build menu.\
 This only works for this mods Wizards build menu, you sill need magic ink to open the Wizards menu at the tower.
+
+##### `Hide Location`
+This button will add the current player location to a list to not display in Robins build menu.\
+When opening up the build menu the map properties "AlwaysActive" and "CanBuildHere" are set to true for the current location.\
+To remove non blacklisted locations with no buildings from Robins menu, reload your save.
 
 ## Farming
 - [Enable Farming](#enable-farming)
@@ -144,11 +149,6 @@ This toggle lets you place more than two mini-obelisks per location.\
 Having more than two per location will make the mini-obelisks not work as intended, but it can be used as decoration.\
 If you have the Multiple Mini-Obelisk mod, this toggle will be enabled by default, otherwise it is disabled by default.
 
-##### `House/Cabin Bypass`
-This toggle will enable building cabins outside of the farm.\
-This exists for testing or decoration purposes.\
-THEY WILL NOT FUNCTION AS INTENDED AND NEW PLAYERS LOADING INTO A CABIN NOT LOCATED ON THE FARM WILL BE SOFT-LOCKED
-
 
 ## Debug Commands
 
@@ -171,4 +171,10 @@ These commands are executed in the SMAPI console. Use with caution and only if y
   
   Example:
     `aa_remove_furniture current (F)1371`
+
+- `aa_active`
+  Prints a list of all the locations that are set to AlwaysActive
+  
+  Usage:
+    `aa_active`
 
