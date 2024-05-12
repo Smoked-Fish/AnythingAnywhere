@@ -74,6 +74,5 @@
   // TODO
   "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
   "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
-  "Message.AnythingAnywhere.MultiplayerCabins": "You cannot build cabins outside of the farm while in multiplayer"
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu"
 }
