@@ -209,6 +209,7 @@ namespace AnythingAnywhere.Framework.Handlers
             }
             else if (Game1.activeClickableMenu is BuildAnywhereMenu)
             {
+                ResetBlacklist();
                 Game1.displayFarmer = true;
                 ((BuildAnywhereMenu)Game1.activeClickableMenu).returnToCarpentryMenu();
                 ((BuildAnywhereMenu)Game1.activeClickableMenu).exitThisMenu();
@@ -258,6 +259,11 @@ namespace AnythingAnywhere.Framework.Handlers
                     {
                         location.isAlwaysActive.Value = true;
                     }
+                }
+
+                if (ModEntry.Config.BlacklistedLocations.Contains(location.NameOrUniqueName))
+                {
+                    location.Map.Properties.Remove("CanBuildHere");
                 }
             }
         }
