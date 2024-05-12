@@ -64,7 +64,7 @@
 
   // TODO
   // Buildable Locations Config
-  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Blacklist Location",
+  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
   "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
   "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
 
