@@ -236,17 +236,14 @@ namespace AnythingAnywhere.Framework.Handlers
         {
             foreach (GameLocation location in Game1.locations)
             {
-                if (ModEntry.Config.BlacklistedLocations != null && ModEntry.Config.BlacklistedLocations.Contains(location.NameOrUniqueName)) continue;
                 if (location.buildings.Any())
                 {
-                    location.Map.Properties.TryGetValue("CanBuildHere", out var value);
-                    if (value == null)
+                    if (!location.Map.Properties.TryGetValue("CanBuildHere", out var value) || value != "T")
                     {
-                        location.Map.Properties.Add("CanBuildHere", "T");
-                    }
-                    else if (value != "T")
-                    {
-                        value = "T";
+                        if (ModEntry.Config.BlacklistedLocations != null && ModEntry.Config.BlacklistedLocations.Contains(location.NameOrUniqueName))
+                            continue;
+
+                        location.Map.Properties["CanBuildHere"] = "T";
                     }
 
                     if (setAlwaysActive && location.isAlwaysActive.Value == false)
