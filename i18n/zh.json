@@ -33,6 +33,11 @@
   "Config.AnythingAnywhere.BypassMagicInk.Name": "魔法墨水绕过",
   "Config.AnythingAnywhere.BypassMagicInk.Description": "跳过魔法墨水检查。",
 
+  // Buildable Locations Config
+  "Config.AnythingAnywhere.BlacklistedLocations.Title": "隐藏位置",
+  "Config.AnythingAnywhere.BlacklistedLocations.Button": "当前位置",
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "防止当前位置出现在罗宾菜单中",
+
   // 农业配置
   "Config.AnythingAnywhere.Farming.Title": "农业",
   "Config.AnythingAnywhere.EnablePlanting.Name": "启用耕作",
@@ -68,11 +73,5 @@
   "Message.AnythingAnywhere.NoMagicInk": "您需要魔法墨水才能打开巫师的建造菜单",
   "Message.AnythingAnywhere.MultiplayerRelocate": "在多人游戏中，您无法将建筑物移动到其他位置",
   "Message.AnythingAnywhere.ChooseBuildingLocation": "您想将建筑物移动到哪里？",
-  "Message.AnythingAnywhere.ChooseAnimalLocation": "您想将动物移动到哪里？",
-
-
-  // TODO
-  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu"
+  "Message.AnythingAnywhere.ChooseAnimalLocation": "您想将动物移动到哪里？"
 }
