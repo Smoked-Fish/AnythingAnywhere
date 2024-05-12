@@ -9,6 +9,7 @@ using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using AnythingAnywhere.Framework.Handlers;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Common.Managers;
 using Common.Util;
@@ -70,10 +71,12 @@ namespace AnythingAnywhere
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
             helper.ConsoleCommands.Add("aa_remove_furniture", "Removes all furniture of a specified ID at a specified location.\n\nUsage: aa_remove_furniture [LOCATION] [FURNITURE_ID]", this.DebugRemoveFurniture);
+            helper.ConsoleCommands.Add("aa_active", "Lists all active locations.\n\nUsage: aa_active", this.DebugListActiveLocations);
 
             // Hook into Game events
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += EventHandlers.OnSaveLoaded;
+            helper.Events.World.BuildingListChanged += EventHandlers.OnBuildingListChanged;
             helper.Events.Input.ButtonsChanged += EventHandlers.OnButtonsChanged;
             helper.Events.Content.AssetRequested += EventHandlers.OnAssetRequested;
 
@@ -245,6 +248,35 @@ namespace AnythingAnywhere
 
             ModMonitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
             return;
+        }
+
+        private void DebugListActiveLocations(string command, string[] args)
+        {
+            if (args.Length > 0)
+            {
+                Monitor.Log($"This command does not take any arguments", LogLevel.Warn);
+                return;
+            }
+
+            if (!Context.IsWorldReady)
+            {
+                ModMonitor.Log("You need to load a save to use this command.", LogLevel.Error);
+                return;
+            }
+
+            List<string> activeLocations = [];
+
+            foreach (GameLocation location in Game1.locations)
+            {
+                if (location.isAlwaysActive.Value == true)
+                {
+                    activeLocations.Add(location.Name);
+                }
+            }
+
+            // Print out the comma-separated list of active locations
+            string activeLocationsStr = string.Join(", ", activeLocations);
+            ModMonitor.Log($"Active locations: {activeLocationsStr}", LogLevel.Info);
         }
     }
 }
