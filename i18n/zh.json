@@ -62,17 +62,18 @@
   // Button
   "Config.AnythingAnywhere.ResetPage.Button": "重置页面",
 
-  // TODO
-  // Buildable Locations Config
-  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
-
   // 玩家消息
   "Message.AnythingAnywhere.NoBuildingIndoors": "禁用了室内建筑",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} 无法移动到另一张地图",
   "Message.AnythingAnywhere.NoMagicInk": "您需要魔法墨水才能打开巫师的建造菜单",
   "Message.AnythingAnywhere.MultiplayerRelocate": "在多人游戏中，您无法将建筑物移动到其他位置",
   "Message.AnythingAnywhere.ChooseBuildingLocation": "您想将建筑物移动到哪里？",
-  "Message.AnythingAnywhere.ChooseAnimalLocation": "您想将动物移动到哪里？"
+  "Message.AnythingAnywhere.ChooseAnimalLocation": "您想将动物移动到哪里？",
+
+
+  // TODO
+  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
+  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
+  "Message.AnythingAnywhere.MultiplayerCabins": "You cannot build cabins outside of the farm while in multiplayer"
 }
