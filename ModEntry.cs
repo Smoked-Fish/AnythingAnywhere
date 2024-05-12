@@ -1,23 +1,19 @@
 ﻿using HarmonyLib;
 using StardewValley;
-using StardewValley.GameData.Buildings;
-using StardewValley.GameData.Locations;
-using StardewValley.TokenizableStrings;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using AnythingAnywhere.Framework.UI;
 using AnythingAnywhere.Framework.Interfaces;
 using AnythingAnywhere.Framework.Patches.Menus;
 using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
+using AnythingAnywhere.Framework.Handlers;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System;
 using Common.Managers;
 using Common.Util;
+using System.Linq;
+using System;
 
 namespace AnythingAnywhere
 {
@@ -29,9 +25,9 @@ namespace AnythingAnywhere
         internal static Multiplayer Multiplayer { get; set; }
         internal static ApiManager ApiManager { get; set; }
         internal static ICustomBushApi CustomBushApi { get; set; }
+        internal static EventHandlers EventHandlers { get; set; }
 
         private static Harmony harmony;
-        private static bool buildingConfigChanged = false;
 
         public override void Entry(IModHelper helper)
         {
@@ -46,6 +42,9 @@ namespace AnythingAnywhere
 
             // Load the Harmony patches
             harmony = new Harmony(this.ModManifest.UniqueID);
+
+            // Setup Event Handlers
+            EventHandlers = new EventHandlers();
 
             // Apply GameLocation patches
             new GameLocationPatch(harmony).Apply();
@@ -74,14 +73,13 @@ namespace AnythingAnywhere
 
             // Hook into Game events
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
-            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
-            helper.Events.Input.ButtonsChanged += this.OnButtonsChanged;
-            helper.Events.World.BuildingListChanged += this.OnBuildingListChanged;
-            helper.Events.Content.AssetRequested += this.OnAssetRequested;
+            helper.Events.GameLoop.SaveLoaded += EventHandlers.OnSaveLoaded;
+            helper.Events.Input.ButtonsChanged += EventHandlers.OnButtonsChanged;
+            helper.Events.Content.AssetRequested += EventHandlers.OnAssetRequested;
 
             // Hook into Custom events
-            ButtonOptions.Click += this.OnClick;
-            Config.ConfigChanged += OnConfigChanged;
+            ButtonOptions.Click += EventHandlers.OnClick;
+            Config.ConfigChanged += EventHandlers.OnConfigChanged;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -134,7 +132,7 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.EnableBuildingIndoors));
                 ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
                 ConfigManager.AddHorizontalSeparator();
-                ConfigManager.AddButtonOption("BlacklistedLocations", "BlacklistedLocations", "BlacklistCurrentLocation");
+                ConfigManager.AddButtonOption("BlacklistedLocations", "BlacklistedLocations", "BlacklistCurrentLocation", afterReset);
 
 
                 // Register the farming settings
@@ -157,234 +155,11 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
             }
         }
-        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+
+        private static readonly Action afterReset = () =>
         {
-            foreach (GameLocation location in Game1.locations)
-            {
-                if (Config.BlacklistedLocations != null && Config.BlacklistedLocations.Contains(location.NameOrUniqueName)) continue;
-                if (location.buildings.Any() && location.isAlwaysActive.Value == false)
-                {
-                    location.Map.Properties.TryGetValue("CanBuildHere", out var value);
-                    if (value == null)
-                    {
-                        location.Map.Properties.Add("CanBuildHere", "T");
-                    }
-                    else
-                    {
-                        value = "T";
-                    }
-                    location.isAlwaysActive.Value = true;
-                }
-            }
-        }
-
-        private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
-        {
-            if (!Context.IsWorldReady || !Config.EnableBuilding)
-                return;
-
-            if (Config.BuildMenu.JustPressed() && Config.EnableBuilding)
-                HandleBuildButtonPress("Robin");
-
-            if (Config.WizardBuildMenu.JustPressed() && Config.EnableBuilding)
-                HandleBuildButtonPress("Wizard");
-        }
-
-        private void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
-        {
-            foreach (GameLocation location in Game1.locations)
-            {
-                if (location.buildings.Any() && location.isAlwaysActive.Value == true)
-                {
-                    ModMonitor.Log($"Location Name: {location.DisplayName}, Active: {location.isAlwaysActive.Value}", LogLevel.Debug);
-                }
-            }
-        }
-
-        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
-        {
-            if (e.Name.IsEquivalentTo("Data/Buildings"))
-            {
-                e.Edit(
-                    asset =>
-                    {
-                        var data = asset.AsDictionary<string, BuildingData>().Data;
-                        foreach (var buildingDataKey in data.Keys.ToList()) 
-                        {
-                            data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], Config.EnableInstantBuild, Config.EnableGreenhouse, Config.RemoveBuildConditions);
-                        }
-                    }, AssetEditPriority.Late);
-                return;
-            }
-
-            if (e.Name.IsEquivalentTo("Data/Locations"))
-            {
-                e.Edit(
-                    asset =>
-                    {
-                        var data = asset.AsDictionary<string, LocationData>().Data;
-                        foreach (var LocationDataKey in data.Keys.ToList())
-                        {
-                            data[LocationDataKey] = ModifyLocationData(data[LocationDataKey], Config.EnablePlanting);
-                        }
-                    }, AssetEditPriority.Late);
-                return;
-            }
-        }
-
-        private void OnConfigChanged(object sender, ConfigChangedEventArgs e)
-        {
-            if (Equals(e.OldValue, e.NewValue)) return;
-
-            if (e.ConfigName == nameof(ModConfig.EnablePlanting))
-            {
-                ModHelper.GameContent.InvalidateCache("Data/Locations");
-            }
-
-            if (e.ConfigName == nameof(ModConfig.RemoveBuildConditions) || e.ConfigName == nameof(ModConfig.EnableInstantBuild) || e.ConfigName == nameof(ModConfig.EnableGreenhouse))
-            {
-                buildingConfigChanged = true; // Doesn't work if I don't do this
-            }
-        }
-
-        private void OnClick(ButtonClickEventArgs e)
-        {
-            if (e.FieldID.Equals("BlacklistCurrentLocation"))
-            {
-                if (!Context.IsWorldReady)
-                {
-                    Game1.playSound("thudStep");
-                    return;
-                }
-                else if (Game1.player.currentLocation.IsFarm)
-                {
-                    Game1.playSound("thudStep");
-                    return;
-                }
-                else if (Config.BlacklistedLocations.Contains(Game1.player.currentLocation.NameOrUniqueName))
-                {
-                    Game1.playSound("thudStep");
-                    return;
-                }
-                else
-                {
-                    Game1.playSound("backpackIN");
-                    Config.BlacklistedLocations.Add(Game1.player.currentLocation.NameOrUniqueName);
-                    if (Game1.player.currentLocation.IsBuildableLocation())
-                    {
-                        Game1.currentLocation.Map.Properties.Remove("CanBuildHere");
-                    }
-                }
-            }
-            else
-            {
-                Game1.playSound("backpackIN");
-                Config.InitializeDefaultConfig(e.FieldID);
-                PageHelper.OpenPage(PageHelper.CurrPage);
-            }
-        }
-
-        private static BuildingData ModifyBuildingData(BuildingData data, bool enableInstantBuild, bool enableGreenhouse, bool removeBuildConditions)
-        {
-            if (enableGreenhouse && IsGreenhouse(data))
-                SetGreenhouseAttributes(data);
-
-            if (enableInstantBuild)
-                SetInstantBuildAttributes(data);
-
-            if (removeBuildConditions)
-                RemoveBuildConditions(data);
-
-            return data;
-        }
-
-        private static bool IsGreenhouse(BuildingData data)
-        {
-            return TokenParser.ParseText(data.Name) == Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name");
-        }
-
-        private static void SetGreenhouseAttributes(BuildingData data)
-        {
-            // Define greenhouse materials
-            List<BuildingMaterial> greenhouseMaterials = new List<BuildingMaterial>
-            {
-                new BuildingMaterial { ItemId = "(O)709", Amount = 100 },
-                new BuildingMaterial { ItemId = "(O)338", Amount = 20 },
-                new BuildingMaterial { ItemId = "(O)337", Amount = 10 },
-            };
-
-            // Set greenhouse attributes
-            data.Builder = Game1.builder_robin;
-            data.BuildCost = 150000;
-            data.BuildDays = 3;
-            data.BuildMaterials = greenhouseMaterials;
-            data.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
-        }
-
-        private static void SetInstantBuildAttributes(BuildingData data)
-        {
-            data.MagicalConstruction = true;
-            data.BuildCost = 0;
-            data.BuildDays = 0;
-            data.BuildMaterials = [];
-        }
-
-        private static void RemoveBuildConditions(BuildingData data)
-        {
-            data.BuildCondition = "";
-        }
-
-        private static LocationData ModifyLocationData(LocationData data, bool enablePlanting)
-        {
-            if (enablePlanting)
-            {
-                data.CanPlantHere = true;
-            }
-
-            return data;
-        }
-
-        private void HandleBuildButtonPress(string builder)
-        {
-            if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
-            {
-                if (buildingConfigChanged)
-                {
-                    ModHelper.GameContent.InvalidateCache("Data/Buildings");
-                    buildingConfigChanged = false;
-                }
-                ActivateBuildAnywhereMenu(builder);
-            }
-            else if (Game1.activeClickableMenu is BuildAnywhereMenu)
-            {
-                Game1.displayFarmer = true;
-                ((BuildAnywhereMenu)Game1.activeClickableMenu).returnToCarpentryMenu();
-                ((BuildAnywhereMenu)Game1.activeClickableMenu).exitThisMenu();
-            }
-        }
-
-        private void ActivateBuildAnywhereMenu(string builder)
-        {
-            if (!Game1.currentLocation.IsOutdoors && !Config.EnableBuildingIndoors)
-            {
-                Game1.addHUDMessage(new HUDMessage(TranslationHelper.GetByKey("Message.AnythingAnywhere.NoBuildingIndoors"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
-                return;
-            }
-            bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || Config.BypassMagicInk);
-            if (builder == "Wizard" && magicInkCheck && !Config.EnableInstantBuild)
-            {
-                Game1.addHUDMessage(new HUDMessage(TranslationHelper.GetByKey("Message.AnythingAnywhere.NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
-                return;
-            }
-
-            if (!Game1.currentLocation.IsBuildableLocation())
-            {
-                Game1.currentLocation.Map.Properties.Add("CanBuildHere", "T");
-                Game1.currentLocation.isAlwaysActive.Value = true;
-            }
-
-            Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
-        }
+            EventHandlers.ResetBlacklist();
+        };
 
         private void DebugRemoveFurniture(string command, string[] args)
         {
