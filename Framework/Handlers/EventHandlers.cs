@@ -22,6 +22,14 @@ namespace AnythingAnywhere.Framework.Handlers
             ResetBlacklist(true);
         }
 
+        internal void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
+        {
+            if (e.Added.Any())
+            {
+                ResetBlacklist(true); // For multiplayer
+            }
+        }
+
         internal void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
             if (!Context.IsWorldReady || !ModEntry.Config.EnableBuilding)
