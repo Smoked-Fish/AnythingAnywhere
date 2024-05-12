@@ -10,12 +10,16 @@
 - [Debug Commands](#debug-commands)
 
 ## Placing
+- [Reset Page button](#reset-page-button)
 - [Enable Placing](#enable-placing)
 - [Place Anywhere](#place-anywhere)
 - [Rug Removal Bypass](#rug-removal-bypass)
 - [Wall Furniture Indoors](#wall-furniture-indoors)
 
 ##
+
+##### `Reset Page Button`
+This button is at the top of every page. it resets the config for only that page.
 
 ##### `Enable Placing`
 This toggle enables the placement portion of the mod. When enabled you can play objects (chests, mini-fridges, fences) and furniture on any free tile.\
@@ -44,6 +48,7 @@ This enables placing wall furniture anywhere indoors. The default is off so deco
 - [Remove Build Conditions](#remove-build-conditions)
 - [Build Indoors](#build-indoors)
 - [Magic Ink Bypass](#magic-ink-bypass)
+- [Hide Location](#hide-location)
 
 ##
 
@@ -124,7 +129,6 @@ Enabling this WILL make wild trees quickly grow out of control and you will be t
 - [Jukebox Tweaks](#jukebox-tweaks)
 - [Gold Clock Tweaks](#gold-clock-tweaks)
 - [Multiple Mini-Obelisk](#multiple-mini-obelisk)
-- [House/Cabin Bypass](#housecabin-bypass)
 
 ##
 
