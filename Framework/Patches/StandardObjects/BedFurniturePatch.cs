@@ -20,7 +20,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             Patch(PatchType.Transpiler, nameof(BedFurniture.placementAction), nameof(PlacementActionTranspiler));
         }
 
-        // Enable modifying other players beds
+        // Enable modifying other players beds/placing inside of other players homes
         private static void CanModifyBedPostfix(BedFurniture __instance, Farmer who, ref bool __result)
         {
             if (!ModEntry.Config.EnableFreePlace)
