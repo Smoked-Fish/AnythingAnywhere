@@ -60,6 +60,7 @@ namespace AnythingAnywhere
             // Apply StandardObject patches
             new CaskPatch(harmony).Apply();
             new FurniturePatch(harmony).Apply();
+            new BedFurniturePatch(harmony).Apply();
             new MiniJukeboxPatch(harmony).Apply();
             new ObjectPatch(harmony).Apply();
 
