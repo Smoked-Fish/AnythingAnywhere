@@ -3,7 +3,6 @@ using StardewValley.Menus;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -14,6 +13,7 @@ using Microsoft.Xna.Framework;
 using xTile.Dimensions;
 using AnythingAnywhere.Framework.UI;
 using StardewValley.Objects;
+using static StardewValley.Menus.CarpenterMenu;
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
@@ -266,21 +266,20 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         }
 
         // Don't display gold if buildcost is less than 1 instead of 0
-        private static IEnumerable<CodeInstruction> DrawTranspiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+        private static IEnumerable<CodeInstruction> DrawTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
         {
             try
             {
-                List<CodeInstruction> list = instructions.ToList();
+                var matcher = new CodeMatcher(instructions, generator);
 
-                for (int i = 1; i < list.Count; i++)
-                {
-                    if (list[i].opcode.Equals(OpCodes.Ldc_I4_0) && list[i - 1].opcode.Equals(OpCodes.Callvirt) && list[i - 2].opcode.Equals(OpCodes.Ldloc_0))
-                    {
-                        list[i].opcode = OpCodes.Ldc_I4_1;
-                        break;
-                    }
-                }
-                return list;
+                matcher.MatchEndForward(
+                    new CodeMatch(OpCodes.Ldloc_0),
+                    new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(BlueprintEntry), nameof(BlueprintEntry.BuildCost)).GetGetMethod()),
+                    new CodeMatch(OpCodes.Ldc_I4_0))
+                    .Set(OpCodes.Ldc_I4_1, null)
+                    .ThrowIfNotMatch("Could not find blueprint.BuildCost");
+
+                return matcher.InstructionEnumeration();
             }
             catch (Exception e)
             {
