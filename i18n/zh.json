@@ -16,8 +16,7 @@
   "Config.AnythingAnywhere.EnableBuilding.Description": "启用此模组的建筑功能",
   "Config.AnythingAnywhere.EnableBuildAnywhere.Name": "任意建造",
   "Config.AnythingAnywhere.EnableBuildAnywhere.Description": "允许在任何位置建造，甚至在墙上",
-  "Config.AnythingAnywhere.EnableInstantBuild.Name": "免费即时建造",
-  "Config.AnythingAnywhere.EnableInstantBuild.Description": "启用即时建造，并将建造成本设置为免费",
+
   "Config.AnythingAnywhere.BuildMenu.Name": "任意建造菜单",
   "Config.AnythingAnywhere.BuildMenu.Description": "在任何地方打开木匠菜单",
   "Config.AnythingAnywhere.WizardBuildMenu.Name": "巫师建造菜单",
@@ -73,5 +72,15 @@
   "Message.AnythingAnywhere.NoMagicInk": "您需要魔法墨水才能打开巫师的建造菜单",
   "Message.AnythingAnywhere.MultiplayerRelocate": "在多人游戏中，您无法将建筑物移动到其他位置",
   "Message.AnythingAnywhere.ChooseBuildingLocation": "您想将建筑物移动到哪里？",
-  "Message.AnythingAnywhere.ChooseAnimalLocation": "您想将动物移动到哪里？"
+  "Message.AnythingAnywhere.ChooseAnimalLocation": "您想将动物移动到哪里？",
+
+
+
+  // TODO (DID MY BEST)
+
+  "Config.AnythingAnywhere.EnableInstantBuild.Name": "即时建造",
+  "Config.AnythingAnywhere.EnableInstantBuild.Description": "启用即时建造",
+
+  "Config.AnythingAnywhere.EnableFreeBuild.Name": "免费建造",
+  "Config.AnythingAnywhere.EnableFreeBuild.Description": "将建造成本设置为免费"
 }

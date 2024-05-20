@@ -23,8 +23,11 @@
   "Config.AnythingAnywhere.EnableBuildAnywhere.Name": "Build Anywhere",
   "Config.AnythingAnywhere.EnableBuildAnywhere.Description": "Enables building at any location, even in walls",
 
-  "Config.AnythingAnywhere.EnableInstantBuild.Name": "Build Free & Instantly",
-  "Config.AnythingAnywhere.EnableInstantBuild.Description": "Enables instant building, and sets building costs to free",
+  "Config.AnythingAnywhere.EnableInstantBuild.Name": "Build Instantly",
+  "Config.AnythingAnywhere.EnableInstantBuild.Description": "Enables building instantly",
+
+  "Config.AnythingAnywhere.EnableFreeBuild.Name": "Build for Free",
+  "Config.AnythingAnywhere.EnableFreeBuild.Description": "Enables building for free",
 
   "Config.AnythingAnywhere.BuildMenu.Name": "Build Anywhere Menu",
   "Config.AnythingAnywhere.BuildMenu.Description": "Opens up the carpenter menu anywhere",

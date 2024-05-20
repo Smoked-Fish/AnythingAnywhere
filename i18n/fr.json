@@ -23,9 +23,6 @@
   "Config.AnythingAnywhere.EnableBuildAnywhere.Name": "Construction libre",
   "Config.AnythingAnywhere.EnableBuildAnywhere.Description": "Permet de construire à n'importe quel endroit sans restrictions, même dans les murs.",
 
-  "Config.AnythingAnywhere.EnableInstantBuild.Name": "Construction gratuite et instantanée",
-  "Config.AnythingAnywhere.EnableInstantBuild.Description": "Permet une construction instantanée et définit les coûts de construction à zéro.",
-
   "Config.AnythingAnywhere.BuildMenu.Name": "Menu de construction n'importe où",
   "Config.AnythingAnywhere.BuildMenu.Description": "Permet d'ouvrir le menu de construction n'importe où.",
 
@@ -95,5 +92,11 @@
   "Config.AnythingAnywhere.ResetPage.Button": "Reset Page",
   "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
   "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu"
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
+
+  // TODO - DID MY BEST
+  "Config.AnythingAnywhere.EnableInstantBuild.Name": "Construction instantanée",
+  "Config.AnythingAnywhere.EnableInstantBuild.Description": "Permet une construction instantanée",
+  "Config.AnythingAnywhere.EnableFreeBuild.Name": "Construction gratuite",
+  "Config.AnythingAnywhere.EnableFreeBuild.Description": "Définit les coûts de construction à zéro"
 }
