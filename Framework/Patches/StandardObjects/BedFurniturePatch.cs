@@ -8,6 +8,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Linq;
+using StardewValley.Locations;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
@@ -29,20 +30,23 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 
 
         // Enable all beds indoors
-        private static IEnumerable<CodeInstruction> PlacementActionTranspiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+        private static IEnumerable<CodeInstruction> PlacementActionTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
         {
             try
             {
-                List<CodeInstruction> list = instructions.ToList();
+                var matcher = new CodeMatcher(instructions, generator);
 
-                for (int i = 1; i < list.Count; i++)
-                {
-                    if (i + 1 < list.Count && list[i].opcode == OpCodes.Callvirt && list[i].operand is MethodInfo methodInfo &&  methodInfo.ReturnType == typeof(int))
-                    {
-                        list[i + 1].opcode = OpCodes.Ldc_I4_0;
-                    }
-                }
-                return list;
+                matcher.MatchEndForward(
+                    new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(FarmHouse), nameof(FarmHouse.upgradeLevel)).GetGetMethod()),
+                    new CodeMatch(OpCodes.Ldc_I4_2))
+                    .Set(OpCodes.Ldc_I4_0, null)
+                    .MatchEndForward(
+                    new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(FarmHouse), nameof(FarmHouse.upgradeLevel)).GetGetMethod()),
+                    new CodeMatch(OpCodes.Ldc_I4_1))
+                    .Set(OpCodes.Ldc_I4_0, null)
+                    .ThrowIfNotMatch("Could not find get_upgradeLevel()");
+
+                return matcher.InstructionEnumeration();
             }
             catch (Exception e)
             {
