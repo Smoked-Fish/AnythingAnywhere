@@ -80,6 +80,9 @@ namespace AnythingAnywhere
             helper.Events.World.BuildingListChanged += EventHandlers.OnBuildingListChanged;
             helper.Events.Input.ButtonsChanged += EventHandlers.OnButtonsChanged;
             helper.Events.Content.AssetRequested += EventHandlers.OnAssetRequested;
+            helper.Events.GameLoop.UpdateTicked += EventHandlers.OnUpdateTicked;
+            helper.Events.Player.Warped += EventHandlers.OnWarped;
+
 
             // Hook into Custom events
             ButtonOptions.Click += EventHandlers.OnClick;
@@ -128,6 +131,7 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.EnableBuilding));
                 ConfigManager.AddOption(nameof(ModConfig.EnableBuildAnywhere));
                 ConfigManager.AddOption(nameof(ModConfig.EnableInstantBuild));
+                ConfigManager.AddOption(nameof(ModConfig.EnableFreeBuild));
                 ConfigManager.AddOption(nameof(ModConfig.BuildMenu));
                 ConfigManager.AddOption(nameof(ModConfig.WizardBuildMenu));
                 ConfigManager.AddOption(nameof(ModConfig.BuildModifier));
