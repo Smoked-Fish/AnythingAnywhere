@@ -38,6 +38,9 @@ namespace AnythingAnywhere
         [DefaultValue(false, "Building")]
         public bool EnableInstantBuild { get; set; }
 
+        [DefaultValue(false, "Building")]
+        public bool EnableFreeBuild { get; set; }
+
         [DefaultValue(SButton.OemComma, "Building")]
         public KeybindList BuildMenu { get; set; }
 
