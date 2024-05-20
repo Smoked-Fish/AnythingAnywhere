@@ -9,6 +9,8 @@ using StardewValley.GameData.Buildings;
 using AnythingAnywhere.Framework.UI;
 using Common.Managers;
 using StardewValley.TokenizableStrings;
+using AnythingAnywhere.Framework.Patches.Locations;
+using StardewValley.Locations;
 
 namespace AnythingAnywhere.Framework.Handlers
 {
@@ -52,7 +54,7 @@ namespace AnythingAnywhere.Framework.Handlers
                         var data = asset.AsDictionary<string, BuildingData>().Data;
                         foreach (var buildingDataKey in data.Keys.ToList())
                         {
-                            data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], ModEntry.Config.EnableInstantBuild, ModEntry.Config.EnableGreenhouse, ModEntry.Config.RemoveBuildConditions);
+                            data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], ModEntry.Config.EnableFreeBuild, ModEntry.Config.EnableInstantBuild, ModEntry.Config.RemoveBuildConditions, ModEntry.Config.EnableGreenhouse);
                         }
                     }, AssetEditPriority.Late);
                 return;
@@ -68,8 +70,39 @@ namespace AnythingAnywhere.Framework.Handlers
                         {
                             data[LocationDataKey] = ModifyLocationData(data[LocationDataKey], ModEntry.Config.EnablePlanting);
                         }
+
+                        if (ModEntry.Config.EnablePlanting)
+                        {
+                            foreach (var location in Game1.locations)
+                            {
+                                location.Map.Properties.TryAdd("ForceAllowTreePlanting", "T");
+                            }
+                        }
+
                     }, AssetEditPriority.Late);
                 return;
+            }
+        }
+
+        internal void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            if (buildingConfigChanged)
+            {
+                ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
+                buildingConfigChanged = false;
+            }
+        }
+
+        internal void OnWarped(object sender, WarpedEventArgs e)
+        {
+            if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors)
+                return;
+
+            if (!(e.OldLocation is Cellar || e.OldLocation is FarmHouse || e.OldLocation is Cabin) && (e.NewLocation is FarmHouse || e.OldLocation is Cabin))
+            {
+                Game1.player.Position = FarmHousePatch.FarmHouseRealPos * 64f;
+                Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
+                Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
             }
         }
 
@@ -82,7 +115,10 @@ namespace AnythingAnywhere.Framework.Handlers
                 ModEntry.ModHelper.GameContent.InvalidateCache("Data/Locations");
             }
 
-            if (e.ConfigName == nameof(ModConfig.RemoveBuildConditions) || e.ConfigName == nameof(ModConfig.EnableInstantBuild) || e.ConfigName == nameof(ModConfig.EnableGreenhouse))
+            if (e.ConfigName == nameof(ModConfig.EnableFreeBuild) || 
+                e.ConfigName == nameof(ModConfig.EnableInstantBuild) || 
+                e.ConfigName == nameof(ModConfig.RemoveBuildConditions) || 
+                e.ConfigName == nameof(ModConfig.EnableGreenhouse))
             {
                 buildingConfigChanged = true; // Doesn't work if I don't do this
             }
@@ -132,14 +168,18 @@ namespace AnythingAnywhere.Framework.Handlers
         #endregion
 
         #region Modify Building Data
-        private static BuildingData ModifyBuildingData(BuildingData data, bool enableInstantBuild, bool enableGreenhouse, bool removeBuildConditions)
+        private static BuildingData ModifyBuildingData(BuildingData data, bool enableFreeBuild, bool enableInstantBuild, bool removeBuildConditions, bool enableGreenhouse)
         {
-            if (enableGreenhouse && IsGreenhouse(data))
-                SetGreenhouseAttributes(data);
+            if (enableFreeBuild)
+                SetFreeBuildAttributes(data);
 
             if (enableInstantBuild)
                 SetInstantBuildAttributes(data);
 
+            if (enableGreenhouse && IsGreenhouse(data))
+                SetGreenhouseAttributes(data);
+
+            // Remove build conditions last
             if (removeBuildConditions)
                 RemoveBuildConditions(data);
 
@@ -169,12 +209,16 @@ namespace AnythingAnywhere.Framework.Handlers
             data.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
         }
 
+        private static void SetFreeBuildAttributes(BuildingData data)
+        {
+            data.BuildCost = 0;
+            data.BuildMaterials = [];
+        }
+
         private static void SetInstantBuildAttributes(BuildingData data)
         {
             data.MagicalConstruction = true;
-            data.BuildCost = 0;
             data.BuildDays = 0;
-            data.BuildMaterials = [];
         }
 
         private static void RemoveBuildConditions(BuildingData data)
@@ -200,11 +244,6 @@ namespace AnythingAnywhere.Framework.Handlers
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
             {
-                if (buildingConfigChanged)
-                {
-                    ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
-                    buildingConfigChanged = false;
-                }
                 ActivateBuildAnywhereMenu(builder);
             }
             else if (Game1.activeClickableMenu is BuildAnywhereMenu)
