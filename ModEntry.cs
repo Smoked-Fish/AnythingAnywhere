@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿global using SObject = StardewValley.Object;
+using HarmonyLib;
 using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
