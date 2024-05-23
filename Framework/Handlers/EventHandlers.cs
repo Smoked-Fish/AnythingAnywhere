@@ -170,16 +170,16 @@ namespace AnythingAnywhere.Framework.Handlers
         #region Modify Building Data
         private static BuildingData ModifyBuildingData(BuildingData data, bool enableFreeBuild, bool enableInstantBuild, bool removeBuildConditions, bool enableGreenhouse)
         {
+            // Add greenhouse first
+            if (enableGreenhouse && IsGreenhouse(data))
+                SetGreenhouseAttributes(data);
+
             if (enableFreeBuild)
                 SetFreeBuildAttributes(data);
 
             if (enableInstantBuild)
                 SetInstantBuildAttributes(data);
 
-            if (enableGreenhouse && IsGreenhouse(data))
-                SetGreenhouseAttributes(data);
-
-            // Remove build conditions last
             if (removeBuildConditions)
                 RemoveBuildConditions(data);
 
