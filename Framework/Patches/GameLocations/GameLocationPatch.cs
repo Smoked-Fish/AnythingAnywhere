@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using xTile.ObjectModel;
 using xTile.Tiles;
 using System.Linq;
+using Common.Util;
 
 namespace AnythingAnywhere.Framework.Patches.GameLocations
 {

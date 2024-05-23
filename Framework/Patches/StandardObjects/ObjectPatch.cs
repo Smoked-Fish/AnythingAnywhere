@@ -2,26 +2,26 @@
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using Object = StardewValley.Object;
 using AnythingAnywhere.Framework.External.CustomBush;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using Common.Util;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal class ObjectPatch : PatchTemplate
     {
-        internal ObjectPatch(Harmony harmony) : base(harmony, typeof(Object)) { }
+        internal ObjectPatch(Harmony harmony) : base(harmony, typeof(SObject)) { }
         internal void Apply()
         {
-            Patch(PatchType.Prefix, nameof(Object.placementAction), nameof(PlacementActionPrefix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
-            Patch(PatchType.Prefix, nameof(Object.canBePlacedHere), nameof(CanBePlacedHerePrefix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
+            Patch(PatchType.Prefix, nameof(SObject.placementAction), nameof(PlacementActionPrefix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
+            Patch(PatchType.Prefix, nameof(SObject.canBePlacedHere), nameof(CanBePlacedHerePrefix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
             Patch(PatchType.Prefix, "canPlaceWildTreeSeed", nameof(CanPlaceWildTreeSeedPrefix));
         }
 
         // Object placment action
-        private static bool PlacementActionPrefix(Object __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
+        private static bool PlacementActionPrefix(SObject __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
         {
             if (!ModEntry.Config.EnablePlacing)
                 return true;
@@ -91,7 +91,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 {
                     return true;
                 }
-                Object toPlace = (Object)__instance.getOne();
+                SObject toPlace = (SObject)__instance.getOne();
                 switch (__instance.QualifiedItemId)
                 {
                     case "(BC)108":
@@ -128,7 +128,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                             Vector2 obelisk1 = Vector2.Zero;
                             Vector2 obelisk2 = Vector2.Zero;
 
-                            foreach (KeyValuePair<Vector2, Object> o2 in location.objects.Pairs)
+                            foreach (KeyValuePair<Vector2, SObject> o2 in location.objects.Pairs)
                             {
                                 if (o2.Value.QualifiedItemId == "(BC)238")
                                 {
@@ -249,7 +249,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         }
 
         // object placement
-        private static bool CanBePlacedHerePrefix(Object __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
+        private static bool CanBePlacedHerePrefix(SObject __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
         {
             if (!ModEntry.Config.EnablePlacing)
                 return true;
@@ -263,7 +263,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             return true;
         }
 
-        private static bool CanPlaceWildTreeSeedPrefix(Object __instance, GameLocation location, Vector2 tile, ref bool __result, out string deniedMessage)
+        private static bool CanPlaceWildTreeSeedPrefix(SObject __instance, GameLocation location, Vector2 tile, ref bool __result, out string deniedMessage)
         {
             deniedMessage = null;
 

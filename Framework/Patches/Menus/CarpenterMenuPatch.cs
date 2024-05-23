@@ -13,7 +13,8 @@ using Microsoft.Xna.Framework;
 using xTile.Dimensions;
 using AnythingAnywhere.Framework.UI;
 using StardewValley.Objects;
-using static StardewValley.Menus.CarpenterMenu;
+using Common.Util;
+
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
@@ -274,7 +275,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
                 matcher.MatchEndForward(
                     new CodeMatch(OpCodes.Ldloc_0),
-                    new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(BlueprintEntry), nameof(BlueprintEntry.BuildCost)).GetGetMethod()),
+                    new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(CarpenterMenu.BlueprintEntry), nameof(CarpenterMenu.BlueprintEntry.BuildCost)).GetGetMethod()),
                     new CodeMatch(OpCodes.Ldc_I4_0))
                     .Set(OpCodes.Ldc_I4_1, null)
                     .ThrowIfNotMatch("Could not find blueprint.BuildCost");

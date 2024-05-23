@@ -2,6 +2,7 @@
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using Microsoft.Xna.Framework;
+using Common.Util;
 
 namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
