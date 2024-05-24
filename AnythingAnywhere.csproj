@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove=".gitignore" />
     <None Remove=".gitmodules" />
+    <None Remove="CONTRIBUTING.md" />
     <None Remove="Framework\Common\.git" />
     <None Remove="LICENSE" />
     <None Remove="README.md" />
