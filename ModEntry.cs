@@ -3,16 +3,17 @@ using HarmonyLib;
 using StardewValley;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using AnythingAnywhere.Framework;
 using AnythingAnywhere.Framework.Interfaces;
 using AnythingAnywhere.Framework.Patches.Menus;
 using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
-using AnythingAnywhere.Framework.Handlers;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Common.Managers;
+using Common.Helpers;
 using Common.Util;
 using System.Linq;
 using System;
@@ -38,34 +39,32 @@ namespace AnythingAnywhere
             ModHelper = helper;
             Config = Helper.ReadConfig<ModConfig>();
             Multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
-
-            // Setup the manager
+            
+            // Setup the managers/handlers
             ApiManager = new ApiManager(helper, ModMonitor);
+            EventHandlers = new EventHandlers();
 
             // Load the Harmony patches
             harmony = new Harmony(this.ModManifest.UniqueID);
 
-            // Setup Event Handlers
-            EventHandlers = new EventHandlers();
-
-            // Apply GameLocation patches
+            // GameLocation
             new GameLocationPatch(harmony).Apply();
 
-            // Apply Location patches
+            // Location
             new FarmHousePatch(harmony).Apply();
 
-            // Apply Menu patches
+            // Menu
             new CarpenterMenuPatch(harmony).Apply();
             new AnimalQueryMenuPatch(harmony).Apply();
 
-            // Apply StandardObject patches
+            // StandardObject
             new CaskPatch(harmony).Apply();
             new FurniturePatch(harmony).Apply();
             new BedFurniturePatch(harmony).Apply();
             new MiniJukeboxPatch(harmony).Apply();
             new ObjectPatch(harmony).Apply();
 
-            // Apply TerrainFeature patches
+            // TerrainFeature
             new FruitTreePatch(harmony).Apply();
             new TreePatch(harmony).Apply();
 
@@ -87,7 +86,7 @@ namespace AnythingAnywhere
 
             // Hook into Custom events
             ButtonOptions.Click += EventHandlers.OnClick;
-            Config.ConfigChanged += EventHandlers.OnConfigChanged;
+            ConfigUtilities.ConfigChanged += EventHandlers.OnConfigChanged;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
