@@ -23,16 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove=".gitignore" />
-    <None Remove=".gitmodules" />
-    <None Remove="Framework\Common\.git" />
-    <None Remove="CONTRIBUTING.md" />
-    <None Remove="LICENSE" />
-    <None Remove="README.md" />
-    <None Remove="images\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
   </ItemGroup>
 
