@@ -26,8 +26,7 @@
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
   </ItemGroup>
 
-  <Target Name="PrepareForGithubWorkflow" AfterTargets="Build" Condition="$(Configuration)=='Release'">
-    <Move SourceFiles="$(OutputPath)\$(ProjectName) $(Version).zip" DestinationFiles="$(OutputPath)\$(ProjectName).zip" />
+  <Target Name="PrepareForGithubWorkflow" AfterTargets="Build">
     <WriteLinesToFile File="$(OutputPath)\version.txt" Lines="$(Version)" Overwrite="true" />
   </Target>
 
