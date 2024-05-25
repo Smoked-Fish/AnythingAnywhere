@@ -5,38 +5,35 @@
     <LangVersion>latest</LangVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
     <EnableHarmony>true</EnableHarmony>
     <DefineConstants>EnableCommonPatches</DefineConstants>
     <EnableCommonPatches>true</EnableCommonPatches>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Remove="i18n\default.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove=".gitignore" />
     <None Remove=".gitmodules" />
-    <None Remove="CONTRIBUTING.md" />
     <None Remove="Framework\Common\.git" />
+    <None Remove="CONTRIBUTING.md" />
     <None Remove="LICENSE" />
     <None Remove="README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="images\**" />
-    <EmbeddedResource Remove="images\**" />
     <None Remove="images\**" />
+    <Compile Remove="Framework\Common\CommonTasks.dll" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
   </ItemGroup>
-  
-	<Target Name="PrepareForGithubWorkflow" AfterTargets="Build" Condition="$(Configuration)=='Release'">
-		<Move SourceFiles="$(OutputPath)\$(ProjectName) $(Version).zip" DestinationFiles="$(OutputPath)\$(ProjectName).zip" />
-		<WriteLinesToFile File="$(OutputPath)\version.txt" Lines="$(Version)" Overwrite="true" />
-	</Target>
+
+  <UsingTask TaskName="ReadManifestTask" AssemblyFile="Framework\Common\CommonTasks.dll" />
+
+  <Target Name="ReadManifest" AfterTargets="Build">
+    <ReadManifestTask ManifestPath="$(MSBuildProjectDirectory)\manifest.json">
+      <Output TaskParameter="Version" PropertyName="ManifestVersion" />
+    </ReadManifestTask>
+
+    <Message Text="Version extracted from manifest.json: $(ManifestVersion)" />
+  </Target>
 
 </Project>
