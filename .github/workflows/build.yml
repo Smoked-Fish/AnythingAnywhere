@@ -11,37 +11,89 @@ jobs:
       run: |
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
     - uses: actions/checkout@v4
+
+    - name: Cache NuGet
+      id: cache-nuget
+      uses: actions/cache@v4.0.2
+      with:
+        path: |
+          ~/.nuget/packages
+          ${{ github.workspace }}/obj
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+
+    - name: Resore Common
+      id: cache-common
+      uses: actions/cache/restore@v4.0.2
+      with:
+        path: Common
+        key: ${{ runner.os }}-common
+
+    - name: Resore Reference Assemblies
+      id: cache-refasm
+      uses: actions/cache/restore@v4.0.2
+      with:
+        path: GamePath
+        key: ${{ runner.os }}-mod-reference
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 6.0.X
+
     - name: Checkout Common submodule
+      if: steps.cache-common.outputs.cache-hit != 'true'
       uses: actions/checkout@v4
       with:
         repository: Smoked-Fish/Common
         ref: main
         path: Common
+
     - name: Setup game and SMAPI
+      if: steps.cache-refasm.outputs.cache-hit != 'true'
       uses: actions/checkout@v4
       with:
         repository: Smoked-Fish/mod-reference-assemblies
         fetch-tags: true
         ref: refs/tags/SDV1.6.8-SMAPI4.0.8
         path: GamePath
+
     - name: Set game path
       run: |
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
+        
     - name: Restore dependencies
+      if: steps.cache-nuget.outputs.cache-hit != 'true'
       run: dotnet restore
+
     - name: Build
       run: dotnet build --no-restore --configuration Release
+
     - name: Fetch version
       run: |
         echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/bin/Release/version.txt)" >> $GITHUB_ENV
-        unzip ${{ github.workspace }}/bin/Release/${{ env.REPO_NAME }}.zip -d Mod
+
+    - name: Unzip mod
+      run: |
+        MOD_ZIP_PATH="${{ github.workspace }}/bin/Release/${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}.zip"
+        unzip "$MOD_ZIP_PATH" -d Mod
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}
         path: Mod
+
+    - name: Cache Common
+      if: steps.cache-common.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4.0.2
+      with:
+        path: Common
+        key: ${{ steps.cache-common.outputs.cache-primary-key }}
+
+    - name: Cache Reference Assemblies
+      if: steps.cache-refasm.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4.0.2
+      with:
+        path: GamePath
+        key: ${{ steps.cache-refasm.outputs.cache-primary-key }}
