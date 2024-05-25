@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
     - name: Fetch Repo Name
       run: |
@@ -14,13 +16,20 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 6.x
+        cache: true
+        cache-dependency-path: subdir/packages.lock.json
     - name: Checkout Common submodule
       uses: actions/checkout@v4
       with:
         repository: Smoked-Fish/Common
         ref: main
         path: Common
+    - name: Cache Common
+      uses: actions/cache@v2
+      with:
+        path: Common
+        key: ${{ runner.os }}-common-${{ hashFiles('Common/**') }}
     - name: Setup game and SMAPI
       uses: actions/checkout@v4
       with:
@@ -28,12 +37,17 @@ jobs:
         fetch-tags: true
         ref: refs/tags/SDV1.6.8-SMAPI4.0.8
         path: GamePath
+    - name: Cache Reference Assemblies
+      uses: actions/cache@v2
+      with:
+        path: GamePath
+        key: ${{ runner.os }}-mod-reference-${{ hashFiles('GamePath/**') }}
     - name: Set game path
       run: |
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore --locked-mode
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Fetch version
