@@ -5,9 +5,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -21,6 +19,12 @@ jobs:
         fetch-tags: true
         ref: refs/tags/SDV1.6.3-SMAPI4.0.2
         path: GamePath
+    - name: Checkout Common submodule
+      uses: actions/checkout@v4
+      with:
+        repository: Smoked-Fish/Common
+        ref: main
+        path: Common
     - name: Set game path
       run: |
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
@@ -36,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: AnythingAnywhere 
-        path: AnythingAnywhere /bin/Release/AnythingAnywhere .zip
+        path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
