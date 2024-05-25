@@ -17,8 +17,13 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.X
-        cache: true
-        cache-dependency-path: subdir/packages.lock.json
+    - name: Cache .NET dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ env.NUGET_PACKAGES }}
+          subdir/packages.lock.json
+        key: ${{ runner.os }}-dotnet-${{ hashFiles('**/packages.lock.json') }}
     - name: Checkout Common submodule
       uses: actions/checkout@v4
       with:
