@@ -85,12 +85,14 @@ jobs:
         path: Mod
 
     - name: Cache Common
+      if: steps.cache-common.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4.0.2
       with:
         path: Common
         key: ${{ steps.cache-common.outputs.cache-primary-key }}
 
     - name: Cache Reference Assemblies
+      if: steps.cache-refasm.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4.0.2
       with:
         path: GamePath
