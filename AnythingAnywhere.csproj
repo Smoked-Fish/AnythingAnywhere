@@ -9,7 +9,7 @@
     <DefineConstants>EnableCommonPatches</DefineConstants>
     <EnableCommonPatches>true</EnableCommonPatches>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Version>1.0.1</Version>
+    <Version>1.7.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
