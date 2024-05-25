@@ -15,9 +15,9 @@ jobs:
     - name: Setup game and SMAPI
       uses: actions/checkout@v4
       with:
-        repository: StardewModders/mod-reference-assemblies
+        repository: Smoked-Fish/mod-reference-assemblies
         fetch-tags: true
-        ref: refs/tags/SDV1.6.3-SMAPI4.0.2
+        ref: refs/tags/SDV1.6.8-SMAPI4.0.8
         path: GamePath
     - name: Checkout Common submodule
       uses: actions/checkout@v4
@@ -41,3 +41,24 @@ jobs:
       with:
         name: AnythingAnywhere 
         path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
+
+  upload:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+    - name: Install strip json comments
+      run: |
+        npm install --global strip-json-comments-cli
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: AnythingAnywhere
+    - name: Get mod info
+      run: |
+        unzip AnythingAnywhere.zip -d mod
+        echo "ModVersion=$(cat mod/TestMod/manifest.json | strip-json-comments | jq '.Version')" >> $GITHUB_ENV
+        echo "ModId=$(cat mod/TestMod/manifest.json | strip-json-comments | jq --raw-output '.UpdateKeys[] | select(startswith("Nexus:"))' | grep -o '[0-9]*')" >> $GITHUB_ENV
