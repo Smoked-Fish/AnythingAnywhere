@@ -12,12 +12,21 @@ jobs:
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
     - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+    - name: Restore .NET Cache
+      uses: actions/cache/restore@v4.0.2
       with:
-        dotnet-version: 6.0.X
-        cache: true
-        cache-dependency-path: '**/packages.lock.json'
+        id: cache-dotnet
+        path: '.\.dotnet'
+        key: ${{ runner.os }}-dotnet-6
+
+    - name: Restore NuGet Cache
+      uses: actions/cache/restore@v4.0.2
+      with:
+        id: cache-nuget
+        path: |
+          ~/.nuget/packages
+          ${{ github.workspace }}/obj
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
     - name: Restore Common Cache
       uses: actions/cache/restore@v4.0.2
@@ -32,6 +41,11 @@ jobs:
         id: cache-refasm
         path: GamePath
         key: ${{ runner.os }}-mod-reference-${{ hashFiles('GamePath/**') }}
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.X
 
     - name: Checkout Common submodule
       if: steps.cache-common.outputs.cache-hit != 'true'
@@ -56,6 +70,7 @@ jobs:
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
         
     - name: Restore dependencies
+      if: steps.cache-nuget.outputs.cache-hit != 'true'
       run: dotnet restore
 
     - name: Build
@@ -75,6 +90,22 @@ jobs:
       with:
         name: ${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}
         path: Mod
+
+    - name: Cache .NET
+      uses: actions/cache/save@v4.0.2
+      with:
+        id: cache-dotnet
+        path: '.\.dotnet'
+        key: ${{ runner.os }}-dotnet-6
+
+    - name: Cache NuGet
+      uses: actions/cache/save@v4.0.2
+      with:
+        id: cache-nuget
+        path: |
+          ~/.nuget/packages
+          ${{ github.workspace }}/obj
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
     - name: Cache Common
       uses: actions/cache/save@v4.0.2
