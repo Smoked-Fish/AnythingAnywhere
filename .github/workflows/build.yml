@@ -39,6 +39,8 @@ jobs:
     - name: Fetch version
       run: |
         echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/bin/Release/version.txt)" >> $GITHUB_ENV
+    - name: Unzip mod
+      run: |
         unzip ${{ github.workspace }}/bin/Release/${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}.zip -d Mod
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
