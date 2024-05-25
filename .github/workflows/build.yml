@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: AnythingAnywhere 
-        path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
+        path: AnythingAnywhere/bin/Release/AnythingAnywhere $(AnythingAnywhere_version).zip
