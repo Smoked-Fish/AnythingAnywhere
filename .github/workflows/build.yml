@@ -15,9 +15,9 @@ jobs:
     - name: Setup game and SMAPI
       uses: actions/checkout@v4
       with:
-        repository: StardewModders/mod-reference-assemblies
+        repository: Smoked-Fish/mod-reference-assemblies
         fetch-tags: true
-        ref: refs/tags/SDV1.6.3-SMAPI4.0.2
+        ref: refs/tags/SDV1.6.8-SMAPI4.0.8
         path: GamePath
     - name: Checkout Common submodule
       uses: actions/checkout@v4
