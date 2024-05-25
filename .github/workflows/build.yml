@@ -10,6 +10,7 @@ jobs:
     - name: Fetch Repo Name
       run: |
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
+        
     - name: Checkout Submodule
       uses: actions/checkout@v4
       with: 
