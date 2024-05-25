@@ -12,13 +12,6 @@ jobs:
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
     - uses: actions/checkout@v4
 
-    - name: Cache .NET
-      id: cache-dotnet
-      uses: actions/cache@v4.0.2
-      with:
-        path: /usr/share/dotnet
-        key: ${{ runner.os }}-dotnet-6
-
     - name: Cache NuGet
       id: cache-nuget
       uses: actions/cache@v4.0.2
@@ -28,19 +21,19 @@ jobs:
           ${{ github.workspace }}/obj
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
-    - name: Cache Common
+    - name: Resore Common
       id: cache-common
-      uses: actions/cache@v4.0.2
+      uses: actions/cache/restore@v4.0.2
       with:
         path: Common
-        key: ${{ runner.os }}-common-${{ hashFiles('Common/**') }}
+        key: ${{ runner.os }}-common
 
-    - name: Cache Reference Assemblies
+    - name: Resore Reference Assemblies
       id: cache-refasm
-      uses: actions/cache@v4.0.2
+      uses: actions/cache/restore@v4.0.2
       with:
         path: GamePath
-        key: ${{ runner.os }}-mod-reference-${{ hashFiles('GamePath/**') }}
+        key: ${{ runner.os }}-mod-reference
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -90,3 +83,15 @@ jobs:
       with:
         name: ${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}
         path: Mod
+
+    - name: Cache Common
+      uses: actions/cache/save@v4.0.2
+      with:
+        path: Common
+        key: ${{ steps.cache-common.outputs.cache-primary-key }}
+
+    - name: Cache Reference Assemblies
+      uses: actions/cache/save@v4.0.2
+      with:
+        path: GamePath
+        key: ${{ steps.cache-refasm.outputs.cache-primary-key }}
