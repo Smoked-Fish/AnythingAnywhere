@@ -14,7 +14,7 @@ using StardewValley.Locations;
 using Common.Helpers;
 using System.Threading;
 
-namespace AnythingAnywhere.Framework.Handlers
+namespace AnythingAnywhere.Framework
 {
     internal class EventHandlers
     {
@@ -117,9 +117,9 @@ namespace AnythingAnywhere.Framework.Handlers
                 ModEntry.ModHelper.GameContent.InvalidateCache("Data/Locations");
             }
 
-            if (e.ConfigName == nameof(ModConfig.EnableFreeBuild) || 
-                e.ConfigName == nameof(ModConfig.EnableInstantBuild) || 
-                e.ConfigName == nameof(ModConfig.RemoveBuildConditions) || 
+            if (e.ConfigName == nameof(ModConfig.EnableFreeBuild) ||
+                e.ConfigName == nameof(ModConfig.EnableInstantBuild) ||
+                e.ConfigName == nameof(ModConfig.RemoveBuildConditions) ||
                 e.ConfigName == nameof(ModConfig.EnableGreenhouse))
             {
                 buildingConfigChanged = true; // Doesn't work if I don't do this
@@ -263,7 +263,7 @@ namespace AnythingAnywhere.Framework.Handlers
                 Game1.addHUDMessage(new HUDMessage(I18n.Message("NoBuildingIndoors"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
-            
+
             bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || ModEntry.Config.BypassMagicInk);
             if (builder == "Wizard" && magicInkCheck && !ModEntry.Config.EnableInstantBuild)
             {
