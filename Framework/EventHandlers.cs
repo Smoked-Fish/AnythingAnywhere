@@ -11,6 +11,8 @@ using Common.Managers;
 using StardewValley.TokenizableStrings;
 using AnythingAnywhere.Framework.Patches.Locations;
 using StardewValley.Locations;
+using Common.Helpers;
+using System.Threading;
 
 namespace AnythingAnywhere.Framework.Handlers
 {
@@ -156,7 +158,7 @@ namespace AnythingAnywhere.Framework.Handlers
             else
             {
                 Game1.playSound("backpackIN");
-                ModEntry.Config.InitializeDefaultConfig(e.FieldID);
+                ConfigUtilities.InitializeDefaultConfig(ModEntry.Config, e.FieldID);
                 PageHelper.OpenPage(PageHelper.CurrPage);
 
                 if (e.FieldID.Equals("Building"))
@@ -258,13 +260,14 @@ namespace AnythingAnywhere.Framework.Handlers
         {
             if (!Game1.currentLocation.IsOutdoors && !ModEntry.Config.EnableBuildingIndoors)
             {
-                Game1.addHUDMessage(new HUDMessage(TranslationHelper.GetByKey("Message.AnythingAnywhere.NoBuildingIndoors"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                Game1.addHUDMessage(new HUDMessage(I18n.Message("NoBuildingIndoors"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
+            
             bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || ModEntry.Config.BypassMagicInk);
             if (builder == "Wizard" && magicInkCheck && !ModEntry.Config.EnableInstantBuild)
             {
-                Game1.addHUDMessage(new HUDMessage(TranslationHelper.GetByKey("Message.AnythingAnywhere.NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                Game1.addHUDMessage(new HUDMessage(I18n.Message("NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
                 return;
             }
 
@@ -279,7 +282,7 @@ namespace AnythingAnywhere.Framework.Handlers
 
         #endregion
 
-        #region Reset Blacklist
+        #region Blacklist
         internal static void ResetBlacklist(bool setAlwaysActive = false)
         {
             foreach (GameLocation location in Game1.locations)
