@@ -39,5 +39,4 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: AnythingAnywhere $(AnythingAnywhere_version).zip
-        path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
+        path: AnythingAnywhere/bin/Release/AnythingAnywhere ${{ env.AnythingAnywhere_version }}.zip
