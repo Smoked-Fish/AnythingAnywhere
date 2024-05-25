@@ -26,7 +26,7 @@ jobs:
       uses: actions/cache/restore@v4.0.2
       with:
         path: Common
-        key: ${{ runner.os }}-common
+        key: ${{ runner.os }}-common-${{ hashFiles('Common/**') }}
 
     - name: Resore Reference Assemblies
       id: cache-refasm
