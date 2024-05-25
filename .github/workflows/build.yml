@@ -12,6 +12,12 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
+    - name: Checkout Common submodule
+      uses: actions/checkout@v4
+      with:
+        repository: Smoked-Fish/Common
+        ref: main
+        path: Common
     - name: Setup game and SMAPI
       uses: actions/checkout@v4
       with:
@@ -19,12 +25,6 @@ jobs:
         fetch-tags: true
         ref: refs/tags/SDV1.6.8-SMAPI4.0.8
         path: GamePath
-    - name: Checkout Common submodule
-      uses: actions/checkout@v4
-      with:
-        repository: Smoked-Fish/Common
-        ref: main
-        path: Common
     - name: Set game path
       run: |
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
@@ -35,7 +35,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
     - name: Fetch version
       run: |
-        echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/TestMod/bin/Release/version.txt)" >> $GITHUB_ENV
+        echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/AnythingAnywhere/bin/Release/version.txt)" >> $GITHUB_ENV
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
