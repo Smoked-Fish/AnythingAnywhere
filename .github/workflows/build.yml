@@ -19,7 +19,7 @@ jobs:
       with:
         dotnet-version: 6.0.X
         cache: true
-        cache-dependency-path: subdir/packages.lock.json
+        cache-dependency-path: '**/package-lock.json'
 
     - name: Restore Common Cache
       uses: actions/cache/restore@v4.0.2
