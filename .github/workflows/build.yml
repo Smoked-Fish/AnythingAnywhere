@@ -54,8 +54,9 @@ jobs:
       run: |
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
+        
     - name: Restore dependencies
-      run: dotnet restore --locked-mode
+      run: dotnet restore
 
     - name: Build
       run: dotnet build --no-restore --configuration Release
