@@ -7,10 +7,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Fetch Repo Name
+    
+    - name: Set Environment Variables
       run: |
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
-        echo "REFASM_TAG=SDV1.6.8-SMAPI4.0.8" >>GITHUB_ENV
+        echo "REFASM_TAG=SDV1.6.8-SMAPI4.0.8" >> $GITHUB_ENV
+        // Setup GamePath
+        echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
+        echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
         
     - name: Checkout Submodule
       uses: actions/checkout@v4
@@ -46,11 +50,6 @@ jobs:
         fetch-tags: true
         ref: refs/tags/${{ env.REFASM_TAG }}
         path: GamePath
-
-    - name: Set game path
-      run: |
-        echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
-        echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
         
     - name: Restore dependencies
       if: steps.cache-nuget.outputs.cache-hit != 'true'
