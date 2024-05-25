@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <Target Name="PrepareForGithubWorkflow" AfterTargets="Build" Condition="$(Configuration)=='Release'">
-    <WriteLinesToFile File="$(OutputPath)\version.txt" Lines="$(Version)" Overwrite="true" />
+    <Copy SourceFiles="$(OutputPath)\$(ProjectName) $(Version).zip" DestinationFiles="$(OutputPath)\$(ProjectName).zip" />
   </Target>
 
 </Project>
