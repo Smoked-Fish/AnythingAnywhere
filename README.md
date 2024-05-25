@@ -1,4 +1,4 @@
-
+[![Build](https://github.com/Smoked-Fish/AnythingAnywhere/actions/workflows/build.yml/badge.svg)](https://github.com/Smoked-Fish/AnythingAnywhere/actions/workflows/build.yml)
 # Anything Anywhere Config List
 
 
