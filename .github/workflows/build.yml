@@ -7,6 +7,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Fetch Repo Name
+      run: |
+        echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -35,8 +38,10 @@ jobs:
       run: dotnet build --no-restore --configuration Release
     - name: Fetch version
       run: |
-        echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/AnythingAnywhere/bin/Release/version.txt)" >> $GITHUB_ENV
+        echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/bin/Release/version.txt)" >> $GITHUB_ENV
+        unzip ${{ github.workspace }}/bin/Release/${{ env.REPO_NAME }}.zip -d Mod
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        path: AnythingAnywhere/bin/Release/AnythingAnywhere ${{ env.MOD_VERSION }}.zip
+        name: ${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}
+        path: Mod
