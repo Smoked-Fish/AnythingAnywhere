@@ -41,3 +41,24 @@ jobs:
       with:
         name: AnythingAnywhere 
         path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
+
+  upload:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+    - name: Install strip json comments
+      run: |
+        npm install --global strip-json-comments-cli
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: AnythingAnywhere
+    - name: Get mod info
+      run: |
+        unzip AnythingAnywhere.zip -d mod
+        echo "ModVersion=$(cat mod/TestMod/manifest.json | strip-json-comments | jq '.Version')" >> $GITHUB_ENV
+        echo "ModId=$(cat mod/TestMod/manifest.json | strip-json-comments | jq --raw-output '.UpdateKeys[] | select(startswith("Nexus:"))' | grep -o '[0-9]*')" >> $GITHUB_ENV
