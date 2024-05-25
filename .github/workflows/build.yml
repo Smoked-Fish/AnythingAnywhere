@@ -41,7 +41,8 @@ jobs:
         echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/bin/Release/version.txt)" >> $GITHUB_ENV
     - name: Unzip mod
       run: |
-        unzip ${{ github.workspace }}/bin/Release/${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}.zip -d Mod
+        MOD_ZIP_PATH="${{ github.workspace }}/bin/Release/${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}.zip"
+        unzip MOD_ZIP_PATH -d Mod
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
