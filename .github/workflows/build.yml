@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+    - name: Setup game and SMAPI
+      uses: actions/checkout@v4
+      with:
+        repository: StardewModders/mod-reference-assemblies
+        fetch-tags: true
+        ref: refs/tags/SDV1.6.3-SMAPI4.0.2
+        path: GamePath
+    - name: Checkout Common submodule
+      uses: actions/checkout@v4
+      with:
+        repository: Smoked-Fish/Common
+        ref: main
+        path: Common
+    - name: Set game path
+      run: |
+        echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
+        echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    - name: Fetch version
+      run: |
+        echo "AnythingAnywhere_version=$(cat $GITHUB_WORKSPACE/AnythingAnywhere/bin/Release/version.txt)" >> $GITHUB_ENV
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AnythingAnywhere 
+        path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
