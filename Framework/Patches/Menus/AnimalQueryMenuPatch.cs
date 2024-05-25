@@ -104,7 +104,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
                     validLocations.Add(new KeyValuePair<string, string>(farm.NameOrUniqueName, farm.DisplayName));
                 }
-                Game1.currentLocation.ShowPagedResponses(TranslationHelper.GetByKey("Message.AnythingAnywhere.ChooseAnimalLocation"), validLocations, delegate (string value)
+                Game1.currentLocation.ShowPagedResponses(I18n.Message("ChooseAnimalLocation"), validLocations, delegate (string value)
                 {
                     GameLocation locationFromName = Game1.getLocationFromName(value);
 
