@@ -33,11 +33,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore --configuration Release
-    - name: Fetch version
-      run: |
-        echo "AnythingAnywhere_version=$(cat $GITHUB_WORKSPACE/AnythingAnywhere/bin/Release/version.txt)" >> $GITHUB_ENV
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: AnythingAnywhere 
+        name: AnythingAnywhere-$AnythingAnywhere_version.zip
         path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
