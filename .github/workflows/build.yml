@@ -42,7 +42,7 @@ jobs:
     - name: Unzip mod
       run: |
         MOD_ZIP_PATH="${{ github.workspace }}/bin/Release/${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}.zip"
-        unzip $MOD_ZIP_PATH -d Mod
+        unzip "$MOD_ZIP_PATH" -d Mod
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
