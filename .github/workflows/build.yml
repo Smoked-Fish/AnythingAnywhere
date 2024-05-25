@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: AnythingAnywhere
-        path: ${{ GITHUB_WORKSPACE }}/bin/Release/AnythingAnywhere.zip
+        path: ${{ github.workspace }}/bin/Release/AnythingAnywhere.zip
