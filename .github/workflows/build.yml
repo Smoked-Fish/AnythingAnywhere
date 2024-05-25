@@ -33,7 +33,10 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore --configuration Release
+    - name: Fetch version
+      run: |
+        echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/TestMod/bin/Release/version.txt)" >> $GITHUB_ENV
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        path: AnythingAnywhere/bin/Release/AnythingAnywhere.zip
+        path: AnythingAnywhere/bin/Release/AnythingAnywhere ${{ env.MOD_VERSION }}.zip
