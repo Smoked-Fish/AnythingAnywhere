@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using Common.Managers;
 using Common.Util;
 
-
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
     internal class AnimalQueryMenuPatch : PatchTemplate
@@ -37,7 +36,6 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
             FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
-
 
             if (movingAnimal)
             {
@@ -98,7 +96,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         validLocations.Add(new KeyValuePair<string, string>(location.NameOrUniqueName, location.DisplayName));
                     }
                 }
-                if (!validLocations.Any())
+                if (validLocations.Count <= 0)
                 {
                     Farm farm = Game1.getFarm();
 
@@ -189,7 +187,6 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 return;
 
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
-
 
             if (movingAnimal)
             {
