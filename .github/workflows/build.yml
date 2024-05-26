@@ -18,6 +18,18 @@ jobs:
         # Setup GamePath
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
+
+    - name: Search for manifest.json
+      id: find-file
+      run: |
+        FILE=$(find . -name "manifest.json" -print -quit)
+        if [ -z "$FILE" ]; then
+          echo "File not found"
+          exit 1
+        else
+          echo "File found at $FILE"
+          echo "::set-output name=filepath::$FILE"
+        fi
         
     - name: Checkout Submodule
       uses: actions/checkout@v4
