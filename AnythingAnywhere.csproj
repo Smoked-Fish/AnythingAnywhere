@@ -7,7 +7,6 @@
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <EnableHarmony>true</EnableHarmony>
     <DefineConstants>EnableCommonPatches</DefineConstants>
-    <EnableCommonPatches>true</EnableCommonPatches>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
