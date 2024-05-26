@@ -9,20 +9,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    
+        
+    - name: Checkout Submodule
+      uses: actions/checkout@v4
+      with: 
+        submodules: true
+
     - name: Set Environment Variables
       run: |
-        echo "Version=$(find . -type f -name "manifest.json" -exec jq --raw-output '.Version' {} \;)" >> "$GITHUB_ENV"
+        echo "MOD_VERSION=$(cat ./manifest.json | jq --raw-output '.Version')" >> $GITHUB_ENV
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
         echo "REFASM_TAG=SDV1.6.8-SMAPI4.0.8" >> $GITHUB_ENV
         # Setup GamePath
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
-        
-    - name: Checkout Submodule
-      uses: actions/checkout@v4
-      with: 
-        submodules: true 
 
     - name: Cache NuGet
       id: cache-nuget
@@ -69,5 +69,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}
+        name: ${{ env.REPO_NAME }} ${{ env. }}
         path: Mod
