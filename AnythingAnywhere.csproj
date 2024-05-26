@@ -9,7 +9,6 @@
     <DefineConstants>EnableCommonPatches</DefineConstants>
     <EnableCommonPatches>true</EnableCommonPatches>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Version>1.7.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,9 +24,5 @@
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
   </ItemGroup>
-
-  <Target Name="PrepareForGithubWorkflow" AfterTargets="Build">
-    <WriteLinesToFile File="$(OutputPath)\version.txt" Lines="$(Version)" Overwrite="true" />
-  </Target>
 
 </Project>
