@@ -13,23 +13,11 @@ jobs:
     - name: Set Environment Variables
       run: |
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
-        echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/AnythingAnywhere/manifest.json | jq --raw-output '.Version')" >> $GITHUB_ENV
+        echo "MOD_VERSION=$(cat ${{github.workspace}}/manifest.json | jq --raw-output '.Version')" >> $GITHUB_ENV
         echo "REFASM_TAG=SDV1.6.8-SMAPI4.0.8" >> $GITHUB_ENV
         # Setup GamePath
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
-
-    - name: Search for manifest.json
-      id: find-file
-      run: |
-        FILE=$(find . -type f -name 'manifest.json')
-        if [ -z "$FILE" ]; then
-          echo "File not found"
-          exit 1
-        else
-          echo "File found at $FILE"
-          echo "::set-output name=filepath::$FILE"
-        fi
         
     - name: Checkout Submodule
       uses: actions/checkout@v4
