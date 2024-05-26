@@ -27,7 +27,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = true;
         }
 
-
         // Enable all beds indoors
         private static IEnumerable<CodeInstruction> PlacementActionTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
         {

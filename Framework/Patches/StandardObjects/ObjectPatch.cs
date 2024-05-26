@@ -150,7 +150,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                                 return false; 
                             }
 
-                            
                             toPlace.shakeTimer = 50;
                             toPlace.TileLocation = placementTile;
                             toPlace.performDropDownAction(who);
@@ -301,6 +300,5 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             __result = location.CheckItemPlantRules(__instance.QualifiedItemId, isGardenPot: false, true, out deniedMessage);
             return false;
         }
-
     }
 }

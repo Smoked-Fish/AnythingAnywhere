@@ -15,7 +15,6 @@ using AnythingAnywhere.Framework.UI;
 using StardewValley.Objects;
 using Common.Util;
 
-
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
     internal class CarpenterMenuPatch : PatchTemplate

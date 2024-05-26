@@ -80,7 +80,6 @@ namespace AnythingAnywhere.Framework
                                 location.Map.Properties.TryAdd("ForceAllowTreePlanting", "T");
                             }
                         }
-
                     }, AssetEditPriority.Late);
                 return;
             }

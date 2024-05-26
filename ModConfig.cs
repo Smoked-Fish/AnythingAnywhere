@@ -1,7 +1,5 @@
 ﻿using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
-using System.Reflection;
-using System;
 using Common.Interfaces;
 using System.Collections.Generic;
 using Common.Helpers;
@@ -10,9 +8,7 @@ namespace AnythingAnywhere
 {
     internal class ModConfig : IConfigurable
     {
-
         // PLACING
-
         [DefaultValue(true, "Placing")]
         public bool EnablePlacing { get; set; }
 
@@ -25,9 +21,7 @@ namespace AnythingAnywhere
         [DefaultValue(false, "Placing")]
         public bool EnableWallFurnitureIndoors { get; set; }
 
-
         // BUILDING
-
         [DefaultValue(true, "Building")]
         public bool EnableBuilding { get; set; }
 
@@ -64,7 +58,6 @@ namespace AnythingAnywhere
         [DefaultValue(null, "Building")]
         public List<string> BlacklistedLocations { get; set; }
 
-
         // FARMING
         [DefaultValue(true, "Farming")]
         public bool EnablePlanting { get; set; }
@@ -77,8 +70,6 @@ namespace AnythingAnywhere
 
         [DefaultValue(false, "Farming")]
         public bool EnableWildTreeTweaks { get; set; }
-
-
 
         // OTHER
         [DefaultValue(true, "Other")]
@@ -103,6 +94,5 @@ namespace AnythingAnywhere
         {
             ConfigUtilities.InitializeDefaultConfig(this);
         }
-
     }
 }

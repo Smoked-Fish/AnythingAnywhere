@@ -68,7 +68,6 @@ namespace AnythingAnywhere
             new FruitTreePatch(harmony).Apply();
             new TreePatch(harmony).Apply();
 
-
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
             helper.ConsoleCommands.Add("aa_remove_furniture", "Removes all furniture of a specified ID at a specified location.\n\nUsage: aa_remove_furniture [LOCATION] [FURNITURE_ID]", this.DebugRemoveFurniture);
@@ -82,7 +81,6 @@ namespace AnythingAnywhere
             helper.Events.Content.AssetRequested += EventHandlers.OnAssetRequested;
             helper.Events.GameLoop.UpdateTicked += EventHandlers.OnUpdateTicked;
             helper.Events.Player.Warped += EventHandlers.OnWarped;
-
 
             // Hook into Custom events
             ButtonOptions.Click += EventHandlers.OnClick;
@@ -141,7 +139,6 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
                 ConfigManager.AddHorizontalSeparator();
                 ConfigManager.AddButtonOption("BlacklistedLocations", "BlacklistedLocations", "BlacklistCurrentLocation", afterReset);
-
 
                 // Register the farming settings
                 ConfigManager.AddPage("Farming");
