@@ -1,16 +1,28 @@
 name: Build
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Fetch Repo Name
+        
+    - name: Checkout Submodule
+      uses: actions/checkout@v4
+      with: 
+        submodules: true
+
+    - name: Set Environment Variables
       run: |
+        echo "MOD_VERSION=$(cat ./manifest.json | jq --raw-output '.Version')" >> $GITHUB_ENV
         echo "REPO_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
-    - uses: actions/checkout@v4
+        echo "REFASM_TAG=SDV1.6.8-SMAPI4.0.8" >> $GITHUB_ENV
+        # Setup GamePath
+        echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
+        echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
 
     - name: Cache NuGet
       id: cache-nuget
@@ -21,32 +33,17 @@ jobs:
           ${{ github.workspace }}/obj
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
-    - name: Resore Common
-      id: cache-common
-      uses: actions/cache/restore@v4.0.2
-      with:
-        path: Common
-        key: ${{ runner.os }}-common-${{ hashFiles('Common/**') }}
-
     - name: Resore Reference Assemblies
       id: cache-refasm
-      uses: actions/cache/restore@v4.0.2
+      uses: actions/cache@v4.0.2
       with:
         path: GamePath
-        key: ${{ runner.os }}-mod-reference
+        key: ${{ runner.os }}-mod-reference-${{ env.REFASM_TAG }}
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.X
-
-    - name: Checkout Common submodule
-      if: steps.cache-common.outputs.cache-hit != 'true'
-      uses: actions/checkout@v4
-      with:
-        repository: Smoked-Fish/Common
-        ref: main
-        path: Common
 
     - name: Setup game and SMAPI
       if: steps.cache-refasm.outputs.cache-hit != 'true'
@@ -54,13 +51,8 @@ jobs:
       with:
         repository: Smoked-Fish/mod-reference-assemblies
         fetch-tags: true
-        ref: refs/tags/SDV1.6.8-SMAPI4.0.8
+        ref: refs/tags/${{ env.REFASM_TAG }}
         path: GamePath
-
-    - name: Set game path
-      run: |
-        echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
-        echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
         
     - name: Restore dependencies
       if: steps.cache-nuget.outputs.cache-hit != 'true'
@@ -68,10 +60,6 @@ jobs:
 
     - name: Build
       run: dotnet build --no-restore --configuration Release
-
-    - name: Fetch version
-      run: |
-        echo "MOD_VERSION=$(cat $GITHUB_WORKSPACE/bin/Release/version.txt)" >> $GITHUB_ENV
 
     - name: Unzip mod
       run: |
@@ -83,17 +71,3 @@ jobs:
       with:
         name: ${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}
         path: Mod
-
-    - name: Cache Common
-      if: steps.cache-common.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4.0.2
-      with:
-        path: Common
-        key: ${{ steps.cache-common.outputs.cache-primary-key }}
-
-    - name: Cache Reference Assemblies
-      if: steps.cache-refasm.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4.0.2
-      with:
-        path: GamePath
-        key: ${{ steps.cache-refasm.outputs.cache-primary-key }}
