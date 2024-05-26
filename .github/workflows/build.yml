@@ -29,10 +29,6 @@ jobs:
         # Set up GamePath
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
-
-    - run: |
-        # Define the path to the mod zip file
-        echo "MOD_ZIP_PATH=${{ github.workspace }}/bin/Release/${{ env.MOD_NAME }} ${{ env.MOD_VERSION }}.zip" >> $GITHUB_ENV
         
     # Step 3: Cache NuGet packages
     - name: Cache NuGet
@@ -79,7 +75,9 @@ jobs:
 
     # Step 9: Unzip the mod for artifact upload
     - name: Unzip mod
-      run: unzip "$MOD_ZIP_PATH" -d Mod
+      run: |
+        MOD_ZIP_PATH="${{ github.workspace }}/bin/Release/${{ env.MOD_NAME }} ${{ env.MOD_VERSION }}.zip"
+        unzip "$MOD_ZIP_PATH" -d Mod
 
     # Step 10: Upload the mod as an artifact
     - name: Upload Artifact
