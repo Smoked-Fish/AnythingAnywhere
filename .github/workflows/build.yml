@@ -24,11 +24,15 @@ jobs:
         echo "MOD_VERSION=$(cat ./manifest.json | jq --raw-output '.Version')" >> $GITHUB_ENV
         # Fetch the latest tag from the reference assemblies repository
         echo "REFASM_TAG=$(curl -s 'https://api.github.com/repos/Smoked-Fish/mod-reference-assemblies/tags' | jq -r '.[0].name')" >> $GITHUB_ENV
-        # Define the path to the mod zip file
-        echo "MOD_ZIP_PATH=${{ github.workspace }}/bin/Release/${{ env.MOD_NAME }} ${{ env.MOD_VERSION }}.zip" >> $GITHUB_ENV
+
         # Set up GamePath
         echo "GamePath=$GITHUB_WORKSPACE/GamePath" >> "$GITHUB_ENV"
         echo "<Project><PropertyGroup><GamePath>$GITHUB_WORKSPACE/GamePath</GamePath></PropertyGroup></Project>" > "$HOME/stardewvalley.targets"
+
+    - name: TEST
+      run: |
+        # Define the path to the mod zip file
+        echo "MOD_ZIP_PATH=${{ github.workspace }}/bin/Release/${{ env.MOD_NAME }} ${{ env.MOD_VERSION }}.zip" >> $GITHUB_ENV
 
     # Step 3: Cache NuGet packages
     - name: Cache NuGet
