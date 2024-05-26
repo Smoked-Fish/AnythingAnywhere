@@ -69,5 +69,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.REPO_NAME }} ${{ env. }}
+        name: ${{ env.REPO_NAME }} ${{ env.MOD_VERSION }}
         path: Mod
