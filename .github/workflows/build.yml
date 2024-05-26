@@ -22,7 +22,7 @@ jobs:
     - name: Search for manifest.json
       id: find-file
       run: |
-        FILE=$(find . -name "manifest.json" -print -quit)
+        FILE=$(find . -type f -name 'manifest.json')
         if [ -z "$FILE" ]; then
           echo "File not found"
           exit 1
