@@ -15,7 +15,7 @@ jobs:
     
     # Step 1: Checkout the repository and its submodules
     - name: Checkout Submodule
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4.1.5
       with: 
         submodules: true
 
@@ -72,13 +72,6 @@ jobs:
       if: steps.cache-nuget.outputs.cache-hit != 'true'
       run: dotnet restore
 
-    - name: Remove Comments
-      run: |
-        # Remove single-line comments
-        find . -name "*.cs" -exec sed -i 's://.*$::g' {} \;
-        # Remove multi-line comments
-        find . -name "*.cs" -exec sed -i '/\/\*/,/\*\//d' {} \;
-
     # Step 8: Build the project
     - name: Build
       run: dotnet build --no-restore --configuration Release
@@ -91,7 +84,8 @@ jobs:
 
     # Step 10: Upload the mod as an artifact
     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.3.3
       with:
         name: ${{ env.MOD_NAME }} ${{ env.MOD_VERSION }}
         path: Mod
+        compression-level: 9
