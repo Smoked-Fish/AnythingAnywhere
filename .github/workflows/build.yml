@@ -6,6 +6,7 @@ on:
       - main
     paths-ignore:
       - '.github/**'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -70,6 +71,13 @@ jobs:
     - name: Restore dependencies
       if: steps.cache-nuget.outputs.cache-hit != 'true'
       run: dotnet restore
+
+    - name: Remove Comments
+      run: |
+        # Remove single-line comments
+        find . -name "*.cs" -exec sed -i 's://.*$::g' {} \;
+        # Remove multi-line comments
+        find . -name "*.cs" -exec sed -i '/\/\*/,/\*\//d' {} \;
 
     # Step 8: Build the project
     - name: Build
