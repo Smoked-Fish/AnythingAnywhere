@@ -2,3 +2,4 @@ CONTRIBUTING.md merge=ours
 README.md merge=ours
 LICENSE merge=ours
 images/* merge=ours
+.github/* merge=ours
