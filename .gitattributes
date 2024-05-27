@@ -1,5 +1,5 @@
-CONTRIBUTING.md merge=ours
-README.md merge=ours
-LICENSE merge=ours
-images/* merge=ours
-.github/* merge=ours
+CONTRIBUTING.md merge=ignore
+README.md merge=ignore
+LICENSE merge=ignore
+images/* merge=ignore
+.github/* merge=ignore
