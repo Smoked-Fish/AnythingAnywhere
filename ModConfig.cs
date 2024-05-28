@@ -87,9 +87,6 @@ namespace AnythingAnywhere
         [DefaultValue(false, "Other")]
         public bool MultipleMiniObelisks { get; set; }
 
-        [DefaultValue(false, "Other")]
-        public bool EnableCabinsAnywhere { get; set; }
-
         public ModConfig()
         {
             ConfigUtilities.InitializeDefaultConfig(this);
