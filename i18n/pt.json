@@ -50,11 +50,6 @@
   "Config.AnythingAnywhere.BypassMagicInk.Name": "Ignorar tinta mágica",
   "Config.AnythingAnywhere.BypassMagicInk.Description": "Ignora a necessidade de tinta mágica.",
 
-  // Buildable Locations Config
-  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Esconder localização",
-  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Localização atual",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Impede que a localização atual apareça no menu da Robin",
-
   // Farming Config
   "Config.AnythingAnywhere.Farming.Title": "Plantação",
 
@@ -91,8 +86,13 @@
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "Cabanas/Casas de Fazenda em qualquer lugar",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "ISTO CAUSARÁ ERROS! Desativa as verificações de Cabanas e Casas de Fazenda.",
 
-  // Button
+  // Reset Page Button
   "Config.AnythingAnywhere.ResetPage.Button": "Resetar página",
+
+  // Buildable Locations Button
+  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Esconder localização",
+  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Localização atual",
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Impede que a localização atual apareça no menu da Robin",
 
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "A construção interna está desativada.",

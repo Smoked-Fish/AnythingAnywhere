@@ -32,11 +32,6 @@
   "Config.AnythingAnywhere.BypassMagicInk.Name": "魔法墨水绕过",
   "Config.AnythingAnywhere.BypassMagicInk.Description": "跳过魔法墨水检查。",
 
-  // Buildable Locations Config
-  "Config.AnythingAnywhere.BlacklistedLocations.Title": "隐藏位置",
-  "Config.AnythingAnywhere.BlacklistedLocations.Button": "当前位置",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "防止当前位置出现在罗宾菜单中",
-
   // 农业配置
   "Config.AnythingAnywhere.Farming.Title": "农业",
   "Config.AnythingAnywhere.EnablePlanting.Name": "启用耕作",
@@ -63,8 +58,13 @@
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "房屋/小屋绕过",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "这将导致错误！禁用小屋和农舍检查",
 
-  // Button
+  // Reset Page Button
   "Config.AnythingAnywhere.ResetPage.Button": "重置页面",
+
+  // Buildable Locations Button
+  "Config.AnythingAnywhere.BlacklistedLocations.Title": "隐藏位置",
+  "Config.AnythingAnywhere.BlacklistedLocations.Button": "当前位置",
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "防止当前位置出现在罗宾菜单中",
 
   // 玩家消息
   "Message.AnythingAnywhere.NoBuildingIndoors": "禁用了室内建筑",
@@ -74,13 +74,9 @@
   "Message.AnythingAnywhere.ChooseBuildingLocation": "您想将建筑物移动到哪里？",
   "Message.AnythingAnywhere.ChooseAnimalLocation": "您想将动物移动到哪里？",
 
-
-
   // TODO (DID MY BEST)
-
   "Config.AnythingAnywhere.EnableInstantBuild.Name": "即时建造",
   "Config.AnythingAnywhere.EnableInstantBuild.Description": "启用即时建造",
-
   "Config.AnythingAnywhere.EnableFreeBuild.Name": "免费建造",
   "Config.AnythingAnywhere.EnableFreeBuild.Description": "将建造成本设置为免费"
 }

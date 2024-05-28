@@ -50,11 +50,6 @@
   "Config.AnythingAnywhere.BypassMagicInk.Name": "Magic Ink Bypass",
   "Config.AnythingAnywhere.BypassMagicInk.Description": "Skips the check for magic ink.",
 
-  // Buildable Locations Config
-  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
-
   // Farming Config
   "Config.AnythingAnywhere.Farming.Title": "Farming",
 
@@ -91,8 +86,13 @@
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "House/Cabin Bypass",
   "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "THIS WILL CAUSE ERRORS! Disables the Cabins and Farm House checks",
 
-  // Button
+  // Reset Page Button
   "Config.AnythingAnywhere.ResetPage.Button": "Reset Page",
+
+  // Buildable Locations Button
+  "Config.AnythingAnywhere.BlacklistedLocations.Title": "Hide Location",
+  "Config.AnythingAnywhere.BlacklistedLocations.Button": "Current Location",
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "Prevent the current location from showing up in Robins menu",
 
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "Building indoors is disabled",
