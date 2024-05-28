@@ -1,20 +1,21 @@
-﻿global using SObject = StardewValley.Object;
+﻿#nullable disable
+global using SObject = StardewValley.Object;
 using HarmonyLib;
-using StardewValley;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley;
+using Common.Managers;
+using Common.Utilities;
+using Common.Utilities.Options;
 using AnythingAnywhere.Framework;
-using AnythingAnywhere.Framework.Interfaces;
-using AnythingAnywhere.Framework.Patches.Menus;
-using AnythingAnywhere.Framework.Patches.Locations;
+using AnythingAnywhere.Framework.External.CustomBush;
 using AnythingAnywhere.Framework.Patches.GameLocations;
+using AnythingAnywhere.Framework.Patches.Locations;
+using AnythingAnywhere.Framework.Patches.Menus;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Common.Managers;
-using Common.Helpers;
-using Common.Util;
 using System.Linq;
 using System;
 
@@ -40,7 +41,7 @@ namespace AnythingAnywhere
             ModHelper = helper;
             Config = Helper.ReadConfig<ModConfig>();
             Multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
-            
+
             // Setup the managers/handlers
             ApiManager = new ApiManager(helper, ModMonitor);
             EventHandlers = new EventHandlers();
@@ -81,7 +82,7 @@ namespace AnythingAnywhere
             helper.Events.Input.ButtonsChanged += EventHandlers.OnButtonsChanged;
             helper.Events.Content.AssetRequested += EventHandlers.OnAssetRequested;
             helper.Events.GameLoop.UpdateTicked += EventHandlers.OnUpdateTicked;
-            helper.Events.Player.Warped += EventHandlers.OnWarped;     
+            helper.Events.Player.Warped += EventHandlers.OnWarped;
 
             // Hook into Custom events
             ButtonOptions.Click += EventHandlers.OnClick;
@@ -163,16 +164,13 @@ namespace AnythingAnywhere
             }
         }
 
-        private static readonly Action afterReset = () =>
-        {
-            EventHandlers.ResetBlacklist();
-        };
+        private static readonly Action afterReset = () => EventHandlers.ResetBlacklist();
 
         private void DebugRemoveFurniture(string command, string[] args)
         {
             if (args.Length <= 1)
             {
-                Monitor.Log($"Missing required arguments: [LOCATION] [FURNITURE_ID]", LogLevel.Warn);
+                Monitor.Log("Missing required arguments: [LOCATION] [FURNITURE_ID]", LogLevel.Warn);
                 return;
             }
 
@@ -184,7 +182,7 @@ namespace AnythingAnywhere
             }
 
             // get target location
-            var location = Game1.locations.FirstOrDefault(p => p.Name != null && p.Name.Equals(args[0], StringComparison.OrdinalIgnoreCase));
+            var location = Game1.locations.FirstOrDefault(p => p.Name?.Equals(args[0], StringComparison.OrdinalIgnoreCase) == true);
             if (location == null && args[0] == "current")
             {
                 location = Game1.currentLocation;
@@ -215,7 +213,7 @@ namespace AnythingAnywhere
         {
             if (args.Length <= 1)
             {
-                Monitor.Log($"Missing required arguments: [LOCATION] [OBJECT_ID]", LogLevel.Warn);
+                Monitor.Log("Missing required arguments: [LOCATION] [OBJECT_ID]", LogLevel.Warn);
                 return;
             }
 
@@ -227,7 +225,7 @@ namespace AnythingAnywhere
             }
 
             // get target location
-            var location = Game1.locations.FirstOrDefault(p => p.Name != null && p.Name.Equals(args[0], StringComparison.OrdinalIgnoreCase));
+            var location = Game1.locations.FirstOrDefault(p => p.Name?.Equals(args[0], StringComparison.OrdinalIgnoreCase) == true);
             if (location == null && args[0] == "current")
             {
                 location = Game1.currentLocation;
@@ -258,7 +256,7 @@ namespace AnythingAnywhere
         {
             if (args.Length > 0)
             {
-                Monitor.Log($"This command does not take any arguments", LogLevel.Warn);
+                Monitor.Log("This command does not take any arguments", LogLevel.Warn);
                 return;
             }
 
@@ -272,7 +270,7 @@ namespace AnythingAnywhere
 
             foreach (GameLocation location in Game1.locations)
             {
-                if (location.isAlwaysActive.Value == true)
+                if (location.isAlwaysActive.Value)
                 {
                     activeLocations.Add(location.Name);
                 }
