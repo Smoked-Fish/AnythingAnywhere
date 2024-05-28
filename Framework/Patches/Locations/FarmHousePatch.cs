@@ -1,12 +1,13 @@
-﻿using HarmonyLib;
-using Microsoft.Xna.Framework;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
 using StardewValley.Locations;
-using Common.Util;
+using Microsoft.Xna.Framework;
+using Common.Helpers;
 
 namespace AnythingAnywhere.Framework.Patches.Locations
 {
-    internal class FarmHousePatch : PatchTemplate
+    internal sealed class FarmHousePatch : PatchHelper
     {
         public static Vector2 FarmHouseRealPos {  get; set; }
         internal FarmHousePatch(Harmony harmony) : base(harmony, typeof(FarmHouse)) { }

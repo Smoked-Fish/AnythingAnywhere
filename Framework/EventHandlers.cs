@@ -1,24 +1,25 @@
-﻿using Common.Util;
-using StardewModdingAPI.Events;
-using StardewModdingAPI;
+﻿#nullable disable
 using StardewValley;
-using System.Collections.Generic;
-using System.Linq;
-using StardewValley.GameData.Locations;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley.GameData.Buildings;
-using AnythingAnywhere.Framework.UI;
-using Common.Managers;
+using StardewValley.GameData.Locations;
+using StardewValley.Locations;
 using StardewValley.TokenizableStrings;
 using AnythingAnywhere.Framework.Patches.Locations;
-using StardewValley.Locations;
+using AnythingAnywhere.Framework.UI;
 using Common.Helpers;
-using System.Threading;
+using Common.Managers;
+using Common.Utilities;
+using Common.Utilities.Options;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AnythingAnywhere.Framework
 {
-    internal class EventHandlers
+    internal sealed class EventHandlers
     {
-        private static bool buildingConfigChanged = false;
+        private static bool buildingConfigChanged;
 
         #region Event Subscriptions
         internal void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
@@ -131,7 +132,7 @@ namespace AnythingAnywhere.Framework
             }
         }
 
-        internal void OnClick(ButtonClickEventArgs e)
+        internal static void OnClick(ButtonClickEventData e)
         {
             if (e.FieldID.Equals("BlacklistCurrentLocation"))
             {
@@ -201,12 +202,12 @@ namespace AnythingAnywhere.Framework
         private static void SetGreenhouseAttributes(BuildingData data)
         {
             // Define greenhouse materials
-            List<BuildingMaterial> greenhouseMaterials = new List<BuildingMaterial>
-            {
+            List<BuildingMaterial> greenhouseMaterials =
+            [
                 new BuildingMaterial { ItemId = "(O)709", Amount = 100 },
                 new BuildingMaterial { ItemId = "(O)338", Amount = 20 },
                 new BuildingMaterial { ItemId = "(O)337", Amount = 10 },
-            };
+            ];
 
             // Set greenhouse attributes
             data.Builder = Game1.builder_robin;
@@ -247,21 +248,21 @@ namespace AnythingAnywhere.Framework
         #endregion
 
         #region Activate Build Menu
-        private void HandleBuildButtonPress(string builder)
+        private static void HandleBuildButtonPress(string builder)
         {
             if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
             {
                 ActivateBuildAnywhereMenu(builder);
             }
-            else if (Game1.activeClickableMenu is BuildAnywhereMenu)
+            else if (Game1.activeClickableMenu is BuildAnywhereMenu buildAnywhereMenu)
             {
                 ResetBlacklist();
                 Game1.displayFarmer = true;
-                ((BuildAnywhereMenu)Game1.activeClickableMenu).returnToCarpentryMenu();
-                ((BuildAnywhereMenu)Game1.activeClickableMenu).exitThisMenu();
+                buildAnywhereMenu.returnToCarpentryMenu();
+                Game1.activeClickableMenu.exitThisMenu();
             }
         }
-        private void ActivateBuildAnywhereMenu(string builder)
+        private static void ActivateBuildAnywhereMenu(string builder)
         {
             if (!Game1.currentLocation.IsOutdoors && !ModEntry.Config.EnableBuildingIndoors)
             {
@@ -292,17 +293,17 @@ namespace AnythingAnywhere.Framework
         {
             foreach (GameLocation location in Game1.locations)
             {
-                if (location.buildings.Any())
+                if (location.buildings.Count != 0)
                 {
                     if (!location.Map.Properties.TryGetValue("CanBuildHere", out var value) || value != "T")
                     {
-                        if (ModEntry.Config.BlacklistedLocations != null && ModEntry.Config.BlacklistedLocations.Contains(location.NameOrUniqueName))
+                        if (ModEntry.Config.BlacklistedLocations?.Contains(location.NameOrUniqueName) == true)
                             continue;
 
                         location.Map.Properties["CanBuildHere"] = "T";
                     }
 
-                    if (setAlwaysActive && location.isAlwaysActive.Value == false)
+                    if (setAlwaysActive && !location.isAlwaysActive.Value)
                     {
                         location.isAlwaysActive.Value = true;
                     }

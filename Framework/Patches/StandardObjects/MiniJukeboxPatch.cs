@@ -1,13 +1,14 @@
-﻿using HarmonyLib;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
-using StardewValley.Objects;
 using StardewValley.Menus;
+using StardewValley.Objects;
+using Common.Helpers;
 using System.Collections.Generic;
-using Common.Util;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
-    internal class MiniJukeboxPatch : PatchTemplate
+    internal sealed class MiniJukeboxPatch : PatchHelper
     {
         internal MiniJukeboxPatch(Harmony harmony) : base(harmony, typeof(MiniJukebox)) { }
         internal void Apply()

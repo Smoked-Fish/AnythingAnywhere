@@ -1,12 +1,13 @@
-﻿using HarmonyLib;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley.Objects;
-using Common.Util;
+using Common.Helpers;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
-    internal class CaskPatch : PatchTemplate
+    internal sealed class CaskPatch : PatchHelper
     {
-        internal CaskPatch(Harmony harmony) : base(harmony, typeof(Cask)) { } 
+        internal CaskPatch(Harmony harmony) : base(harmony, typeof(Cask)) { }
         internal void Apply()
         {
             Patch(PatchType.Prefix, nameof(Cask.IsValidCaskLocation), nameof(IsValidCaskLocationPrefix));

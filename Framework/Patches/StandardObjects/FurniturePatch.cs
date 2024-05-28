@@ -1,17 +1,18 @@
-﻿using HarmonyLib;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
-using StardewValley.Objects;
 using StardewValley.Locations;
+using StardewValley.Objects;
 using Microsoft.Xna.Framework;
-using Common.Util;
+using Common.Helpers;
 
-namespace AnythingAnywhere.Framework.Patches.StandardObjects    
+namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
-    internal class FurniturePatch : PatchTemplate
+    internal sealed class FurniturePatch : PatchHelper
     {
-        internal FurniturePatch(Harmony harmony) : base(harmony, typeof(Furniture)) { } 
+        internal FurniturePatch(Harmony harmony) : base(harmony, typeof(Furniture)) { }
         internal void Apply()
-        {   
+        {
             Patch(PatchType.Postfix, nameof(Furniture.GetAdditionalFurniturePlacementStatus), nameof(GetAdditionalFurniturePlacementStatusPostfix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
             Patch(PatchType.Postfix, nameof(Furniture.canBePlacedHere), nameof(CanBePlacedHerePostfix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
             Patch(PatchType.Postfix, nameof(Furniture.canBeRemoved), nameof(CanBeRemovedPostfix), [typeof(Farmer)]);
@@ -25,9 +26,8 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 (__instance.furniture_type.Value == 6 ||
                 __instance.furniture_type.Value == 17 ||
                 __instance.furniture_type.Value == 13 ||
-                __instance.QualifiedItemId == "(F)1293");   
-
-            if (!ModEntry.Config.EnableWallFurnitureIndoors && location is DecoratableLocation decoratableLocation && !ModEntry.Config.EnableBuildAnywhere)
+                __instance.QualifiedItemId == "(F)1293");
+            if (!ModEntry.Config.EnableWallFurnitureIndoors && location is DecoratableLocation && !ModEntry.Config.EnableBuildAnywhere)
             {
                 if (!isWallFurniture)
                 {

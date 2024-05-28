@@ -1,12 +1,13 @@
-﻿using StardewModdingAPI;
+﻿#nullable disable
+using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using Common.Interfaces;
+using Common.Utilities;
 using System.Collections.Generic;
-using Common.Helpers;
 
 namespace AnythingAnywhere
 {
-    internal class ModConfig : IConfigurable
+    internal sealed class ModConfig : IConfigurable
     {
         // PLACING
         [DefaultValue(true, "Placing")]

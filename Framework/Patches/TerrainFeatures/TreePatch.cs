@@ -1,10 +1,11 @@
-﻿using Common.Util;
+﻿#nullable disable
 using HarmonyLib;
 using StardewValley.TerrainFeatures;
+using Common.Helpers;
 
 namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
-    internal class TreePatch : PatchTemplate
+    internal sealed class TreePatch : PatchHelper
     {
         internal TreePatch(Harmony harmony) : base(harmony, typeof(Tree)) { }
         internal void Apply()

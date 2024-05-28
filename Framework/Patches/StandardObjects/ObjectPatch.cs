@@ -1,16 +1,17 @@
-﻿using HarmonyLib;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using AnythingAnywhere.Framework.External.CustomBush;
 using Microsoft.Xna.Framework;
+using AnythingAnywhere.Framework.External.CustomBush;
+using Common.Helpers;
 using System.Collections.Generic;
 using System;
-using Common.Util;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
-    internal class ObjectPatch : PatchTemplate
+    internal sealed class ObjectPatch : PatchHelper
     {
         internal ObjectPatch(Harmony harmony) : base(harmony, typeof(SObject)) { }
         internal void Apply()
@@ -26,7 +27,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             if (!ModEntry.Config.EnablePlacing)
                 return true;
 
-            Vector2 placementTile = new Vector2(x / 64, y / 64);
+            Vector2 placementTile = new(x / 64, y / 64);
             __instance.setHealth(10);
             __instance.Location = location;
             __instance.TileLocation = placementTile;
@@ -38,7 +39,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = false;
                 return false;
             }
-            if (!__instance.bigCraftable.Value && !(__instance is Furniture))
+            if (!__instance.bigCraftable.Value && __instance is not Furniture)
             {
                 if (__instance.IsSprinkler() && location.doesTileHavePropertyNoNull((int)placementTile.X, (int)placementTile.Y, "NoSprinklers", "Back") == "T")
                 {
@@ -113,7 +114,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         return true;
                     case "(BC)216": // Mini-Fridge
                         {
-                            Chest fridge = new Chest("216", placementTile, 217, 2)
+                            Chest fridge = new("216", placementTile, 217, 2)
                             {
                                 shakeTimer = 50
                             };
@@ -147,7 +148,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                             {
                                 Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:OnlyPlaceTwo"));
                                 __result = false;
-                                return false; 
+                                return false;
                             }
 
                             toPlace.shakeTimer = 50;
@@ -177,7 +178,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             // Bypass fruit tree placement checks
             if (__instance.isSapling())
             {
-                if ((__instance.IsWildTreeSapling() && !ModEntry.Config.EnablePlacing && !ModEntry.Config.EnablePlanting) || 
+                if ((__instance.IsWildTreeSapling() && !ModEntry.Config.EnablePlacing && !ModEntry.Config.EnablePlanting) ||
                     (__instance.IsFruitTreeSapling() && !ModEntry.Config.EnablePlacing && !ModEntry.Config.EnablePlanting))
                 {
                     if (FruitTree.IsTooCloseToAnotherTree(new Vector2(x / 64, y / 64), location))
@@ -206,7 +207,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 bool canDig = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Diggable", "Back") != null;
                 string tileType = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Type", "Back");
                 bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
-                if (((location is Farm && (canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) || ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2))) || ModEntry.Config.EnablePlacing)
+                if ((location is Farm && (canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) || ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2)) || ModEntry.Config.EnablePlacing)
                 {
                     location.playSound("dirtyHit");
                     DelayedAction.playSoundAfterDelay("coin", 100);
@@ -217,7 +218,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         __result = true;
                         return false;
                     }
-                    FruitTree fruitTree = new FruitTree(__instance.ItemId)
+                    FruitTree fruitTree = new(__instance.ItemId)
                     {
                         GreenHouseTileTree = (location.IsGreenhouse && tileType == "Stone")
                     };
@@ -226,10 +227,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                     __result = true;
                     return false;
                 }
-                if (deniedMessage2 == null)
-                {
-                    deniedMessage2 = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13068");
-                }
+                deniedMessage2 ??= Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13068");
                 Game1.showRedMessage(deniedMessage2);
                 __result = false;
                 return false;
@@ -281,7 +279,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = false;
                 return false;
             }
-            if (location.terrainFeatures.TryGetValue(tile, out var terrainFeature) && !(terrainFeature is HoeDirt))
+            if (location.terrainFeatures.TryGetValue(tile, out var terrainFeature) && terrainFeature is not HoeDirt)
             {
                 __result = false;
                 return false;

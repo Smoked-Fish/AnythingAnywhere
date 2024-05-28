@@ -1,16 +1,17 @@
-﻿using HarmonyLib;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
 using StardewModdingAPI;
 using StardewValley.Objects;
 using Microsoft.Xna.Framework;
 using xTile.ObjectModel;
 using xTile.Tiles;
+using Common.Helpers;
 using System.Linq;
-using Common.Util;
 
 namespace AnythingAnywhere.Framework.Patches.GameLocations
 {
-    internal class GameLocationPatch : PatchTemplate
+    internal sealed class GameLocationPatch : PatchHelper
     {
         internal GameLocationPatch(Harmony harmony) : base(harmony, typeof(GameLocation)) { }
         internal void Apply()
@@ -57,7 +58,7 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
         // Set all tiles as diggable
         private static void DoesTileHavePropertyPostfix(GameLocation __instance, int xTile, int yTile, string propertyName, string layerName, ref string __result)
         {
-            if (!Context.IsWorldReady || !__instance.farmers.Any() || !(propertyName == "Diggable") || !(layerName == "Back") || !ModEntry.Config.EnablePlanting)
+            if (!Context.IsWorldReady || !__instance.farmers.Any() || propertyName != "Diggable" || layerName != "Back" || !ModEntry.Config.EnablePlanting)
             {
                 return;
             }
@@ -104,10 +105,7 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
                 return true;
 
             bool hasGoldClock = __instance.buildings.Any(building => building.buildingType.Value == "Gold Clock");
-            if (hasGoldClock && !Game1.netWorldState.Value.goldenClocksTurnedOff.Value)
-                return false;
-
-            return true;
+            return !hasGoldClock || Game1.netWorldState.Value.goldenClocksTurnedOff.Value;
         }
 
         private static bool LoadWeedsPrefix(GameLocation __instance)
@@ -116,10 +114,7 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
                 return true;
 
             bool hasGoldClock = __instance.buildings.Any(building => building.buildingType.Value == "Gold Clock");
-            if (hasGoldClock && !Game1.netWorldState.Value.goldenClocksTurnedOff.Value)
-                return false;
-
-            return true;
+            return !hasGoldClock || Game1.netWorldState.Value.goldenClocksTurnedOff.Value;
         }
     }
 }

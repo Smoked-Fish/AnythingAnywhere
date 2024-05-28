@@ -1,12 +1,13 @@
-﻿using HarmonyLib;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using Microsoft.Xna.Framework;
-using Common.Util;
+using Common.Helpers;
 
 namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
-    internal class FruitTreePatch : PatchTemplate
+    internal sealed class FruitTreePatch : PatchHelper
     {
         internal FruitTreePatch(Harmony harmony) : base(harmony, typeof(FruitTree)) { }
         internal void Apply()

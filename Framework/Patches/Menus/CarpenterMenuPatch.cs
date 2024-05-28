@@ -1,23 +1,24 @@
-﻿using StardewModdingAPI;
-using StardewValley.Menus;
-using StardewValley;
-using System;
-using System.Collections.Generic;
+﻿#nullable disable
 using HarmonyLib;
+using StardewValley;
+using StardewModdingAPI;
+using StardewValley.Menus;
+using StardewValley.Objects;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework.Graphics;
-using System.Reflection;
-using System.Reflection.Emit;
 using Microsoft.Xna.Framework;
 using xTile.Dimensions;
 using AnythingAnywhere.Framework.UI;
-using StardewValley.Objects;
-using Common.Util;
+using Common.Helpers;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Collections.Generic;
+using System;
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
-    internal class CarpenterMenuPatch : PatchTemplate
+    internal sealed class CarpenterMenuPatch : PatchHelper
     {
         internal CarpenterMenuPatch(Harmony harmony) : base(harmony, typeof(CarpenterMenu)) { }
         internal void Apply()
@@ -87,9 +88,9 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     }
                 }
                 Cabin cabin2 = cabin;
-                if (cabin2 != null && cabin2.HasOwner && cabin.owner.isCustomized.Value)
+                if (cabin2?.HasOwner == true && cabin.owner.isCustomized.Value)
                 {
-                    Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", cabin.owner.Name), Game1.currentLocation.createYesNoResponses(), delegate (Farmer f, string answer)
+                    Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", cabin.owner.Name), Game1.currentLocation.createYesNoResponses(), (Farmer f, string answer) =>
                     {
                         if (answer == "Yes")
                         {
@@ -188,7 +189,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     {
                         Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_AnimalsHere"), 3));
                     }
-                    else if (interior != null && interior.farmers.Any())
+                    else if (interior?.farmers.Any() == true)
                     {
                         Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_PlayerHere"), 3));
                     }
@@ -235,7 +236,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                             }
                             if (chest != null)
                             {
-                                farm.objects[new Vector2((int)destroyed.tileX.Value + (int)destroyed.tilesWide.Value / 2, (int)destroyed.tileY.Value + (int)destroyed.tilesHigh.Value / 2)] = chest;
+                                farm.objects[new Vector2(destroyed.tileX.Value + (destroyed.tilesWide.Value / 2), destroyed.tileY.Value + (destroyed.tilesHigh.Value / 2))] = chest;
                             }
                         }
                     }
@@ -255,8 +256,8 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 __result = CenterOnTile((int)Game1.player.Tile.X, (int)Game1.player.Tile.Y);
                 static Location CenterOnTile(int x, int y)
                 {
-                    x = (int)((float)(x * 64) - (float)Game1.viewport.Width / 2f);
-                    y = (int)((float)(y * 64) - (float)Game1.viewport.Height / 2f);
+                    x = (int)((x * 64) - (Game1.viewport.Width / 2f));
+                    y = (int)((y * 64) - (Game1.viewport.Height / 2f));
                     return new Location(x, y);
                 }
                 return false;

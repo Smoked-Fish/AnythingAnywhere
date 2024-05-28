@@ -1,17 +1,18 @@
-﻿using HarmonyLib;
-using StardewModdingAPI;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
+using StardewModdingAPI;
 using StardewValley.Objects;
-using System.Collections.Generic;
-using System;
+using StardewValley.Locations;
+using Common.Helpers;
 using System.Reflection;
 using System.Reflection.Emit;
-using StardewValley.Locations;
-using Common.Util;
+using System.Collections.Generic;
+using System;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
-    internal class BedFurniturePatch : PatchTemplate
+    internal sealed class BedFurniturePatch : PatchHelper
     {
         internal BedFurniturePatch(Harmony harmony) : base(harmony, typeof(BedFurniture)) { }
         internal void Apply()
