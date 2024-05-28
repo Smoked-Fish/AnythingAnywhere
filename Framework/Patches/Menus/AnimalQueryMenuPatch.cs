@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿#nullable disable
+using HarmonyLib;
 using StardewValley;
 using StardewModdingAPI;
 using StardewValley.Menus;
@@ -6,17 +7,17 @@ using StardewValley.Buildings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using xTile.Dimensions;
-using System.Reflection;
-using System.Linq;
-using System.Collections.Generic;
 using Common.Managers;
-using Common.Util;
+using Common.Helpers;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
-    internal class AnimalQueryMenuPatch : PatchTemplate
+    internal sealed class AnimalQueryMenuPatch : PatchHelper
     {
-        private static GameLocation TargetLocation = null;
+        private static GameLocation TargetLocation;
         internal AnimalQueryMenuPatch(Harmony harmony) : base(harmony, typeof(AnimalQueryMenu)) { }
         internal void Apply()
         {
@@ -39,12 +40,12 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             if (movingAnimal)
             {
-                if (__instance.okButton != null && __instance.okButton.containsPoint(x, y))
+                if (__instance.okButton?.containsPoint(x, y) == true)
                 {
                     Game1.globalFadeToBlack(__instance.prepareForReturnFromPlacement);
                     Game1.playSound("smallSelect");
                 }
-                Vector2 clickTile = new Vector2((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
+                Vector2 clickTile = new((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
                 Building selection = TargetLocation.getBuildingAt(clickTile);
                 if (selection == null)
                 {
@@ -86,7 +87,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             if (__instance.moveHomeButton.containsPoint(x, y))
             {
-                List<KeyValuePair<string, string>> validLocations = new();
+                List<KeyValuePair<string, string>> validLocations = [];
 
                 Game1.playSound("smallSelect");
                 foreach (GameLocation location in Game1.locations)
@@ -96,22 +97,22 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         validLocations.Add(new KeyValuePair<string, string>(location.NameOrUniqueName, location.DisplayName));
                     }
                 }
-                if (validLocations.Count <= 0)
+                if (validLocations.Count == 0)
                 {
                     Farm farm = Game1.getFarm();
 
                     validLocations.Add(new KeyValuePair<string, string>(farm.NameOrUniqueName, farm.DisplayName));
                 }
-                Game1.currentLocation.ShowPagedResponses(I18n.Message("ChooseAnimalLocation"), validLocations, delegate (string value)
+                Game1.currentLocation.ShowPagedResponses(I18n.Message("ChooseAnimalLocation"), validLocations, (string value) =>
                 {
                     GameLocation locationFromName = Game1.getLocationFromName(value);
 
                     if (locationFromName != null)
                     {
                         TargetLocation = locationFromName;
-                        if (Game1.activeClickableMenu is not null && Game1.activeClickableMenu is DialogueBox)
+                        if (Game1.activeClickableMenu is DialogueBox dialogueBox && dialogueBox is not null)
                         {
-                            (Game1.activeClickableMenu as DialogueBox).closeDialogue();
+                            dialogueBox.closeDialogue();
                         }
                         Game1.activeClickableMenu = __instance;
                         Game1.globalFadeToBlack(__instance.prepareForAnimalPlacement);
@@ -131,10 +132,8 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         {
             if (!ModEntry.Config.EnableAnimalRelocate)
                 return;
-
-            bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
+            typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(__instance, true);
             FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
-            movingAnimal = true;
             Game1.currentLocation.cleanupBeforePlayerExit();
             Game1.currentLocation = TargetLocation;
             Game1.player.viewingLocation.Value = Game1.currentLocation.NameOrUniqueName;
@@ -160,7 +159,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             if (movingAnimal && TargetLocation != Game1.getFarm())
             {
-                Vector2 clickTile = new Vector2((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
+                Vector2 clickTile = new((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
                 foreach (Building building in TargetLocation.buildings)
                 {
                     building.color = Color.White;
