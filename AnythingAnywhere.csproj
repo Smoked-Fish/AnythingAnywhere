@@ -2,10 +2,11 @@
 
   <!-- Project properties -->
   <PropertyGroup>
+    <Nullable>enable</Nullable>
     <EnableHarmony>true</EnableHarmony>
     <CommonPatches>true</CommonPatches>
   </PropertyGroup>
-
+  
   <!-- Import Common targets -->
   <Import Project="Framework\Common\common.targets" />
   
