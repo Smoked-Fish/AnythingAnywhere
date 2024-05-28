@@ -1,17 +1,16 @@
-﻿using AnythingAnywhere.Framework.Interfaces;
+﻿#nullable disable
 using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
 using System.Linq;
-using Object = StardewValley.Object;
 
 namespace AnythingAnywhere.Framework.External.CustomBush
 {
-    public class CustomBushModData
+    public static class CustomBushModData
     {
-        private static string ModID = "furyx639.CustomBush";
-        private static string modDataId = ModID + "/Id";
+        private const string ModID = "furyx639.CustomBush";
+        private const string modDataId = ModID + "/Id";
 
-        public static Bush AddBushModData(Bush bush, Object __instance)
+        public static Bush AddBushModData(Bush bush, SObject __instance)
         {
             if (ModEntry.CustomBushApi != null && ModEntry.ModHelper.ModRegistry.IsLoaded("furyx639.CustomBush"))
             {
