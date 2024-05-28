@@ -29,6 +29,7 @@ namespace AnythingAnywhere
         internal static ApiManager ApiManager { get; set; }
         internal static ICustomBushApi CustomBushApi { get; set; }
         internal static EventHandlers EventHandlers { get; set; }
+        internal static bool IsRelocateFarmAnimalsLoaded { get; set; }
 
         private static Harmony harmony;
 
@@ -80,7 +81,7 @@ namespace AnythingAnywhere
             helper.Events.Input.ButtonsChanged += EventHandlers.OnButtonsChanged;
             helper.Events.Content.AssetRequested += EventHandlers.OnAssetRequested;
             helper.Events.GameLoop.UpdateTicked += EventHandlers.OnUpdateTicked;
-            helper.Events.Player.Warped += EventHandlers.OnWarped;
+            helper.Events.Player.Warped += EventHandlers.OnWarped;     
 
             // Hook into Custom events
             ButtonOptions.Click += EventHandlers.OnClick;
@@ -99,7 +100,8 @@ namespace AnythingAnywhere
                 Config.MultipleMiniObelisks = true;
             }
 
-            if (Helper.ModRegistry.IsLoaded("mouahrara.RelocateFarmAnimals"))
+            IsRelocateFarmAnimalsLoaded = Helper.ModRegistry.IsLoaded("mouahrara.RelocateFarmAnimals");
+            if (IsRelocateFarmAnimalsLoaded)
             {
                 Config.EnableAnimalRelocate = false;
             }
@@ -115,7 +117,7 @@ namespace AnythingAnywhere
 
                 // Register the placing settings
                 ConfigManager.AddPage("Placing");
-                ConfigManager.AddButtonOption("Placing", "ResetPage", "Placing");
+                ConfigManager.AddButtonOption("Placing", "ResetPage", fieldId: "Placing");
                 ConfigManager.AddHorizontalSeparator();
                 ConfigManager.AddOption(nameof(ModConfig.EnablePlacing));
                 ConfigManager.AddOption(nameof(ModConfig.EnableFreePlace));
@@ -124,7 +126,7 @@ namespace AnythingAnywhere
 
                 // Register the build settings
                 ConfigManager.AddPage("Building");
-                ConfigManager.AddButtonOption("Building", "ResetPage", "Building");
+                ConfigManager.AddButtonOption("Building", "ResetPage", fieldId: "Building");
                 ConfigManager.AddHorizontalSeparator();
                 ConfigManager.AddOption(nameof(ModConfig.EnableBuilding));
                 ConfigManager.AddOption(nameof(ModConfig.EnableBuildAnywhere));
@@ -138,11 +140,11 @@ namespace AnythingAnywhere
                 ConfigManager.AddOption(nameof(ModConfig.EnableBuildingIndoors));
                 ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
                 ConfigManager.AddHorizontalSeparator();
-                ConfigManager.AddButtonOption("BlacklistedLocations", "BlacklistedLocations", "BlacklistCurrentLocation", afterReset);
+                ConfigManager.AddButtonOption("BlacklistedLocations", renderLeft: true, fieldId: "BlacklistCurrentLocation", afterReset: afterReset);
 
                 // Register the farming settings
                 ConfigManager.AddPage("Farming");
-                ConfigManager.AddButtonOption("Farming", "ResetPage", "Farming");
+                ConfigManager.AddButtonOption("Farming", "ResetPage", fieldId: "Farming");
                 ConfigManager.AddHorizontalSeparator();
                 ConfigManager.AddOption(nameof(ModConfig.EnablePlanting));
                 ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
@@ -151,9 +153,9 @@ namespace AnythingAnywhere
 
                 // Register the other settings
                 ConfigManager.AddPage("Other");
-                ConfigManager.AddButtonOption("Other", "ResetPage", "Other");
+                ConfigManager.AddButtonOption("Other", "ResetPage", fieldId: "Other");
                 ConfigManager.AddHorizontalSeparator();
-                ConfigManager.AddOption(nameof(ModConfig.EnableAnimalRelocate));
+                if (!IsRelocateFarmAnimalsLoaded) ConfigManager.AddOption(nameof(ModConfig.EnableAnimalRelocate));
                 ConfigManager.AddOption(nameof(ModConfig.EnableCaskFunctionality));
                 ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
                 ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
