@@ -1,11 +1,10 @@
 ﻿#nullable enable
-
-using System.Collections.Generic;
-using StardewValley.GameData;
 using StardewValley;
+using StardewValley.GameData;
 using StardewValley.TerrainFeatures;
+using System.Collections.Generic;
 
-namespace AnythingAnywhere.Framework.Interfaces
+namespace AnythingAnywhere.Framework.External.CustomBush
 {
     /// <summary>Mod API for custom bushes.</summary>
     public interface ICustomBushApi
@@ -75,7 +74,7 @@ namespace AnythingAnywhere.Framework.Interfaces
         /// <summary>A game state query which indicates whether the item should be added. Defaults to always added.</summary>
         public string? Condition { get; }
 
-        /// <summary>An ID for this entry within the current list (not the item itself, which is <see cref="P:StardewValley.GameData.GenericSpawnItemData.ItemId" />). This only needs to be unique within the current list. For a custom entry, you should use a globally unique ID which includes your mod ID like <c>ExampleMod.Id_ItemName</c>.</summary>
+        /// <summary>An ID for this entry within the current list (not the item itself, which is <see cref="GenericSpawnItemData.ItemId" />). This only needs to be unique within the current list. For a custom entry, you should use a globally unique ID which includes your mod ID like <c>ExampleMod.Id_ItemName</c>.</summary>
         public string? Id { get; }
     }
 }
