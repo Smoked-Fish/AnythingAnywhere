@@ -123,6 +123,12 @@ namespace AnythingAnywhere.Framework
             {
                 buildingConfigChanged = true; // Doesn't work if I don't do this
             }
+
+            if (ModEntry.IsRelocateFarmAnimalsLoaded)
+            {
+                ModEntry.Config.EnableAnimalRelocate = false;
+                ConfigManager.SaveAction.Invoke();
+            }
         }
 
         internal void OnClick(ButtonClickEventArgs e)
