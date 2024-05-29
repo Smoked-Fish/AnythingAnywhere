@@ -1,19 +1,19 @@
 ﻿#nullable disable
-using HarmonyLib;
+using AnythingAnywhere.Framework.External.CustomBush;
+using Common.Helpers;
+
+using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using Microsoft.Xna.Framework;
-using AnythingAnywhere.Framework.External.CustomBush;
-using Common.Helpers;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal sealed class ObjectPatch : PatchHelper
     {
-        internal ObjectPatch(Harmony harmony) : base(harmony, typeof(SObject)) { }
+        internal ObjectPatch() : base(typeof(SObject)) { }
         internal void Apply()
         {
             Patch(PatchType.Prefix, nameof(SObject.placementAction), nameof(PlacementActionPrefix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
@@ -171,7 +171,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                         return false;
                 }
             }
-            if (__instance.Category == -19 && location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature3) && terrainFeature3 is HoeDirt { crop: not null } dirt3 && (__instance.QualifiedItemId == "(O)369" || __instance.QualifiedItemId == "(O)368") && (int)dirt3.crop.currentPhase.Value != 0)
+            if (__instance.Category == -19 && location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature3) && terrainFeature3 is HoeDirt { crop: not null } dirt3 && __instance.QualifiedItemId is "(O)369" or "(O)368" && dirt3.crop.currentPhase.Value != 0)
             {
                 return true;
             }
@@ -248,47 +248,39 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         // object placement
         private static bool CanBePlacedHerePrefix(SObject __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
         {
-            if (!ModEntry.Config.EnablePlacing)
-                return true;
+            if (!ModEntry.Config.EnablePlacing) return true;
+            if (!ModEntry.Config.EnableFreePlace) return true;
 
-            if (ModEntry.Config.EnableFreePlace)
-            {
-                __result = !l.objects.ContainsKey(tile);
-                return false;
-            }
-
-            return true;
+            __result = !l.objects.ContainsKey(tile);
+            return false;
         }
 
+        // TODO: Rewrite tree code
         private static bool CanPlaceWildTreeSeedPrefix(SObject __instance, GameLocation location, Vector2 tile, ref bool __result, out string deniedMessage)
         {
             deniedMessage = null;
 
-            if (location.IsNoSpawnTile(tile, "Tree", ignoreTileSheetProperties: true) && !ModEntry.Config.EnableFreePlace)
-            {
-                __result = false;
-                return false;
-            }
-            if (location.IsNoSpawnTile(tile, "Tree") && !location.doesEitherTileOrTileIndexPropertyEqual((int)tile.X, (int)tile.Y, "CanPlantTrees", "Back", "T") && !ModEntry.Config.EnableFreePlace)
-            {
-                __result = false;
-                return false;
-            }
+            // Suppress __result is never used before the body warning
+            if (location == null) return true;
+
             if (location.objects.ContainsKey(tile))
             {
                 __result = false;
                 return false;
             }
+
             if (location.terrainFeatures.TryGetValue(tile, out var terrainFeature) && terrainFeature is not HoeDirt)
             {
                 __result = false;
                 return false;
             }
+
             if (!location.CanPlantTreesHere(__instance.ItemId, (int)tile.X, (int)tile.Y, out deniedMessage) && !ModEntry.Config.EnablePlacing)
             {
                 __result = false;
                 return false;
             }
+
             if (ModEntry.Config.EnableFreePlace)
             {
                 __result = true;
