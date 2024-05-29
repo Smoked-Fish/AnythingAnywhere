@@ -1,5 +1,4 @@
-﻿#nullable disable
-global using SObject = StardewValley.Object;
+﻿global using SObject = StardewValley.Object;
 using AnythingAnywhere.Framework;
 using AnythingAnywhere.Framework.External.CustomBush;
 using AnythingAnywhere.Framework.Patches.GameLocations;
@@ -24,15 +23,14 @@ namespace AnythingAnywhere
 {
     public class ModEntry : Mod
     {
-        public static IModHelper ModHelper { get; private set; }
-        public static IMonitor ModMonitor { get; private set; }
-        public static ModConfig Config { get; private set; }
-        public static Multiplayer Multiplayer { get; private set; }
-        private static ApiRegistry ApiManager { get; set; }
-        public static ICustomBushApi CustomBushApi { get; private set; }
+        public static IModHelper ModHelper { get; private set; } = null!;
+        public static IMonitor ModMonitor { get; private set; } = null!;
+        public static ModConfig Config { get; private set; } = null!;
+        public static Multiplayer? Multiplayer { get; private set; }
+        public static ICustomBushApi? CustomBushApi { get; private set; }
         public static bool IsRelocateFarmAnimalsLoaded { get; private set; }
 
-        private static Harmony harmony;
+        private static Harmony? _harmony;
 
         public override void Entry(IModHelper helper)
         {
@@ -42,12 +40,9 @@ namespace AnythingAnywhere
             Config = Helper.ReadConfig<ModConfig>();
             Multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
-            // Setup the managers/handlers
-            ApiManager = new ApiRegistry(helper, ModMonitor);
-
             // Load the Harmony patches
-            harmony = new Harmony(ModManifest.UniqueID);
-            PatchHelper.Init(harmony);
+            _harmony = new Harmony(ModManifest.UniqueID);
+            PatchHelper.Init(_harmony);
 
             // GameLocation
             new GameLocationPatch().Apply();
@@ -89,11 +84,11 @@ namespace AnythingAnywhere
             ConfigUtility.ConfigChanged += EventHandlers.OnConfigChanged;
         }
 
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
             if (Helper.ModRegistry.IsLoaded("furyx639.CustomBush"))
             {
-                CustomBushApi = ApiManager.GetApi<ICustomBushApi>("furyx639.CustomBush");
+                CustomBushApi = ApiRegistry.GetApi<ICustomBushApi>("furyx639.CustomBush");
             }
 
             if (Helper.ModRegistry.IsLoaded("PeacefulEnd.MultipleMiniObelisks"))
@@ -107,61 +102,60 @@ namespace AnythingAnywhere
                 Config.EnableAnimalRelocate = false;
             }
 
-            ConfigManager.Initialize(ModManifest, Config, ModHelper, ModMonitor, true);
-            if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu"))
-            {
-                // Register the main page
-                ConfigManager.AddPageLink("Placing");
-                ConfigManager.AddPageLink("Building");
-                ConfigManager.AddPageLink("Farming");
-                ConfigManager.AddPageLink("Other");
+            ConfigManager.Init(ModManifest, Config, ModHelper, ModMonitor, true);
+            if (!Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu")) return;
 
-                // Register the placing settings
-                ConfigManager.AddPage("Placing");
-                ConfigManager.AddButtonOption("Placing", "ResetPage", fieldId: "Placing");
-                ConfigManager.AddHorizontalSeparator();
-                ConfigManager.AddOption(nameof(ModConfig.EnablePlacing));
-                ConfigManager.AddOption(nameof(ModConfig.EnableFreePlace));
-                ConfigManager.AddOption(nameof(ModConfig.EnableWallFurnitureIndoors));
-                ConfigManager.AddOption(nameof(ModConfig.EnableRugRemovalBypass));
+            // Register the main page
+            ConfigManager.AddPageLink("Placing");
+            ConfigManager.AddPageLink("Building");
+            ConfigManager.AddPageLink("Farming");
+            ConfigManager.AddPageLink("Other");
 
-                // Register the build settings
-                ConfigManager.AddPage("Building");
-                ConfigManager.AddButtonOption("Building", "ResetPage", fieldId: "Building");
-                ConfigManager.AddHorizontalSeparator();
-                ConfigManager.AddOption(nameof(ModConfig.EnableBuilding));
-                ConfigManager.AddOption(nameof(ModConfig.EnableBuildAnywhere));
-                ConfigManager.AddOption(nameof(ModConfig.EnableInstantBuild));
-                ConfigManager.AddOption(nameof(ModConfig.EnableFreeBuild));
-                ConfigManager.AddOption(nameof(ModConfig.BuildMenu));
-                ConfigManager.AddOption(nameof(ModConfig.WizardBuildMenu));
-                ConfigManager.AddOption(nameof(ModConfig.BuildModifier));
-                ConfigManager.AddOption(nameof(ModConfig.EnableGreenhouse));
-                ConfigManager.AddOption(nameof(ModConfig.RemoveBuildConditions));
-                ConfigManager.AddOption(nameof(ModConfig.EnableBuildingIndoors));
-                ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
-                ConfigManager.AddHorizontalSeparator();
-                ConfigManager.AddButtonOption("BlacklistedLocations", renderLeft: true, fieldId: "BlacklistCurrentLocation", afterReset: afterReset);
+            // Register the placing settings
+            ConfigManager.AddPage("Placing");
+            ConfigManager.AddButtonOption("Placing", "ResetPage", fieldId: "Placing");
+            ConfigManager.AddHorizontalSeparator();
+            ConfigManager.AddOption(nameof(ModConfig.EnablePlacing));
+            ConfigManager.AddOption(nameof(ModConfig.EnableFreePlace));
+            ConfigManager.AddOption(nameof(ModConfig.EnableWallFurnitureIndoors));
+            ConfigManager.AddOption(nameof(ModConfig.EnableRugRemovalBypass));
 
-                // Register the farming settings
-                ConfigManager.AddPage("Farming");
-                ConfigManager.AddButtonOption("Farming", "ResetPage", fieldId: "Farming");
-                ConfigManager.AddHorizontalSeparator();
-                ConfigManager.AddOption(nameof(ModConfig.EnablePlanting));
-                ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
-                ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
-                ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));
+            // Register the build settings
+            ConfigManager.AddPage("Building");
+            ConfigManager.AddButtonOption("Building", "ResetPage", fieldId: "Building");
+            ConfigManager.AddHorizontalSeparator();
+            ConfigManager.AddOption(nameof(ModConfig.EnableBuilding));
+            ConfigManager.AddOption(nameof(ModConfig.EnableBuildAnywhere));
+            ConfigManager.AddOption(nameof(ModConfig.EnableInstantBuild));
+            ConfigManager.AddOption(nameof(ModConfig.EnableFreeBuild));
+            ConfigManager.AddOption(nameof(ModConfig.BuildMenu));
+            ConfigManager.AddOption(nameof(ModConfig.WizardBuildMenu));
+            ConfigManager.AddOption(nameof(ModConfig.BuildModifier));
+            ConfigManager.AddOption(nameof(ModConfig.EnableGreenhouse));
+            ConfigManager.AddOption(nameof(ModConfig.RemoveBuildConditions));
+            ConfigManager.AddOption(nameof(ModConfig.EnableBuildingIndoors));
+            ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
+            ConfigManager.AddHorizontalSeparator();
+            ConfigManager.AddButtonOption("BlacklistedLocations", renderLeft: true, fieldId: "BlacklistCurrentLocation", afterReset: afterReset);
 
-                // Register the other settings
-                ConfigManager.AddPage("Other");
-                ConfigManager.AddButtonOption("Other", "ResetPage", fieldId: "Other");
-                ConfigManager.AddHorizontalSeparator();
-                if (!IsRelocateFarmAnimalsLoaded) ConfigManager.AddOption(nameof(ModConfig.EnableAnimalRelocate));
-                ConfigManager.AddOption(nameof(ModConfig.EnableCaskFunctionality));
-                ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
-                ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
-                ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
-            }
+            // Register the farming settings
+            ConfigManager.AddPage("Farming");
+            ConfigManager.AddButtonOption("Farming", "ResetPage", fieldId: "Farming");
+            ConfigManager.AddHorizontalSeparator();
+            ConfigManager.AddOption(nameof(ModConfig.EnablePlanting));
+            ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
+            ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
+            ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));
+
+            // Register the other settings
+            ConfigManager.AddPage("Other");
+            ConfigManager.AddButtonOption("Other", "ResetPage", fieldId: "Other");
+            ConfigManager.AddHorizontalSeparator();
+            ConfigManager.AddOption(nameof(ModConfig.EnableAnimalRelocate), IsRelocateFarmAnimalsLoaded);
+            ConfigManager.AddOption(nameof(ModConfig.EnableCaskFunctionality));
+            ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
+            ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
+            ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
         }
 
         private static readonly Action afterReset = () => EventHandlers.ResetBlacklist();
