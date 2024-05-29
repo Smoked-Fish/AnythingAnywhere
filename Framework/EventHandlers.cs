@@ -1,17 +1,17 @@
 ﻿#nullable disable
-using StardewValley;
-using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley.GameData.Buildings;
-using StardewValley.GameData.Locations;
-using StardewValley.Locations;
-using StardewValley.TokenizableStrings;
 using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.UI;
 using Common.Helpers;
 using Common.Managers;
 using Common.Utilities;
 using Common.Utilities.Options;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.GameData.Buildings;
+using StardewValley.GameData.Locations;
+using StardewValley.Locations;
+using StardewValley.TokenizableStrings;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,15 +19,15 @@ namespace AnythingAnywhere.Framework
 {
     internal sealed class EventHandlers
     {
-        private static bool buildingConfigChanged;
+        private static bool _buildingConfigChanged;
 
         #region Event Subscriptions
-        internal void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        internal static void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             ResetBlacklist(true);
         }
 
-        internal void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
+        internal static void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
         {
             if (e.Added.Any())
             {
@@ -69,29 +69,26 @@ namespace AnythingAnywhere.Framework
                     asset =>
                     {
                         var data = asset.AsDictionary<string, LocationData>().Data;
-                        foreach (var LocationDataKey in data.Keys.ToList())
+                        foreach (var locationDataKey in data.Keys.ToList())
                         {
-                            data[LocationDataKey] = ModifyLocationData(data[LocationDataKey], ModEntry.Config.EnablePlanting);
+                            data[locationDataKey] = ModifyLocationData(data[locationDataKey], ModEntry.Config.EnablePlanting);
                         }
 
-                        if (ModEntry.Config.EnablePlanting)
+                        if (!ModEntry.Config.EnablePlanting) return;
+                        foreach (var location in Game1.locations)
                         {
-                            foreach (var location in Game1.locations)
-                            {
-                                location.Map.Properties.TryAdd("ForceAllowTreePlanting", "T");
-                            }
+                            location.Map.Properties.TryAdd("ForceAllowTreePlanting", "T");
                         }
                     }, AssetEditPriority.Late);
-                return;
             }
         }
 
         internal void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (buildingConfigChanged)
+            if (_buildingConfigChanged)
             {
                 ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
-                buildingConfigChanged = false;
+                _buildingConfigChanged = false;
             }
         }
 
@@ -122,7 +119,7 @@ namespace AnythingAnywhere.Framework
                 e.ConfigName == nameof(ModConfig.RemoveBuildConditions) ||
                 e.ConfigName == nameof(ModConfig.EnableGreenhouse))
             {
-                buildingConfigChanged = true; // Doesn't work if I don't do this
+                _buildingConfigChanged = true; // Doesn't work if I don't do this
             }
 
             if (ModEntry.IsRelocateFarmAnimalsLoaded)
@@ -139,17 +136,14 @@ namespace AnythingAnywhere.Framework
                 if (!Context.IsWorldReady)
                 {
                     Game1.playSound("thudStep");
-                    return;
                 }
                 else if (Game1.player.currentLocation.IsFarm)
                 {
                     Game1.playSound("thudStep");
-                    return;
                 }
                 else if (ModEntry.Config.BlacklistedLocations.Contains(Game1.player.currentLocation.NameOrUniqueName))
                 {
                     Game1.playSound("thudStep");
-                    return;
                 }
                 else
                 {
@@ -164,8 +158,8 @@ namespace AnythingAnywhere.Framework
             else
             {
                 Game1.playSound("backpackIN");
-                ConfigUtilities.InitializeDefaultConfig(ModEntry.Config, e.FieldID);
-                PageHelper.OpenPage(PageHelper.CurrPage);
+                ConfigUtility.InitializeDefaultConfig(ModEntry.Config, e.FieldID);
+                PageHelper.OpenPage?.Invoke(PageHelper.CurrPage);
 
                 if (e.FieldID.Equals("Building"))
                 {
@@ -297,7 +291,7 @@ namespace AnythingAnywhere.Framework
                 {
                     if (!location.Map.Properties.TryGetValue("CanBuildHere", out var value) || value != "T")
                     {
-                        if (ModEntry.Config.BlacklistedLocations?.Contains(location.NameOrUniqueName) == true)
+                        if (ModEntry.Config.BlacklistedLocations.Contains(location.NameOrUniqueName))
                             continue;
 
                         location.Map.Properties["CanBuildHere"] = "T";
