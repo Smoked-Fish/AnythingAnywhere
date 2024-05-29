@@ -1,7 +1,5 @@
-﻿#nullable disable
-using AnythingAnywhere.Framework.External.CustomBush;
+﻿using AnythingAnywhere.Framework.External.CustomBush;
 using Common.Helpers;
-
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
@@ -21,8 +19,8 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             Patch(PatchType.Prefix, "canPlaceWildTreeSeed", nameof(CanPlaceWildTreeSeedPrefix));
         }
 
-        // Object placment action
-        private static bool PlacementActionPrefix(SObject __instance, GameLocation location, int x, int y, ref bool __result, Farmer who = null)
+        // Object placement action
+        private static bool PlacementActionPrefix(SObject __instance, GameLocation location, int x, int y, ref bool __result, Farmer? who = null)
         {
             if (!ModEntry.Config.EnablePlacing)
                 return true;
@@ -33,7 +31,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             __instance.TileLocation = placementTile;
             __instance.owner.Value = who?.UniqueMultiplayerID ?? Game1.player.UniqueMultiplayerID;
 
-            // Do not allow placing objects on top of eachother.
+            // Do not allow placing objects on top of each-other.
             if (location.objects.ContainsKey(placementTile))
             {
                 __result = false;
@@ -196,14 +194,14 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 }
                 if (location.terrainFeatures.TryGetValue(placementTile, out var terrainFeature2))
                 {
-                    if (!(terrainFeature2 is HoeDirt { crop: null }))
+                    if (terrainFeature2 is not HoeDirt { crop: null })
                     {
                         __result = false;
                         return false;
                     }
                     location.terrainFeatures.Remove(placementTile);
                 }
-                string deniedMessage2 = null;
+                string? deniedMessage2 = null;
                 bool canDig = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Diggable", "Back") != null;
                 string tileType = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Type", "Back");
                 bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
@@ -232,7 +230,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 __result = false;
                 return false;
             }
-            if (__instance.Category == -74 || __instance.Category == -19)
+            if (__instance.Category is -74 or -19)
             {
                 return true;
             }
@@ -256,7 +254,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         }
 
         // TODO: Rewrite tree code
-        private static bool CanPlaceWildTreeSeedPrefix(SObject __instance, GameLocation location, Vector2 tile, ref bool __result, out string deniedMessage)
+        private static bool CanPlaceWildTreeSeedPrefix(SObject __instance, GameLocation? location, Vector2 tile, ref bool __result, out string? deniedMessage)
         {
             deniedMessage = null;
 

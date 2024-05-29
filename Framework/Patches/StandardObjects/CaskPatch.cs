@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Common.Helpers;
+﻿using Common.Helpers;
 using StardewValley.Objects;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects

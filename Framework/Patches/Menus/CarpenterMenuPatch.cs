@@ -1,5 +1,4 @@
-﻿#nullable disable
-using AnythingAnywhere.Framework.UI;
+﻿using AnythingAnywhere.Framework.UI;
 using Common.Helpers;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
@@ -58,7 +57,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             GameLocation farm;
             Building destroyed;
             GameLocation interior;
-            Cabin cabin;
+            Cabin? cabin;
             if (__instance.demolishing)
             {
                 farm = __instance.TargetLocation;
@@ -82,8 +81,8 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 {
                     return false;
                 }
-                Cabin cabin2 = cabin;
-                if (cabin2?.HasOwner == true && cabin.owner.isCustomized.Value)
+                Cabin? cabin2 = cabin;
+                if (cabin != null && cabin2?.HasOwner == true && cabin.owner.isCustomized.Value)
                 {
                     Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", cabin.owner.Name), Game1.currentLocation.createYesNoResponses(), (f, answer) =>
                     {
@@ -116,7 +115,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     toUpgrade.daysUntilUpgrade.Value = Math.Max(__instance.Blueprint.BuildDays, 1);
                     toUpgrade.showUpgradeAnimation(__instance.TargetLocation);
                     Game1.playSound("axe");
-                    if (!ModEntry.Config.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
+                    if (!ModEntry.Config.BuildModifier!.IsDown() || !__instance.CanBuildCurrentBlueprint())
                     {
                         DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenuAfterSuccessfulBuild, 1500);
                         __instance.freeze = true;
@@ -151,7 +150,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     if (__instance.tryToBuild())
                     {
                         __instance.ConsumeResources();
-                        if (!ModEntry.Config.BuildModifier.IsDown() || !__instance.CanBuildCurrentBlueprint())
+                        if (!ModEntry.Config.BuildModifier!.IsDown() || !__instance.CanBuildCurrentBlueprint())
                         {
                             DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenuAfterSuccessfulBuild, 2000);
                             __instance.freeze = true;
@@ -177,7 +176,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             void ContinueDemolish()
             {
-                if (!__instance.demolishing || destroyed == null || !farm.buildings.Contains(destroyed)) return;
+                if (!__instance.demolishing || !farm.buildings.Contains(destroyed)) return;
 
                 if (destroyed.daysOfConstructionLeft.Value > 0 || destroyed.daysUntilUpgrade.Value > 0)
                 {
@@ -208,7 +207,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         }
                     }
                     destroyed.BeforeDemolish();
-                    Chest chest = null;
+                    Chest? chest = null;
                     if (cabin != null)
                     {
                         List<Item> items = cabin.demolish();
@@ -225,7 +224,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     destroyed.showDestroyedAnimation(__instance.TargetLocation);
                     Game1.playSound("explosion");
                     Utility.spreadAnimalsAround(destroyed, farm);
-                    if (!ModEntry.Config.BuildModifier.IsDown())
+                    if (!ModEntry.Config.BuildModifier!.IsDown())
                     {
                         DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenu, 1500);
                         __instance.freeze = true;
@@ -240,25 +239,22 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
         private static bool GetInitialBuildingPlacementViewportPrefix(CarpenterMenu __instance, GameLocation location, ref Location __result)
         {
-            if (!ModEntry.Config.EnableBuilding)
-                return true;
+            if (!ModEntry.Config.EnableBuilding) return true;
+            if (Game1.activeClickableMenu is not BuildAnywhereMenu) return true;
 
-            if (Game1.activeClickableMenu is BuildAnywhereMenu)
+            __result = CenterOnTile((int)Game1.player.Tile.X, (int)Game1.player.Tile.Y);
+
+            return false;
+
+            static Location CenterOnTile(int x, int y)
             {
-                __result = CenterOnTile((int)Game1.player.Tile.X, (int)Game1.player.Tile.Y);
-                static Location CenterOnTile(int x, int y)
-                {
-                    x = (int)((x * 64) - (Game1.viewport.Width / 2f));
-                    y = (int)((y * 64) - (Game1.viewport.Height / 2f));
-                    return new Location(x, y);
-                }
-                return false;
+                x = (int)((x * 64) - (Game1.viewport.Width / 2f));
+                y = (int)((y * 64) - (Game1.viewport.Height / 2f));
+                return new Location(x, y);
             }
-
-            return true;
         }
 
-        // Don't display gold if buildcost is less than 1 instead of 0
+        // Don't display gold if build cost is less than 1 instead of 0
         private static IEnumerable<CodeInstruction> DrawTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
         {
             var codeInstructions = instructions.ToList();

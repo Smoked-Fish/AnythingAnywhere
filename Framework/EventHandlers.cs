@@ -1,5 +1,4 @@
-﻿#nullable disable
-using AnythingAnywhere.Framework.Patches.Locations;
+﻿using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.UI;
 using Common.Helpers;
 using Common.Managers;
@@ -17,7 +16,7 @@ using System.Linq;
 
 namespace AnythingAnywhere.Framework
 {
-    internal sealed class EventHandlers
+    internal static class EventHandlers
     {
         private static bool _buildingConfigChanged;
 
@@ -35,19 +34,19 @@ namespace AnythingAnywhere.Framework
             }
         }
 
-        internal void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
+        internal static void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
             if (!Context.IsWorldReady || !ModEntry.Config.EnableBuilding)
                 return;
 
-            if (ModEntry.Config.BuildMenu.JustPressed() && ModEntry.Config.EnableBuilding)
+            if (ModEntry.Config.BuildMenu!.JustPressed() && ModEntry.Config.EnableBuilding)
                 HandleBuildButtonPress("Robin");
 
-            if (ModEntry.Config.WizardBuildMenu.JustPressed() && ModEntry.Config.EnableBuilding)
+            if (ModEntry.Config.WizardBuildMenu!.JustPressed() && ModEntry.Config.EnableBuilding)
                 HandleBuildButtonPress("Wizard");
         }
 
-        internal void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        internal static void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
             if (e.Name.IsEquivalentTo("Data/Buildings"))
             {
@@ -83,50 +82,43 @@ namespace AnythingAnywhere.Framework
             }
         }
 
-        internal void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        internal static void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (_buildingConfigChanged)
-            {
-                ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
-                _buildingConfigChanged = false;
-            }
+            if (!_buildingConfigChanged) return;
+            ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
+            _buildingConfigChanged = false;
         }
 
-        internal void OnWarped(object sender, WarpedEventArgs e)
+        internal static void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors)
-                return;
+            if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors) return;
+            if (e.OldLocation is Cellar or FarmHouse or Cabin || (e.NewLocation is not FarmHouse && e.OldLocation is not Cabin)) return;
 
-            if (!(e.OldLocation is Cellar || e.OldLocation is FarmHouse || e.OldLocation is Cabin) && (e.NewLocation is FarmHouse || e.OldLocation is Cabin))
-            {
-                Game1.player.Position = FarmHousePatch.FarmHouseRealPos * 64f;
-                Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
-                Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
-            }
+            Game1.player.Position = FarmHousePatch.FarmHouseRealPos * 64f;
+            Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
+            Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
         }
 
-        internal void OnConfigChanged(object sender, ConfigChangedEventArgs e)
+        internal static void OnConfigChanged(object sender, ConfigChangedEventArgs e)
         {
             if (Equals(e.OldValue, e.NewValue)) return;
 
-            if (e.ConfigName == nameof(ModConfig.EnablePlanting))
+            switch (e.ConfigName)
             {
-                ModEntry.ModHelper.GameContent.InvalidateCache("Data/Locations");
+                case nameof(ModConfig.EnablePlanting):
+                    ModEntry.ModHelper.GameContent.InvalidateCache("Data/Locations");
+                    break;
+                case nameof(ModConfig.EnableFreeBuild):
+                case nameof(ModConfig.EnableInstantBuild):
+                case nameof(ModConfig.RemoveBuildConditions):
+                case nameof(ModConfig.EnableGreenhouse):
+                    _buildingConfigChanged = true; // Doesn't work if I don't do this
+                    break;
             }
 
-            if (e.ConfigName == nameof(ModConfig.EnableFreeBuild) ||
-                e.ConfigName == nameof(ModConfig.EnableInstantBuild) ||
-                e.ConfigName == nameof(ModConfig.RemoveBuildConditions) ||
-                e.ConfigName == nameof(ModConfig.EnableGreenhouse))
-            {
-                _buildingConfigChanged = true; // Doesn't work if I don't do this
-            }
-
-            if (ModEntry.IsRelocateFarmAnimalsLoaded)
-            {
-                ModEntry.Config.EnableAnimalRelocate = false;
-                ConfigManager.SaveAction.Invoke();
-            }
+            if (!ModEntry.IsRelocateFarmAnimalsLoaded) return;
+            ModEntry.Config.EnableAnimalRelocate = false;
+            ConfigManager.SaveAction.Invoke();
         }
 
         internal static void OnClick(ButtonClickEventData e)
@@ -141,7 +133,7 @@ namespace AnythingAnywhere.Framework
                 {
                     Game1.playSound("thudStep");
                 }
-                else if (ModEntry.Config.BlacklistedLocations.Contains(Game1.player.currentLocation.NameOrUniqueName))
+                else if (ModEntry.Config.BlacklistedLocations!.Contains(Game1.player.currentLocation.NameOrUniqueName))
                 {
                     Game1.playSound("thudStep");
                 }
@@ -159,7 +151,7 @@ namespace AnythingAnywhere.Framework
             {
                 Game1.playSound("backpackIN");
                 ConfigUtility.InitializeDefaultConfig(ModEntry.Config, e.FieldID);
-                PageHelper.OpenPage?.Invoke(PageHelper.CurrPage);
+                PageHelper.OpenPage?.Invoke(PageHelper.CurrPage ?? string.Empty);
 
                 if (e.FieldID.Equals("Building"))
                 {
@@ -291,7 +283,7 @@ namespace AnythingAnywhere.Framework
                 {
                     if (!location.Map.Properties.TryGetValue("CanBuildHere", out var value) || value != "T")
                     {
-                        if (ModEntry.Config.BlacklistedLocations.Contains(location.NameOrUniqueName))
+                        if (ModEntry.Config.BlacklistedLocations!.Contains(location.NameOrUniqueName))
                             continue;
 
                         location.Map.Properties["CanBuildHere"] = "T";
@@ -303,7 +295,7 @@ namespace AnythingAnywhere.Framework
                     }
                 }
 
-                if (ModEntry.Config.BlacklistedLocations.Contains(location.NameOrUniqueName))
+                if (ModEntry.Config.BlacklistedLocations!.Contains(location.NameOrUniqueName))
                 {
                     location.Map.Properties.Remove("CanBuildHere");
                 }

@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Common.Helpers;
+﻿using Common.Helpers;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
@@ -33,24 +32,22 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
         // Sets tiles buildable for construction (just visual)
         private static void IsBuildablePostfix(GameLocation __instance, Vector2 tileLocation, ref bool __result, bool onlyNeedsToBePassable = false)
         {
-            if (ModEntry.Config.EnableBuilding)
+            if (!ModEntry.Config.EnableBuilding) return;
+            if (ModEntry.Config.EnableBuildAnywhere)
             {
-                if (ModEntry.Config.EnableBuildAnywhere)
-                {
-                    __result = true;
-                }
-                else if (!__instance.IsOutdoors && !ModEntry.Config.EnableBuildingIndoors)
-                {
-                    __result = false;
-                }
-                else if (__instance.isTilePassable(tileLocation) && !__instance.isWaterTile((int)tileLocation.X, (int)tileLocation.Y))
-                {
-                    __result = !__instance.IsTileOccupiedBy(tileLocation, CollisionMask.All, CollisionMask.All);
-                }
-                else
-                {
-                    __result = false; // Set to false if the tile is not passable
-                }
+                __result = true;
+            }
+            else if (!__instance.IsOutdoors && !ModEntry.Config.EnableBuildingIndoors)
+            {
+                __result = false;
+            }
+            else if (__instance.isTilePassable(tileLocation) && !__instance.isWaterTile((int)tileLocation.X, (int)tileLocation.Y))
+            {
+                __result = !__instance.IsTileOccupiedBy(tileLocation, CollisionMask.All, CollisionMask.All);
+            }
+            else
+            {
+                __result = false; // Set to false if the tile is not passable
             }
         }
 
@@ -62,12 +59,12 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
                 return;
             }
 
-            Tile tile = __instance.Map.GetLayer("Back")?.Tiles[xTile, yTile];
+            Tile? tile = __instance.Map.GetLayer("Back")?.Tiles[xTile, yTile];
             if (tile?.TileSheet == null)
             {
                 return;
             }
-            string text = null;
+            string? text = null;
             IPropertyCollection tileIndexProperties = tile.TileIndexProperties;
             if (tileIndexProperties != null && tileIndexProperties.TryGetValue("Type", out var value))
             {
@@ -85,7 +82,7 @@ namespace AnythingAnywhere.Framework.Patches.GameLocations
             {
                 __result = "T";
             }
-            if (text == "Dirt" || text == "Grass")
+            if (text is "Dirt" or "Grass")
             {
                 __result = "T";
             }

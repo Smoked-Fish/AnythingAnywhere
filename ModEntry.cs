@@ -24,14 +24,13 @@ namespace AnythingAnywhere
 {
     public class ModEntry : Mod
     {
-        internal static IModHelper ModHelper { get; set; }
-        internal static IMonitor ModMonitor { get; set; }
-        internal static ModConfig Config { get; set; }
-        internal static Multiplayer Multiplayer { get; set; }
-        internal static ApiRegistry ApiManager { get; set; }
-        internal static ICustomBushApi CustomBushApi { get; set; }
-        internal static EventHandlers EventHandlers { get; set; }
-        internal static bool IsRelocateFarmAnimalsLoaded { get; set; }
+        public static IModHelper ModHelper { get; private set; }
+        public static IMonitor ModMonitor { get; private set; }
+        public static ModConfig Config { get; private set; }
+        public static Multiplayer Multiplayer { get; private set; }
+        private static ApiRegistry ApiManager { get; set; }
+        public static ICustomBushApi CustomBushApi { get; private set; }
+        public static bool IsRelocateFarmAnimalsLoaded { get; private set; }
 
         private static Harmony harmony;
 
@@ -45,10 +44,9 @@ namespace AnythingAnywhere
 
             // Setup the managers/handlers
             ApiManager = new ApiRegistry(helper, ModMonitor);
-            EventHandlers = new EventHandlers();
 
             // Load the Harmony patches
-            harmony = new Harmony(this.ModManifest.UniqueID);
+            harmony = new Harmony(ModManifest.UniqueID);
             PatchHelper.Init(harmony);
 
             // GameLocation
@@ -200,11 +198,9 @@ namespace AnythingAnywhere
             int removed = 0;
             foreach (var pair in location.furniture.ToArray())
             {
-                if (pair.QualifiedItemId == args[1])
-                {
-                    location.furniture.Remove(pair);
-                    removed++;
-                }
+                if (pair.QualifiedItemId != args[1]) continue;
+                location.furniture.Remove(pair);
+                removed++;
             }
 
             ModMonitor.Log($"Command removed {removed} furniture objects at {location.NameOrUniqueName}", LogLevel.Info);
@@ -265,14 +261,7 @@ namespace AnythingAnywhere
             }
 
             List<string> activeLocations = [];
-
-            foreach (GameLocation location in Game1.locations)
-            {
-                if (location.isAlwaysActive.Value)
-                {
-                    activeLocations.Add(location.Name);
-                }
-            }
+            activeLocations.AddRange(from location in Game1.locations where location.isAlwaysActive.Value select location.Name);
 
             // Print out the comma-separated list of active locations
             string activeLocationsStr = string.Join(", ", activeLocations);

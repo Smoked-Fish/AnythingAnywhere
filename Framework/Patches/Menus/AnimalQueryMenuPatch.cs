@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Common.Helpers;
+﻿using Common.Helpers;
 using Common.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -16,7 +15,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 {
     internal sealed class AnimalQueryMenuPatch : PatchHelper
     {
-        private static GameLocation TargetLocation;
+        private static GameLocation? TargetLocation;
         internal AnimalQueryMenuPatch() : base(typeof(AnimalQueryMenu)) { }
         internal void Apply()
         {
@@ -36,8 +35,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             // TODO: FIX THIS AND ADD REFLECTION HELPER TO COMMON
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(__instance)!;
-            FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(__instance);
-            if (animal is null) return false;
+            FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(__instance)!;
 
             if (movingAnimal)
             {
@@ -47,7 +45,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                     Game1.playSound("smallSelect");
                 }
                 Vector2 clickTile = new((float)(Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (float)(Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
-                Building selection = TargetLocation.getBuildingAt(clickTile);
+                Building? selection = TargetLocation?.getBuildingAt(clickTile);
                 if (selection == null)
                 {
                     return false;
@@ -66,7 +64,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         return false;
                     }
                     AnimalHouse oldHome = (AnimalHouse)animal.home.GetIndoors();
-                    if (oldHome.animals.Remove(animal.myID.Value) || TargetLocation.animals.Remove(animal.myID.Value))
+                    if (TargetLocation != null && (oldHome.animals.Remove(animal.myID.Value) || TargetLocation.animals.Remove(animal.myID.Value)))
                     {
                         oldHome.animalsThatLiveHere.Remove(animal.myID.Value);
                         selectedHome.adoptAnimal(animal);
@@ -133,7 +131,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance)!.SetValue(__instance, true);
             Game1.currentLocation.cleanupBeforePlayerExit();
             Game1.currentLocation = TargetLocation;
-            Game1.player.viewingLocation.Value = Game1.currentLocation.NameOrUniqueName;
+            Game1.player.viewingLocation.Value = Game1.currentLocation?.NameOrUniqueName;
             Game1.globalFadeToClear();
             __instance.okButton.bounds.X = Game1.uiViewport.Width - 128;
             __instance.okButton.bounds.Y = Game1.uiViewport.Height - 128;
@@ -141,7 +139,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             Game1.viewportFreeze = true;
             Game1.viewport.Location = new Location(3136, 320);
             Game1.panScreen(0, 0);
-            Game1.currentLocation.resetForPlayerEntry();
+            Game1.currentLocation?.resetForPlayerEntry();
             Game1.displayFarmer = false;
         }
 
@@ -152,21 +150,23 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 return;
 
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(__instance)!;
-            FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(__instance);
+            FarmAnimal animal = (FarmAnimal)typeof(AnimalQueryMenu).GetField("animal", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(__instance)!;
 
-            if (!movingAnimal || TargetLocation.Equals(Game1.getFarm())) return;
+            if (TargetLocation != null && (!movingAnimal || TargetLocation.Equals(Game1.getFarm()))) return;
 
             Vector2 clickTile = new((float)(Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (float)(Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64);
+            if (TargetLocation == null) return;
             foreach (Building building in TargetLocation.buildings)
             {
                 building.color = Color.White;
             }
+
             Building selection = TargetLocation.getBuildingAt(clickTile);
 
             if (selection == null) return;
-            if (animal is null) return;
 
-            if (animal.CanLiveIn(selection) && !((AnimalHouse)selection.GetIndoors()).isFull() && !selection.Equals(animal.home))
+            if (animal.CanLiveIn(selection) && !((AnimalHouse)selection.GetIndoors()).isFull() &&
+                !selection.Equals(animal.home))
             {
                 selection.color = Color.LightGreen * 0.8f;
             }
@@ -179,29 +179,26 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         // Enable WASD on move animal menu
         private static void ReceiveKeyPressPostfix(AnimalQueryMenu __instance, Keys key)
         {
-            if (!ModEntry.Config.EnableAnimalRelocate)
-                return;
+            if (!ModEntry.Config.EnableAnimalRelocate) return;
 
             bool movingAnimal = (bool)typeof(AnimalQueryMenu).GetField("movingAnimal", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(__instance)!;
+            if (!movingAnimal) return;
 
-            if (movingAnimal)
+            if (Game1.options.doesInputListContain(Game1.options.moveDownButton, key))
             {
-                if (Game1.options.doesInputListContain(Game1.options.moveDownButton, key))
-                {
-                    Game1.panScreen(0, 4);
-                }
-                else if (Game1.options.doesInputListContain(Game1.options.moveRightButton, key))
-                {
-                    Game1.panScreen(4, 0);
-                }
-                else if (Game1.options.doesInputListContain(Game1.options.moveUpButton, key))
-                {
-                    Game1.panScreen(0, -4);
-                }
-                else if (Game1.options.doesInputListContain(Game1.options.moveLeftButton, key))
-                {
-                    Game1.panScreen(-4, 0);
-                }
+                Game1.panScreen(0, 4);
+            }
+            else if (Game1.options.doesInputListContain(Game1.options.moveRightButton, key))
+            {
+                Game1.panScreen(4, 0);
+            }
+            else if (Game1.options.doesInputListContain(Game1.options.moveUpButton, key))
+            {
+                Game1.panScreen(0, -4);
+            }
+            else if (Game1.options.doesInputListContain(Game1.options.moveLeftButton, key))
+            {
+                Game1.panScreen(-4, 0);
             }
         }
     }

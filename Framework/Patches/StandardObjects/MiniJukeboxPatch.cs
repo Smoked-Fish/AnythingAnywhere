@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Common.Helpers;
+﻿using Common.Helpers;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Objects;

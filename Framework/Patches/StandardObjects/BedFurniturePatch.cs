@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Common.Helpers;
+﻿using Common.Helpers;
 using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;

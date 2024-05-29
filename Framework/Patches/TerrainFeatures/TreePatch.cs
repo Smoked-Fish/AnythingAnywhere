@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Common.Helpers;
+﻿using Common.Helpers;
 using StardewValley.TerrainFeatures;
 
 namespace AnythingAnywhere.Framework.Patches.TerrainFeatures

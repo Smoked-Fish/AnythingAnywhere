@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Common.Interfaces;
+﻿using Common.Interfaces;
 using Common.Utilities;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
@@ -7,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AnythingAnywhere
 {
-    internal sealed class ModConfig : IConfigurable
+    public sealed class ModConfig : IConfigurable
     {
         // PLACING
         [DefaultValue(true, "Placing")]
@@ -36,13 +35,13 @@ namespace AnythingAnywhere
         public bool EnableFreeBuild { get; set; }
 
         [DefaultValue(SButton.OemComma, "Building")]
-        public KeybindList BuildMenu { get; set; }
+        public KeybindList? BuildMenu { get; set; }
 
         [DefaultValue(SButton.OemPeriod, "Building")]
-        public KeybindList WizardBuildMenu { get; set; }
+        public KeybindList? WizardBuildMenu { get; set; }
 
         [DefaultValue(SButton.LeftShift, "Building")]
-        public KeybindList BuildModifier { get; set; }
+        public KeybindList? BuildModifier { get; set; }
 
         [DefaultValue(true, "Building")]
         public bool EnableGreenhouse { get; set; }
@@ -57,7 +56,7 @@ namespace AnythingAnywhere
         public bool BypassMagicInk { get; set; }
 
         [DefaultValue(null, "Building")]
-        public List<string> BlacklistedLocations { get; set; }
+        public List<string>? BlacklistedLocations { get; set; }
 
         // FARMING
         [DefaultValue(true, "Farming")]
