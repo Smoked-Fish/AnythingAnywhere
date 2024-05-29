@@ -21,12 +21,12 @@ namespace AnythingAnywhere.Framework
         private static bool _buildingConfigChanged;
 
         #region Event Subscriptions
-        internal static void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        internal static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
             ResetBlacklist(true);
         }
 
-        internal static void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
+        internal static void OnBuildingListChanged(object? sender, BuildingListChangedEventArgs e)
         {
             if (e.Added.Any())
             {
@@ -34,7 +34,7 @@ namespace AnythingAnywhere.Framework
             }
         }
 
-        internal static void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
+        internal static void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
         {
             if (!Context.IsWorldReady || !ModEntry.Config.EnableBuilding)
                 return;
@@ -46,7 +46,7 @@ namespace AnythingAnywhere.Framework
                 HandleBuildButtonPress("Wizard");
         }
 
-        internal static void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        internal static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
         {
             if (e.Name.IsEquivalentTo("Data/Buildings"))
             {
@@ -82,14 +82,14 @@ namespace AnythingAnywhere.Framework
             }
         }
 
-        internal static void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        internal static void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
         {
             if (!_buildingConfigChanged) return;
             ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
             _buildingConfigChanged = false;
         }
 
-        internal static void OnWarped(object sender, WarpedEventArgs e)
+        internal static void OnWarped(object? sender, WarpedEventArgs e)
         {
             if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors) return;
             if (e.OldLocation is Cellar or FarmHouse or Cabin || (e.NewLocation is not FarmHouse && e.OldLocation is not Cabin)) return;
@@ -99,7 +99,7 @@ namespace AnythingAnywhere.Framework
             Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
         }
 
-        internal static void OnConfigChanged(object sender, ConfigChangedEventArgs e)
+        internal static void OnConfigChanged(object? sender, ConfigChangedEventArgs e)
         {
             if (Equals(e.OldValue, e.NewValue)) return;
 
