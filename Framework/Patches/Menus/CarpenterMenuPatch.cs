@@ -1,26 +1,27 @@
 ﻿#nullable disable
-using HarmonyLib;
-using StardewValley;
-using StardewModdingAPI;
-using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Buildings;
-using StardewValley.Locations;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using xTile.Dimensions;
 using AnythingAnywhere.Framework.UI;
 using Common.Helpers;
+using HarmonyLib;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
+using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Locations;
+using StardewValley.Menus;
+using StardewValley.Objects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections.Generic;
-using System;
+using xTile.Dimensions;
 
 namespace AnythingAnywhere.Framework.Patches.Menus
 {
     internal sealed class CarpenterMenuPatch : PatchHelper
     {
-        internal CarpenterMenuPatch(Harmony harmony) : base(harmony, typeof(CarpenterMenu)) { }
+        internal CarpenterMenuPatch() : base(typeof(CarpenterMenu)) { }
         internal void Apply()
         {
             Patch(PatchType.Prefix, nameof(CarpenterMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
@@ -61,36 +62,30 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             if (__instance.demolishing)
             {
                 farm = __instance.TargetLocation;
-                destroyed = farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64));
+                destroyed = farm.getBuildingAt(new Vector2((float)(Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (float)(Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64));
                 if (destroyed == null)
                 {
                     return false;
                 }
                 interior = destroyed.GetIndoors();
                 cabin = interior as Cabin;
-                if (destroyed != null)
+                if (cabin != null && !Game1.IsMasterGame)
                 {
-                    if (cabin != null && !Game1.IsMasterGame)
-                    {
-                        Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_LockFailed"), 3));
-                        destroyed = null;
-                        return false;
-                    }
-                    if (!__instance.CanDemolishThis(destroyed))
-                    {
-                        destroyed = null;
-                        return false;
-                    }
-                    if (!Game1.IsMasterGame && !__instance.hasPermissionsToDemolish(destroyed))
-                    {
-                        destroyed = null;
-                        return false;
-                    }
+                    Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_LockFailed"), 3));
+                    return false;
+                }
+                if (!__instance.CanDemolishThis(destroyed))
+                {
+                    return false;
+                }
+                if (!Game1.IsMasterGame && !__instance.hasPermissionsToDemolish(destroyed))
+                {
+                    return false;
                 }
                 Cabin cabin2 = cabin;
                 if (cabin2?.HasOwner == true && cabin.owner.isCustomized.Value)
                 {
-                    Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", cabin.owner.Name), Game1.currentLocation.createYesNoResponses(), (Farmer f, string answer) =>
+                    Game1.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\UI:Carpenter_DemolishCabinConfirm", cabin.owner.Name), Game1.currentLocation.createYesNoResponses(), (f, answer) =>
                     {
                         if (answer == "Yes")
                         {
@@ -103,16 +98,17 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         }
                     });
                 }
-                else if (destroyed != null)
+                else
                 {
                     Game1.player.team.demolishLock.RequestLock(ContinueDemolish, BuildingLockFailed);
                 }
+
                 return false;
             }
 
             if (__instance.upgrading)
             {
-                Building toUpgrade = __instance.TargetLocation.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64));
+                Building toUpgrade = __instance.TargetLocation.getBuildingAt(new Vector2((float)(Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (float)(Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64));
                 if (toUpgrade != null && toUpgrade.buildingType.Value == __instance.Blueprint.UpgradeFrom)
                 {
                     __instance.ConsumeResources();
@@ -169,6 +165,8 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                 Game1.player.team.buildLock.ReleaseLock();
             });
 
+            return false;
+
             void BuildingLockFailed()
             {
                 if (__instance.demolishing)
@@ -179,71 +177,65 @@ namespace AnythingAnywhere.Framework.Patches.Menus
 
             void ContinueDemolish()
             {
-                if (__instance.demolishing && destroyed != null && farm.buildings.Contains(destroyed))
+                if (!__instance.demolishing || destroyed == null || !farm.buildings.Contains(destroyed)) return;
+
+                if (destroyed.daysOfConstructionLeft.Value > 0 || destroyed.daysUntilUpgrade.Value > 0)
                 {
-                    if ((int)destroyed.daysOfConstructionLeft.Value > 0 || (int)destroyed.daysUntilUpgrade.Value > 0)
+                    Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_DuringConstruction"), 3));
+                }
+                else if (interior is AnimalHouse animalHouse && animalHouse.animalsThatLiveHere.Count > 0)
+                {
+                    Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_AnimalsHere"), 3));
+                }
+                else if (interior?.farmers.Any() == true)
+                {
+                    Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_PlayerHere"), 3));
+                }
+                else
+                {
+                    if (cabin != null)
                     {
-                        Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_DuringConstruction"), 3));
-                    }
-                    else if (interior is AnimalHouse animalHouse && animalHouse.animalsThatLiveHere.Count > 0)
-                    {
-                        Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_AnimalsHere"), 3));
-                    }
-                    else if (interior?.farmers.Any() == true)
-                    {
-                        Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_PlayerHere"), 3));
-                    }
-                    else
-                    {
-                        if (cabin != null)
+                        if (Game1.getAllFarmers().Any(farmer => farmer.currentLocation != null && farmer.currentLocation.Name == cabin.GetCellarName()))
                         {
-                            foreach (Farmer farmer in Game1.getAllFarmers())
-                            {
-                                if (farmer.currentLocation != null && farmer.currentLocation.Name == cabin.GetCellarName())
-                                {
-                                    Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_PlayerHere"), 3));
-                                    return;
-                                }
-                            }
-                            if (cabin.IsOwnerActivated)
-                            {
-                                Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_FarmhandOnline"), 3));
-                                return;
-                            }
+                            Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_PlayerHere"), 3));
+                            return;
                         }
-                        destroyed.BeforeDemolish();
-                        Chest chest = null;
-                        if (cabin != null)
+
+                        if (cabin.IsOwnerActivated)
                         {
-                            List<Item> items = cabin.demolish();
-                            if (items.Count > 0)
-                            {
-                                chest = new Chest(playerChest: true);
-                                chest.fixLidFrame();
-                                chest.Items.OverwriteWith(items);
-                            }
+                            Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_FarmhandOnline"), 3));
+                            return;
                         }
-                        if (farm.destroyStructure(destroyed))
+                    }
+                    destroyed.BeforeDemolish();
+                    Chest chest = null;
+                    if (cabin != null)
+                    {
+                        List<Item> items = cabin.demolish();
+                        if (items.Count > 0)
                         {
-                            Game1.flashAlpha = 1f;
-                            destroyed.showDestroyedAnimation(__instance.TargetLocation);
-                            Game1.playSound("explosion");
-                            Utility.spreadAnimalsAround(destroyed, farm);
-                            if (!ModEntry.Config.BuildModifier.IsDown())
-                            {
-                                DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenu, 1500);
-                                __instance.freeze = true;
-                            }
-                            if (chest != null)
-                            {
-                                farm.objects[new Vector2(destroyed.tileX.Value + (destroyed.tilesWide.Value / 2), destroyed.tileY.Value + (destroyed.tilesHigh.Value / 2))] = chest;
-                            }
+                            chest = new Chest(playerChest: true);
+                            chest.fixLidFrame();
+                            chest.Items.OverwriteWith(items);
                         }
+                    }
+
+                    if (!farm.destroyStructure(destroyed)) return;
+                    Game1.flashAlpha = 1f;
+                    destroyed.showDestroyedAnimation(__instance.TargetLocation);
+                    Game1.playSound("explosion");
+                    Utility.spreadAnimalsAround(destroyed, farm);
+                    if (!ModEntry.Config.BuildModifier.IsDown())
+                    {
+                        DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenu, 1500);
+                        __instance.freeze = true;
+                    }
+                    if (chest != null)
+                    {
+                        farm.objects[new Vector2(destroyed.tileX.Value + (destroyed.tilesWide.Value / 2), destroyed.tileY.Value + (destroyed.tilesHigh.Value / 2))] = chest;
                     }
                 }
             }
-
-            return false;
         }
 
         private static bool GetInitialBuildingPlacementViewportPrefix(CarpenterMenu __instance, GameLocation location, ref Location __result)
@@ -269,9 +261,10 @@ namespace AnythingAnywhere.Framework.Patches.Menus
         // Don't display gold if buildcost is less than 1 instead of 0
         private static IEnumerable<CodeInstruction> DrawTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
         {
+            var codeInstructions = instructions.ToList();
             try
             {
-                var matcher = new CodeMatcher(instructions, generator);
+                var matcher = new CodeMatcher(codeInstructions, generator);
 
                 matcher.MatchEndForward(
                     new CodeMatch(OpCodes.Ldloc_0),
@@ -285,7 +278,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
             catch (Exception e)
             {
                 ModEntry.ModMonitor.Log($"There was an issue modifying the instructions for {typeof(CarpenterMenu)}.{original.Name}: {e}", LogLevel.Error);
-                return instructions;
+                return codeInstructions;
             }
         }
     }
