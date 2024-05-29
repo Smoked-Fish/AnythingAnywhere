@@ -1,7 +1,7 @@
 ﻿#nullable disable
 using StardewValley;
-using StardewValley.Menus;
 using StardewValley.GameData.Buildings;
+using StardewValley.Menus;
 
 namespace AnythingAnywhere.Framework.UI
 {
