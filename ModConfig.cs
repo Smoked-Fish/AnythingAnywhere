@@ -1,8 +1,8 @@
 ﻿#nullable disable
-using StardewModdingAPI;
-using StardewModdingAPI.Utilities;
 using Common.Interfaces;
 using Common.Utilities;
+using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 using System.Collections.Generic;
 
 namespace AnythingAnywhere
@@ -90,7 +90,7 @@ namespace AnythingAnywhere
 
         public ModConfig()
         {
-            ConfigUtilities.InitializeDefaultConfig(this);
+            ConfigUtility.InitializeDefaultConfig(this);
         }
     }
 }
