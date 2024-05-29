@@ -1,13 +1,5 @@
 ﻿#nullable disable
 global using SObject = StardewValley.Object;
-using HarmonyLib;
-using Microsoft.Xna.Framework;
-using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley;
-using Common.Managers;
-using Common.Utilities;
-using Common.Utilities.Options;
 using AnythingAnywhere.Framework;
 using AnythingAnywhere.Framework.External.CustomBush;
 using AnythingAnywhere.Framework.Patches.GameLocations;
@@ -15,9 +7,18 @@ using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.Patches.Menus;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
+using Common.Helpers;
+using Common.Managers;
+using Common.Utilities;
+using Common.Utilities.Options;
+using HarmonyLib;
+using Microsoft.Xna.Framework;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace AnythingAnywhere
 {
@@ -27,7 +28,7 @@ namespace AnythingAnywhere
         internal static IMonitor ModMonitor { get; set; }
         internal static ModConfig Config { get; set; }
         internal static Multiplayer Multiplayer { get; set; }
-        internal static ApiManager ApiManager { get; set; }
+        internal static ApiRegistry ApiManager { get; set; }
         internal static ICustomBushApi CustomBushApi { get; set; }
         internal static EventHandlers EventHandlers { get; set; }
         internal static bool IsRelocateFarmAnimalsLoaded { get; set; }
@@ -43,32 +44,33 @@ namespace AnythingAnywhere
             Multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
             // Setup the managers/handlers
-            ApiManager = new ApiManager(helper, ModMonitor);
+            ApiManager = new ApiRegistry(helper, ModMonitor);
             EventHandlers = new EventHandlers();
 
             // Load the Harmony patches
             harmony = new Harmony(this.ModManifest.UniqueID);
+            PatchHelper.Init(harmony);
 
             // GameLocation
-            new GameLocationPatch(harmony).Apply();
+            new GameLocationPatch().Apply();
 
             // Location
-            new FarmHousePatch(harmony).Apply();
+            new FarmHousePatch().Apply();
 
             // Menu
-            new CarpenterMenuPatch(harmony).Apply();
-            new AnimalQueryMenuPatch(harmony).Apply();
+            new CarpenterMenuPatch().Apply();
+            new AnimalQueryMenuPatch().Apply();
 
             // StandardObject
-            new CaskPatch(harmony).Apply();
-            new FurniturePatch(harmony).Apply();
-            new BedFurniturePatch(harmony).Apply();
-            new MiniJukeboxPatch(harmony).Apply();
-            new ObjectPatch(harmony).Apply();
+            new CaskPatch().Apply();
+            new FurniturePatch().Apply();
+            new BedFurniturePatch().Apply();
+            new MiniJukeboxPatch().Apply();
+            new ObjectPatch().Apply();
 
             // TerrainFeature
-            new FruitTreePatch(harmony).Apply();
-            new TreePatch(harmony).Apply();
+            new FruitTreePatch().Apply();
+            new TreePatch().Apply();
 
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
@@ -86,7 +88,7 @@ namespace AnythingAnywhere
 
             // Hook into Custom events
             ButtonOptions.Click += EventHandlers.OnClick;
-            ConfigUtilities.ConfigChanged += EventHandlers.OnConfigChanged;
+            ConfigUtility.ConfigChanged += EventHandlers.OnConfigChanged;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -107,7 +109,7 @@ namespace AnythingAnywhere
                 Config.EnableAnimalRelocate = false;
             }
 
-            ConfigManager.Initialize(ModManifest, Config, ModHelper, ModMonitor, harmony);
+            ConfigManager.Initialize(ModManifest, Config, ModHelper, ModMonitor, true);
             if (Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu"))
             {
                 // Register the main page
@@ -206,7 +208,6 @@ namespace AnythingAnywhere
             }
 
             ModMonitor.Log($"Command removed {removed} furniture objects at {location.NameOrUniqueName}", LogLevel.Info);
-            return;
         }
 
         private void DebugRemoveObjects(string command, string[] args)
@@ -241,15 +242,12 @@ namespace AnythingAnywhere
             int removed = 0;
             foreach ((Vector2 tile, var obj) in location.Objects.Pairs.ToArray())
             {
-                if (obj.QualifiedItemId == args[1])
-                {
-                    location.Objects.Remove(tile);
-                    removed++;
-                }
+                if (obj.QualifiedItemId != args[1]) continue;
+                location.Objects.Remove(tile);
+                removed++;
             }
 
             ModMonitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
-            return;
         }
 
         private void DebugListActiveLocations(string command, string[] args)
