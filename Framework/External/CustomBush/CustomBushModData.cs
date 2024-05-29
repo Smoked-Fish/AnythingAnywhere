@@ -1,26 +1,23 @@
 ﻿#nullable disable
 using StardewValley.TerrainFeatures;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AnythingAnywhere.Framework.External.CustomBush
 {
     public static class CustomBushModData
     {
-        private const string ModID = "furyx639.CustomBush";
-        private const string modDataId = ModID + "/Id";
+        private const string ModId = "furyx639.CustomBush";
+        private const string ModDataId = ModId + "/Id";
 
         public static Bush AddBushModData(Bush bush, SObject __instance)
         {
-            if (ModEntry.CustomBushApi != null && ModEntry.ModHelper.ModRegistry.IsLoaded("furyx639.CustomBush"))
-            {
-                IEnumerable<(string Id, ICustomBush Data)> customBushData = ModEntry.CustomBushApi.GetData();
-                if (customBushData.Any(item => item.Id == __instance.QualifiedItemId))
-                {
-                    bush.modData[modDataId] = __instance.QualifiedItemId;
-                    bush.setUpSourceRect();
-                }
-            }
+            if (ModEntry.CustomBushApi == null || !ModEntry.ModHelper.ModRegistry.IsLoaded("furyx639.CustomBush")) return bush;
+
+            var customBushData = ModEntry.CustomBushApi.GetData();
+            if (customBushData.All(item => item.Id != __instance.QualifiedItemId)) return bush;
+
+            bush.modData[ModDataId] = __instance.QualifiedItemId;
+            bush.setUpSourceRect();
 
             return bush;
         }
