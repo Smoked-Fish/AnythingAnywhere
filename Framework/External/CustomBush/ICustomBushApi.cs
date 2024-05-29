@@ -1,5 +1,4 @@
-﻿#nullable enable
-using StardewValley;
+﻿using StardewValley;
 using StardewValley.GameData;
 using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
