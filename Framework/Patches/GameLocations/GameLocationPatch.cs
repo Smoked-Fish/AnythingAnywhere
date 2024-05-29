@@ -1,19 +1,18 @@
 ﻿#nullable disable
-using HarmonyLib;
-using StardewValley;
-using StardewModdingAPI;
-using StardewValley.Objects;
+using Common.Helpers;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
+using StardewValley;
+using StardewValley.Objects;
+using System.Linq;
 using xTile.ObjectModel;
 using xTile.Tiles;
-using Common.Helpers;
-using System.Linq;
 
 namespace AnythingAnywhere.Framework.Patches.GameLocations
 {
     internal sealed class GameLocationPatch : PatchHelper
     {
-        internal GameLocationPatch(Harmony harmony) : base(harmony, typeof(GameLocation)) { }
+        internal GameLocationPatch() : base(typeof(GameLocation)) { }
         internal void Apply()
         {
             Patch(PatchType.Postfix, nameof(GameLocation.CanPlaceThisFurnitureHere), nameof(CanPlaceThisFurnitureHerePostfix), [typeof(Furniture)]);

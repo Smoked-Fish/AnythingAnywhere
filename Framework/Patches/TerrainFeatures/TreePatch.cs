@@ -1,13 +1,12 @@
 ﻿#nullable disable
-using HarmonyLib;
-using StardewValley.TerrainFeatures;
 using Common.Helpers;
+using StardewValley.TerrainFeatures;
 
 namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
     internal sealed class TreePatch : PatchHelper
     {
-        internal TreePatch(Harmony harmony) : base(harmony, typeof(Tree)) { }
+        internal TreePatch() : base(typeof(Tree)) { }
         internal void Apply()
         {
             Patch(PatchType.Postfix, nameof(Tree.IsGrowthBlockedByNearbyTree), nameof(IsGrowthBlockedByNearbyTreePostfix));

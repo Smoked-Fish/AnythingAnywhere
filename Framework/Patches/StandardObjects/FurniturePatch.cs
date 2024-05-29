@@ -1,16 +1,15 @@
 ﻿#nullable disable
-using HarmonyLib;
+using Common.Helpers;
+using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
-using Microsoft.Xna.Framework;
-using Common.Helpers;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal sealed class FurniturePatch : PatchHelper
     {
-        internal FurniturePatch(Harmony harmony) : base(harmony, typeof(Furniture)) { }
+        internal FurniturePatch() : base(typeof(Furniture)) { }
         internal void Apply()
         {
             Patch(PatchType.Postfix, nameof(Furniture.GetAdditionalFurniturePlacementStatus), nameof(GetAdditionalFurniturePlacementStatusPostfix), [typeof(GameLocation), typeof(int), typeof(int), typeof(Farmer)]);
@@ -18,7 +17,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             Patch(PatchType.Postfix, nameof(Furniture.canBeRemoved), nameof(CanBeRemovedPostfix), [typeof(Farmer)]);
         }
 
-        // Enables disabling wall furniture in all places in decortable locations. It can be annoying indoors.
+        // Enables disabling wall furniture in all places in decoratable locations. It can be annoying indoors.
         private static void GetAdditionalFurniturePlacementStatusPostfix(Furniture __instance, GameLocation location, int x, int y, Farmer who, ref int __result)
         {
             // Check if the furniture is wall furniture
@@ -33,7 +32,6 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
                 {
                     __result = 0;
                 }
-                return;
             }
             else
             {

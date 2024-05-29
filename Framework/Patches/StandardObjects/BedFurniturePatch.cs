@@ -1,20 +1,21 @@
 ﻿#nullable disable
-using HarmonyLib;
-using StardewValley;
-using StardewModdingAPI;
-using StardewValley.Objects;
-using StardewValley.Locations;
 using Common.Helpers;
+using HarmonyLib;
+using StardewModdingAPI;
+using StardewValley;
+using StardewValley.Locations;
+using StardewValley.Objects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections.Generic;
-using System;
 
 namespace AnythingAnywhere.Framework.Patches.StandardObjects
 {
     internal sealed class BedFurniturePatch : PatchHelper
     {
-        internal BedFurniturePatch(Harmony harmony) : base(harmony, typeof(BedFurniture)) { }
+        internal BedFurniturePatch() : base(typeof(BedFurniture)) { }
         internal void Apply()
         {
             Patch(PatchType.Postfix, nameof(BedFurniture.CanModifyBed), nameof(CanModifyBedPostfix), [typeof(Farmer)]);
@@ -31,9 +32,10 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
         // Enable all beds indoors
         private static IEnumerable<CodeInstruction> PlacementActionTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
         {
+            var placementActionTranspiler = instructions.ToList();
             try
             {
-                var matcher = new CodeMatcher(instructions, generator);
+                var matcher = new CodeMatcher(placementActionTranspiler, generator);
 
                 matcher.MatchEndForward(
                     new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(FarmHouse), nameof(FarmHouse.upgradeLevel)).GetGetMethod()),
@@ -50,7 +52,7 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
             catch (Exception e)
             {
                 ModEntry.ModMonitor.Log($"There was an issue modifying the instructions for {typeof(BedFurniture)}.{original.Name}: {e}", LogLevel.Error);
-                return instructions;
+                return placementActionTranspiler;
             }
         }
     }

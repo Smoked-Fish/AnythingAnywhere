@@ -1,15 +1,14 @@
 ﻿#nullable disable
-using HarmonyLib;
+using Common.Helpers;
+using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.TerrainFeatures;
-using Microsoft.Xna.Framework;
-using Common.Helpers;
 
 namespace AnythingAnywhere.Framework.Patches.TerrainFeatures
 {
     internal sealed class FruitTreePatch : PatchHelper
     {
-        internal FruitTreePatch(Harmony harmony) : base(harmony, typeof(FruitTree)) { }
+        internal FruitTreePatch() : base(typeof(FruitTree)) { }
         internal void Apply()
         {
             Patch(PatchType.Postfix, nameof(FruitTree.IsGrowthBlocked), nameof(IsGrowthBlockedPostfix), [typeof(Vector2), typeof(GameLocation)]);
