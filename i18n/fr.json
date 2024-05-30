@@ -62,9 +62,6 @@
   // Other Config
   "Config.AnythingAnywhere.Other.Title": "Divers",
 
-  "Config.AnythingAnywhere.EnableAnimalRelocate.Name": "Déplacement d'animaux",
-  "Config.AnythingAnywhere.EnableAnimalRelocate.Description": "Permet de déplacer les animaux d'un lieu à un autre.",
-
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Ajustements des fûts",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Permet de rendre les fûts fonctionnels n'importe où.",
 
@@ -77,16 +74,10 @@
   "Config.AnythingAnywhere.MultipleMiniObelisks.Name": "Mini-obélisque multiple",
   "Config.AnythingAnywhere.MultipleMiniObelisks.Description": "Permet de placer plus de 2 mini-obelisques par lieu.",
 
-  "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "Maison de ferme et cabanes sans restrictions",
-  "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "CELA PROVOQUERA DES ERREURS ! Désactive les restrictions de la maison de ferme et des cabanes.",
-
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "La construction en intérieur est désactivée",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} ne peut pas être déplacé vers un autre lieu",
   "Message.AnythingAnywhere.NoMagicInk": "Vous devez obtenir l'encre magique pour ouvrir le menu de construction du sorcier",
-  "Message.AnythingAnywhere.MultiplayerRelocate": "Vous ne pouvez pas déplacer des bâtiments vers d'autres lieux en mode multijoueur",
-  "Message.AnythingAnywhere.ChooseBuildingLocation": "Où voulez-vous déplacer le bâtiment ?",
-  "Message.AnythingAnywhere.ChooseAnimalLocation": "Où voulez-vous déplacer l'animal ?",
 
   // TODO
   "Config.AnythingAnywhere.ResetPage.Button": "Reset Page",

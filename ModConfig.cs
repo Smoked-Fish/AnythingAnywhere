@@ -72,9 +72,6 @@ namespace AnythingAnywhere
         public bool EnableWildTreeTweaks { get; set; }
 
         // OTHER
-        [DefaultValue(true, "Other")]
-        public bool EnableAnimalRelocate { get; set; }
-
         [DefaultValue(false, "Other")]
         public bool EnableCaskFunctionality { get; set; }
 

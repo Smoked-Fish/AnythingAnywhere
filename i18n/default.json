@@ -68,9 +68,6 @@
   // Other Config
   "Config.AnythingAnywhere.Other.Title": "Misc",
 
-  "Config.AnythingAnywhere.EnableAnimalRelocate.Name": "Animal Relocation",
-  "Config.AnythingAnywhere.EnableAnimalRelocate.Description": "Enables relocating animals from location to location",
-
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Cask Tweaks",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Enables cask functionality anywhere",
 
@@ -83,9 +80,6 @@
   "Config.AnythingAnywhere.MultipleMiniObelisks.Name": "Multiple Mini-Obelisk",
   "Config.AnythingAnywhere.MultipleMiniObelisks.Description": "Enables placing more than 2 mini-obelisks per location",
 
-  "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "House/Cabin Bypass",
-  "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "THIS WILL CAUSE ERRORS! Disables the Cabins and Farm House checks",
-
   // Reset Page Button
   "Config.AnythingAnywhere.ResetPage.Button": "Reset Page",
 
@@ -97,8 +91,5 @@
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "Building indoors is disabled",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} cannot be moved to another map",
-  "Message.AnythingAnywhere.NoMagicInk": "You need Magic Ink to open the Wizard's Build Menu",
-  "Message.AnythingAnywhere.MultiplayerRelocate": "You cannot move buildings to other locations while in multiplayer",
-  "Message.AnythingAnywhere.ChooseBuildingLocation": "Where do you want to relocate the building?",
-  "Message.AnythingAnywhere.ChooseAnimalLocation": "Where do you want to relocate the animal?"
+  "Message.AnythingAnywhere.NoMagicInk": "You need Magic Ink to open the Wizard's Build Menu"
 }

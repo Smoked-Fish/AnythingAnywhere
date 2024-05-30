@@ -1,7 +1,6 @@
 ﻿using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.UI;
 using Common.Helpers;
-using Common.Managers;
 using Common.Utilities;
 using Common.Utilities.Options;
 using StardewModdingAPI;
@@ -115,10 +114,6 @@ namespace AnythingAnywhere.Framework
                     _buildingConfigChanged = true; // Doesn't work if I don't do this
                     break;
             }
-
-            if (!ModEntry.IsRelocateFarmAnimalsLoaded) return;
-            ModEntry.Config.EnableAnimalRelocate = false;
-            ConfigManager.SaveAction.Invoke();
         }
 
         internal static void OnClick(ButtonClickEventData e)

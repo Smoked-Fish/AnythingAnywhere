@@ -68,9 +68,6 @@
   // Other Config
   "Config.AnythingAnywhere.Other.Title": "Diversos",
 
-  "Config.AnythingAnywhere.EnableAnimalRelocate.Name": "Relocação de Animais",
-  "Config.AnythingAnywhere.EnableAnimalRelocate.Description": "Permite realocar animais de um local para o outro.",
-
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Ajuste do Barril",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Permite que o barril funcione em qualquer lugar.",
 
@@ -83,9 +80,6 @@
   "Config.AnythingAnywhere.MultipleMiniObelisks.Name": "Múltiplos Mini Obeliscos",
   "Config.AnythingAnywhere.MultipleMiniObelisks.Description": "Permite colocar mais de dois mini obeliscos por local.",
 
-  "Config.AnythingAnywhere.EnableCabinsAnywhere.Name": "Cabanas/Casas de Fazenda em qualquer lugar",
-  "Config.AnythingAnywhere.EnableCabinsAnywhere.Description": "ISTO CAUSARÁ ERROS! Desativa as verificações de Cabanas e Casas de Fazenda.",
-
   // Reset Page Button
   "Config.AnythingAnywhere.ResetPage.Button": "Resetar página",
 
@@ -97,8 +91,5 @@
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "A construção interna está desativada.",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} não pode ser movida para outro mapa.",
-  "Message.AnythingAnywhere.NoMagicInk": "Você precisa de tinta mágica para abrir o menu de construção do Feiticeiro.",
-  "Message.AnythingAnywhere.MultiplayerRelocate": "Você não pode mover construções para outros locais no modo multijogador.",
-  "Message.AnythingAnywhere.ChooseBuildingLocation": "Para onde você deseja mover a construção?",
-  "Message.AnythingAnywhere.ChooseAnimalLocation": "Para onde você deseja mover os animais?"
+  "Message.AnythingAnywhere.NoMagicInk": "Você precisa de tinta mágica para abrir o menu de construção do Feiticeiro."
 }

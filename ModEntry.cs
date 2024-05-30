@@ -28,7 +28,6 @@ namespace AnythingAnywhere
         public static ModConfig Config { get; private set; } = null!;
         public static Multiplayer? Multiplayer { get; private set; }
         public static ICustomBushApi? CustomBushApi { get; private set; }
-        public static bool IsRelocateFarmAnimalsLoaded { get; private set; }
 
         private static Harmony? _harmony;
 
@@ -52,7 +51,6 @@ namespace AnythingAnywhere
 
             // Menu
             new CarpenterMenuPatch().Apply();
-            new AnimalQueryMenuPatch().Apply();
 
             // StandardObject
             new CaskPatch().Apply();
@@ -94,12 +92,6 @@ namespace AnythingAnywhere
             if (Helper.ModRegistry.IsLoaded("PeacefulEnd.MultipleMiniObelisks"))
             {
                 Config.MultipleMiniObelisks = true;
-            }
-
-            IsRelocateFarmAnimalsLoaded = Helper.ModRegistry.IsLoaded("mouahrara.RelocateFarmAnimals");
-            if (IsRelocateFarmAnimalsLoaded)
-            {
-                Config.EnableAnimalRelocate = false;
             }
 
             ConfigManager.Init(ModManifest, Config, ModHelper, ModMonitor, true);
@@ -151,7 +143,6 @@ namespace AnythingAnywhere
             ConfigManager.AddPage("Other");
             ConfigManager.AddButtonOption("Other", "ResetPage", fieldId: "Other");
             ConfigManager.AddHorizontalSeparator();
-            ConfigManager.AddOption(nameof(ModConfig.EnableAnimalRelocate), IsRelocateFarmAnimalsLoaded);
             ConfigManager.AddOption(nameof(ModConfig.EnableCaskFunctionality));
             ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
             ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
