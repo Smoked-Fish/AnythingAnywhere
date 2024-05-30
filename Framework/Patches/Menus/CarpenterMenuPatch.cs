@@ -120,7 +120,7 @@ namespace AnythingAnywhere.Framework.Patches.Menus
                         DelayedAction.functionAfterDelay(__instance.returnToCarpentryMenuAfterSuccessfulBuild, 1500);
                         __instance.freeze = true;
                     }
-                    ModEntry.Multiplayer.globalChatInfoMessage("BuildingBuild", Game1.player.Name, "aOrAn:" + __instance.Blueprint.TokenizedDisplayName, __instance.Blueprint.TokenizedDisplayName, Game1.player.farmName.Value);
+                    ModEntry.Multiplayer?.globalChatInfoMessage("BuildingBuild", Game1.player.Name, "aOrAn:" + __instance.Blueprint.TokenizedDisplayName, __instance.Blueprint.TokenizedDisplayName, Game1.player.farmName.Value);
                     if (__instance.Blueprint.BuildDays < 1)
                     {
                         toUpgrade.FinishConstruction();

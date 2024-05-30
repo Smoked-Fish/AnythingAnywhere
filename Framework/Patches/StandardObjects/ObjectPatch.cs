@@ -129,17 +129,15 @@ namespace AnythingAnywhere.Framework.Patches.StandardObjects
 
                             foreach (KeyValuePair<Vector2, SObject> o2 in location.objects.Pairs)
                             {
-                                if (o2.Value.QualifiedItemId == "(BC)238")
+                                if (o2.Value.QualifiedItemId != "(BC)238") continue;
+                                if (obelisk1.Equals(Vector2.Zero))
                                 {
-                                    if (obelisk1.Equals(Vector2.Zero))
-                                    {
-                                        obelisk1 = o2.Key;
-                                    }
-                                    else if (obelisk2.Equals(Vector2.Zero))
-                                    {
-                                        obelisk2 = o2.Key;
-                                        break;
-                                    }
+                                    obelisk1 = o2.Key;
+                                }
+                                else if (obelisk2.Equals(Vector2.Zero))
+                                {
+                                    obelisk2 = o2.Key;
+                                    break;
                                 }
                             }
                             if (!obelisk1.Equals(Vector2.Zero) && !obelisk2.Equals(Vector2.Zero) && !ModEntry.Config.MultipleMiniObelisks)
