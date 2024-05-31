@@ -29,8 +29,6 @@ namespace AnythingAnywhere
         public static Multiplayer? Multiplayer { get; private set; }
         public static ICustomBushApi? CustomBushApi { get; private set; }
 
-        private static Harmony? _harmony;
-
         public override void Entry(IModHelper helper)
         {
             // Setup the monitor, helper, config and multiplayer
@@ -39,9 +37,8 @@ namespace AnythingAnywhere
             Config = Helper.ReadConfig<ModConfig>();
             Multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
 
-            // Load the Harmony patches
-            _harmony = new Harmony(ModManifest.UniqueID);
-            PatchHelper.Init(_harmony);
+            // Initialize ConfigManager
+            ConfigManager.Init(ModManifest, Config, ModHelper, ModMonitor, true);
 
             // GameLocation
             new GameLocationPatch().Apply();
@@ -94,7 +91,6 @@ namespace AnythingAnywhere
                 Config.MultipleMiniObelisks = true;
             }
 
-            ConfigManager.Init(ModManifest, Config, ModHelper, ModMonitor, true);
             if (!Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu")) return;
 
             // Register the main page
