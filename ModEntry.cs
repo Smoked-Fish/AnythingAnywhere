@@ -1,16 +1,13 @@
-﻿global using SObject = StardewValley.Object;
-using AnythingAnywhere.Framework;
+﻿using AnythingAnywhere.Framework;
 using AnythingAnywhere.Framework.External.CustomBush;
 using AnythingAnywhere.Framework.Patches.GameLocations;
 using AnythingAnywhere.Framework.Patches.Locations;
 using AnythingAnywhere.Framework.Patches.Menus;
 using AnythingAnywhere.Framework.Patches.StandardObjects;
 using AnythingAnywhere.Framework.Patches.TerrainFeatures;
-using Common.Helpers;
 using Common.Managers;
 using Common.Utilities;
 using Common.Utilities.Options;
-using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -40,6 +37,7 @@ namespace AnythingAnywhere
             // Initialize ConfigManager
             ConfigManager.Init(ModManifest, Config, ModHelper, ModMonitor, true);
 
+            // Harmony Patches
             // GameLocation
             new GameLocationPatch().Apply();
 
@@ -48,7 +46,7 @@ namespace AnythingAnywhere
 
             // Menu
             new CarpenterMenuPatch().Apply();
-
+            
             // StandardObject
             new CaskPatch().Apply();
             new FurniturePatch().Apply();
