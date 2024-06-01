@@ -12,8 +12,6 @@ namespace AnythingAnywhere.Framework.UI
 
         // Check if a building is valid for a location
         public override bool IsValidBuildingForLocation(string typeId, BuildingData data, GameLocation targetLocation)
-        {
-            return typeId != "Cabin" || TargetLocation.Name == "Farm" || !Game1.IsMultiplayer;
-        }
+            => typeId != "Cabin" || TargetLocation.Name == "Farm" || !Game1.IsMultiplayer;
     }
 }
