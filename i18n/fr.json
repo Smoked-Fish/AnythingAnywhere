@@ -59,8 +59,8 @@
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Ajustements des arbres sauvages",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Supprime les restrictions de croissance sur les arbres sauvages. Cela peut rapidement devenir incontrôlable.",
 
-  // Other Config
-  "Config.AnythingAnywhere.Other.Title": "Divers",
+  // Misc Config
+  "Config.AnythingAnywhere.Misc.Title": "Divers",
 
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Ajustements des fûts",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Permet de rendre les fûts fonctionnels n'importe où.",

@@ -65,8 +65,8 @@
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Ajuste de árvores selvagens",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Remove as restrições de crescimento de árvores selvagens. Isso ficará rapidamente fora de controle.",
 
-  // Other Config
-  "Config.AnythingAnywhere.Other.Title": "Diversos",
+  // Misc Config
+  "Config.AnythingAnywhere.Misc.Title": "Diversos",
 
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Ajuste do Barril",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Permite que o barril funcione em qualquer lugar.",

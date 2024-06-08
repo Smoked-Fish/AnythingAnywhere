@@ -65,8 +65,8 @@
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Wild Tree Tweaks",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Removes growth restrictions on wild trees. This will quickly grow out of control",
 
-  // Other Config
-  "Config.AnythingAnywhere.Other.Title": "Misc",
+  // Misc Config
+  "Config.AnythingAnywhere.Misc.Title": "Misc",
 
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Cask Tweaks",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Enables cask functionality anywhere",

@@ -44,7 +44,7 @@
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "移除野生树木的生长限制。这将快速失控",
 
   // 其他配置
-  "Config.AnythingAnywhere.Other.Title": "其他",
+  "Config.AnythingAnywhere.Misc.Title": "其他",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "桶调整",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "在任何地方启用桶功能",
   "Config.AnythingAnywhere.EnableJukeboxFunctionality.Name": "点唱机调整",
