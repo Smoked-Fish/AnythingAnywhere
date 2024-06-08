@@ -18,9 +18,6 @@ namespace AnythingAnywhere
         [DefaultValue(false, "Placing")]
         public bool EnableRugRemovalBypass { get; set; }
 
-        [DefaultValue(false, "Placing")]
-        public bool EnableWallFurnitureIndoors { get; set; }
-
         // BUILDING
         [DefaultValue(true, "Building")]
         public bool EnableBuilding { get; set; }
@@ -63,6 +60,9 @@ namespace AnythingAnywhere
         public bool EnablePlanting { get; set; }
 
         [DefaultValue(false, "Farming")]
+        public bool EnableSeasonRestrictions { get; set; }
+
+        [DefaultValue(false, "Farming")]
         public bool EnableDiggingAll { get; set; }
 
         [DefaultValue(false, "Farming")]
@@ -71,17 +71,17 @@ namespace AnythingAnywhere
         [DefaultValue(false, "Farming")]
         public bool EnableWildTreeTweaks { get; set; }
 
-        // OTHER
-        [DefaultValue(false, "Other")]
+        // Misc
+        [DefaultValue(false, "Misc")]
         public bool EnableCaskFunctionality { get; set; }
 
-        [DefaultValue(false, "Other")]
+        [DefaultValue(false, "Misc")]
         public bool EnableJukeboxFunctionality { get; set; }
 
-        [DefaultValue(true, "Other")]
+        [DefaultValue(true, "Misc")]
         public bool EnableGoldClockAnywhere { get; set; }
 
-        [DefaultValue(false, "Other")]
+        [DefaultValue(false, "Misc")]
         public bool MultipleMiniObelisks { get; set; }
 
         public ModConfig()

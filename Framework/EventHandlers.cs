@@ -1,4 +1,4 @@
-﻿using AnythingAnywhere.Framework.Patches.Locations;
+﻿using AnythingAnywhere.Framework.Patches;
 using AnythingAnywhere.Framework.UI;
 using Common.Helpers;
 using Common.Utilities;
@@ -7,7 +7,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Buildings;
-using StardewValley.GameData.Locations;
 using StardewValley.Locations;
 using StardewValley.TokenizableStrings;
 using System.Collections.Generic;
@@ -58,26 +57,6 @@ namespace AnythingAnywhere.Framework
                             data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], ModEntry.Config.EnableFreeBuild, ModEntry.Config.EnableInstantBuild, ModEntry.Config.RemoveBuildConditions, ModEntry.Config.EnableGreenhouse);
                         }
                     }, AssetEditPriority.Late);
-                return;
-            }
-
-            if (e.Name.IsEquivalentTo("Data/Locations"))
-            {
-                e.Edit(
-                    asset =>
-                    {
-                        var data = asset.AsDictionary<string, LocationData>().Data;
-                        foreach (var locationDataKey in data.Keys.ToList())
-                        {
-                            data[locationDataKey] = ModifyLocationData(data[locationDataKey], ModEntry.Config.EnablePlanting);
-                        }
-
-                        if (!ModEntry.Config.EnablePlanting) return;
-                        foreach (var location in Game1.locations)
-                        {
-                            location.Map.Properties.TryAdd("ForceAllowTreePlanting", "T");
-                        }
-                    }, AssetEditPriority.Late);
             }
         }
 
@@ -93,7 +72,7 @@ namespace AnythingAnywhere.Framework
             if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors) return;
             if (e.OldLocation is Cellar or FarmHouse or Cabin || (e.NewLocation is not FarmHouse && e.OldLocation is not Cabin)) return;
 
-            Game1.player.Position = FarmHousePatch.FarmHouseRealPos * 64f;
+            Game1.player.Position = BuildingPatches.FarmHouseRealPos * 64f;
             Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
             Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
         }
@@ -104,9 +83,6 @@ namespace AnythingAnywhere.Framework
 
             switch (e.ConfigName)
             {
-                case nameof(ModConfig.EnablePlanting):
-                    ModEntry.ModHelper.GameContent.InvalidateCache("Data/Locations");
-                    break;
                 case nameof(ModConfig.EnableFreeBuild):
                 case nameof(ModConfig.EnableInstantBuild):
                 case nameof(ModConfig.RemoveBuildConditions):
@@ -213,18 +189,6 @@ namespace AnythingAnywhere.Framework
         private static void RemoveBuildConditions(BuildingData data)
         {
             data.BuildCondition = "";
-        }
-        #endregion
-
-        #region Modify Location Data
-        private static LocationData ModifyLocationData(LocationData data, bool enablePlanting)
-        {
-            if (enablePlanting)
-            {
-                data.CanPlantHere = true;
-            }
-
-            return data;
         }
         #endregion
 

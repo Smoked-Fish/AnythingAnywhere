@@ -1,10 +1,6 @@
 ﻿using AnythingAnywhere.Framework;
 using AnythingAnywhere.Framework.External.CustomBush;
-using AnythingAnywhere.Framework.Patches.GameLocations;
-using AnythingAnywhere.Framework.Patches.Locations;
-using AnythingAnywhere.Framework.Patches.Menus;
-using AnythingAnywhere.Framework.Patches.StandardObjects;
-using AnythingAnywhere.Framework.Patches.TerrainFeatures;
+using AnythingAnywhere.Framework.Patches;
 using Common.Managers;
 using Common.Utilities;
 using Common.Utilities.Options;
@@ -38,25 +34,10 @@ namespace AnythingAnywhere
             ConfigManager.Init(ModManifest, Config, ModHelper, ModMonitor, true);
 
             // Harmony Patches
-            // GameLocation
-            new GameLocationPatch().Apply();
-
-            // Location
-            new FarmHousePatch().Apply();
-
-            // Menu
-            new CarpenterMenuPatch().Apply();
-            
-            // StandardObject
-            new CaskPatch().Apply();
-            new FurniturePatch().Apply();
-            new BedFurniturePatch().Apply();
-            new MiniJukeboxPatch().Apply();
-            new ObjectPatch().Apply();
-
-            // TerrainFeature
-            new FruitTreePatch().Apply();
-            new TreePatch().Apply();
+            new BuildingPatches().Apply();
+            new FarmingPatches().Apply();
+            new PlacementPatches().Apply();
+            new MiscPatches().Apply();
 
             // Add debug commands
             helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
@@ -87,6 +68,7 @@ namespace AnythingAnywhere
             if (Helper.ModRegistry.IsLoaded("PeacefulEnd.MultipleMiniObelisks"))
             {
                 Config.MultipleMiniObelisks = true;
+                ConfigUtility.SkipConfig(nameof(ModConfig.MultipleMiniObelisks));
             }
 
             if (!Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu")) return;
@@ -95,7 +77,7 @@ namespace AnythingAnywhere
             ConfigManager.AddPageLink("Placing");
             ConfigManager.AddPageLink("Building");
             ConfigManager.AddPageLink("Farming");
-            ConfigManager.AddPageLink("Other");
+            ConfigManager.AddPageLink("Misc");
 
             // Register the placing settings
             ConfigManager.AddPage("Placing");
@@ -103,7 +85,6 @@ namespace AnythingAnywhere
             ConfigManager.AddHorizontalSeparator();
             ConfigManager.AddOption(nameof(ModConfig.EnablePlacing));
             ConfigManager.AddOption(nameof(ModConfig.EnableFreePlace));
-            ConfigManager.AddOption(nameof(ModConfig.EnableWallFurnitureIndoors));
             ConfigManager.AddOption(nameof(ModConfig.EnableRugRemovalBypass));
 
             // Register the build settings
@@ -129,18 +110,21 @@ namespace AnythingAnywhere
             ConfigManager.AddButtonOption("Farming", "ResetPage", fieldId: "Farming");
             ConfigManager.AddHorizontalSeparator();
             ConfigManager.AddOption(nameof(ModConfig.EnablePlanting));
+            ConfigManager.AddOption(nameof(ModConfig.EnableSeasonRestrictions));
             ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
             ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
             ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));
 
-            // Register the other settings
-            ConfigManager.AddPage("Other");
-            ConfigManager.AddButtonOption("Other", "ResetPage", fieldId: "Other");
+            // Register the Misc settings
+            ConfigManager.AddPage("Misc");
+            ConfigManager.AddButtonOption("Misc", "ResetPage", fieldId: "Misc");
             ConfigManager.AddHorizontalSeparator();
             ConfigManager.AddOption(nameof(ModConfig.EnableCaskFunctionality));
             ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
             ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
             ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
+
+            
         }
 
         private static readonly Action afterReset = () => EventHandlers.ResetBlacklist();
