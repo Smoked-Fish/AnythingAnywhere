@@ -91,5 +91,9 @@
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "A construção interna está desativada.",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} não pode ser movida para outro mapa.",
-  "Message.AnythingAnywhere.NoMagicInk": "Você precisa de tinta mágica para abrir o menu de construção do Feiticeiro."
+  "Message.AnythingAnywhere.NoMagicInk": "Você precisa de tinta mágica para abrir o menu de construção do Feiticeiro.",
+
+
+  //TODO
+  "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "Buildings build here will not not save correctly"
 }

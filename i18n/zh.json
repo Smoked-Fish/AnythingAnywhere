@@ -71,5 +71,7 @@
   "Config.AnythingAnywhere.EnableInstantBuild.Name": "即时建造",
   "Config.AnythingAnywhere.EnableInstantBuild.Description": "启用即时建造",
   "Config.AnythingAnywhere.EnableFreeBuild.Name": "免费建造",
-  "Config.AnythingAnywhere.EnableFreeBuild.Description": "将建造成本设置为免费"
+  "Config.AnythingAnywhere.EnableFreeBuild.Description": "将建造成本设置为免费",
+
+  "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "Buildings build here will not not save correctly"
 }

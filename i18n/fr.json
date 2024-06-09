@@ -89,5 +89,8 @@
   "Config.AnythingAnywhere.EnableInstantBuild.Name": "Construction instantanée",
   "Config.AnythingAnywhere.EnableInstantBuild.Description": "Permet une construction instantanée",
   "Config.AnythingAnywhere.EnableFreeBuild.Name": "Construction gratuite",
-  "Config.AnythingAnywhere.EnableFreeBuild.Description": "Définit les coûts de construction à zéro"
+  "Config.AnythingAnywhere.EnableFreeBuild.Description": "Définit les coûts de construction à zéro",
+
+
+  "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "Buildings build here will not not save correctly"
 }

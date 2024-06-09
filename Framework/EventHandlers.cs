@@ -228,6 +228,11 @@ namespace AnythingAnywhere.Framework
                 Game1.currentLocation.isAlwaysActive.Value = true;
             }
 
+            if (Game1.player.currentLocation.uniqueName.Value != null)
+            {
+                Game1.addHUDMessage(new HUDMessage(I18n.Message("NoBuildingInInstancedLocations"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+            }
+
             Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
         }
 

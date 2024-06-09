@@ -90,6 +90,7 @@
 
   // Player Messages
   "Message.AnythingAnywhere.NoBuildingIndoors": "Building indoors is disabled",
+  "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "Buildings build here will not not save correctly",
   "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} cannot be moved to another map",
   "Message.AnythingAnywhere.NoMagicInk": "You need Magic Ink to open the Wizard's Build Menu"
 }
