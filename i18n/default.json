@@ -11,9 +11,6 @@
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Name": "Rug Removal Bypass",
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Description": "Enables picking up rugs with furniture on top of them",
 
-  "Config.AnythingAnywhere.EnableWallFurnitureIndoors.Name": "Wall Furniture Indoors",
-  "Config.AnythingAnywhere.EnableWallFurnitureIndoors.Description": "Enables placing wall furniture at any location inside decoratable locations",
-
   // Building Configs
   "Config.AnythingAnywhere.Building.Title": "Building",
 
@@ -55,6 +52,9 @@
 
   "Config.AnythingAnywhere.EnablePlanting.Name": "Enable Farming",
   "Config.AnythingAnywhere.EnablePlanting.Description": "Enables farming at any location",
+
+  "Config.AnythingAnywhere.EnableSeasonRestrictions.Name": "Grow in Any Season",
+  "Config.AnythingAnywhere.EnableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season",
 
   "Config.AnythingAnywhere.EnableDiggingAll.Name": "Hoe Anything",
   "Config.AnythingAnywhere.EnableDiggingAll.Description": "Enables hoeing any tile",
