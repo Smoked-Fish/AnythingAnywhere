@@ -74,7 +74,7 @@ namespace AnythingAnywhere.Framework.Patches
         // Enable planing in all seasons
         private static void SeedsIgnoreSeasonsHerePostfix(GameLocation __instance, ref bool __result)
         {
-            if (ModEntry.Config.EnableSeasonRestrictions)
+            if (ModEntry.Config.DisableSeasonRestrictions)
                 __result = true;
         }
 

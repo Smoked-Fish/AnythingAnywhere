@@ -116,7 +116,7 @@ namespace AnythingAnywhere
             ConfigManager.AddButtonOption("Farming", "ResetPage", fieldId: "Farming");
             ConfigManager.AddHorizontalSeparator();
             ConfigManager.AddOption(nameof(ModConfig.EnablePlanting));
-            ConfigManager.AddOption(nameof(ModConfig.EnableSeasonRestrictions));
+            ConfigManager.AddOption(nameof(ModConfig.DisableSeasonRestrictions));
             ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
             ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
             ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));

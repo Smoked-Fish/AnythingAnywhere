@@ -74,6 +74,6 @@
   "Config.AnythingAnywhere.EnableFreeBuild.Description": "将建造成本设置为免费",
 
   "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "Buildings build here will not not save correctly",
-  "Config.AnythingAnywhere.EnableSeasonRestrictions.Name": "Grow in Any Season",
-  "Config.AnythingAnywhere.EnableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season"
+  "Config.AnythingAnywhere.DisableSeasonRestrictions.Name": "Grow in Any Season",
+  "Config.AnythingAnywhere.DisableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season"
 }
