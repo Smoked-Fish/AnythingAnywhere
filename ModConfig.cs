@@ -60,7 +60,7 @@ namespace AnythingAnywhere
         public bool EnablePlanting { get; set; }
 
         [DefaultValue(false, "Farming")]
-        public bool EnableSeasonRestrictions { get; set; }
+        public bool DisableSeasonRestrictions { get; set; }
 
         [DefaultValue(false, "Farming")]
         public bool EnableDiggingAll { get; set; }
