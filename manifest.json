@@ -15,10 +15,6 @@
       "IsRequired": false
     },
     {
-      "UniqueID": "furyx639.CustomBush",
-      "IsRequired": false
-    },
-    {
       "UniqueID": "mouahrara.FlipBuildings",
       "IsRequired": false
     }
