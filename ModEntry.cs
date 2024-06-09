@@ -71,6 +71,12 @@ namespace AnythingAnywhere
                 ConfigUtility.SkipConfig(nameof(ModConfig.MultipleMiniObelisks));
             }
 
+            if (Helper.ModRegistry.IsLoaded("Pathoschild.CropsAnytimeAnywhere"))
+            {
+                Config.EnablePlanting = false;
+                ConfigUtility.SkipConfig(nameof(ModConfig.EnablePlanting));
+            }
+
             if (!Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu")) return;
 
             // Register the main page
