@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using xTile.ObjectModel;
@@ -24,6 +25,8 @@ namespace AnythingAnywhere.Framework.Patches
             Patch<FruitTree>(PatchType.Postfix, nameof(FruitTree.IsGrowthBlocked), nameof(IsGrowthBlockedPostfix), [typeof(Vector2), typeof(GameLocation)]);
             Patch<FruitTree>(PatchType.Postfix, nameof(FruitTree.IsTooCloseToAnotherTree), nameof(IsTooCloseToAnotherTreePostfix), [typeof(Vector2), typeof(GameLocation), typeof(bool)]);
             Patch<Tree>(PatchType.Postfix, nameof(Tree.IsGrowthBlockedByNearbyTree), nameof(IsGrowthBlockedByNearbyTreePostfix));
+
+            Patch<JunimoHut>(PatchType.Postfix, nameof(JunimoHut.dayUpdate), nameof(DayUpdatePostfix), [typeof(int)]);
         }
 
         // Set all tiles as diggable
@@ -112,6 +115,12 @@ namespace AnythingAnywhere.Framework.Patches
         {
             if (ModEntry.Config.EnableWildTreeTweaks)
                 __result = false;
+        }
+
+        // Send juminos out even if the farmer isn't there.
+        private static void DayUpdatePostfix(JunimoHut __instance)
+        {
+            __instance.shouldSendOutJunimos.Value = true;
         }
     }
 }
