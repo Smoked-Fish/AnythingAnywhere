@@ -1,6 +1,8 @@
 ﻿using Common.Helpers;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Menus;
+using StardewValley.Network.NetEvents;
 using StardewValley.Objects;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,9 @@ namespace AnythingAnywhere.Framework.Patches
             Patch<MiniJukebox>(PatchType.Prefix, nameof(MiniJukebox.checkForAction), nameof(CheckForActionPrefix), [typeof(Farmer), typeof(bool)]);
             Patch<GameLocation>(PatchType.Prefix, nameof(GameLocation.spawnWeedsAndStones), nameof(SpawnWeedsAndStonesPrefix), [typeof(int), typeof(bool), typeof(bool)]);
             Patch<GameLocation>(PatchType.Prefix, nameof(GameLocation.loadWeeds), nameof(LoadWeedsPrefix));
+
+            Patch<GameLocation>(PatchType.Prefix, "communityUpgradeOffer", nameof(CommunityUpgradeOfferPrefix));
+            Patch<GameLocation>(PatchType.Prefix, "communityUpgradeAccept", nameof(CommunityUpgradeAcceptPrefix));
         }
 
         // Enable cask functionality outside of the farm
@@ -70,6 +75,51 @@ namespace AnythingAnywhere.Framework.Patches
 
             bool hasGoldClock = __instance.buildings.Any(building => building.buildingType.Value == "Gold Clock");
             return !hasGoldClock || Game1.netWorldState.Value.goldenClocksTurnedOff.Value;
+        }
+
+        // Make community upgrades free
+        private static bool CommunityUpgradeOfferPrefix(GameLocation __instance)
+        {
+            if (!ModEntry.Config.EnableFreeCommunityUpgrade)
+                return true;
+
+            string msg;
+            if (!Game1.MasterPlayer.mailReceived.Contains("pamHouseUpgrade"))
+            {
+                msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_CommunityUpgrade1").Replace("500,000", "0").Replace("500.000", "0").Replace("500 000", "0").Replace("950", "0");
+                __instance.createQuestionDialogue(Game1.parseText(msg), __instance.createYesNoResponses(), "communityUpgrade");
+                Game1.player.team.RequestSetMail(PlayerActionTarget.Host, "pamHouseUpgradeAsked", MailType.Received, add: true);
+            }
+            else if (!Game1.MasterPlayer.mailReceived.Contains("communityUpgradeShortcuts"))
+            {
+                msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_CommunityUpgrade2").Replace("300,000", "0").Replace("300.000", "0").Replace("300 000", "0");
+                __instance.createQuestionDialogue(Game1.parseText(msg), __instance.createYesNoResponses(), "communityUpgrade");
+            }
+
+            return false;
+        }
+
+        private static bool CommunityUpgradeAcceptPrefix(GameLocation __instance)
+        {
+            if (!ModEntry.Config.EnableFreeCommunityUpgrade)
+                return true;
+
+            if (!Game1.MasterPlayer.mailReceived.Contains("pamHouseUpgrade"))
+            {
+                Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_PamUpgrade_Accepted");
+                Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
+                Game1.RequireLocation<Town>("Town").daysUntilCommunityUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
+                ModEntry.Multiplayer?.globalChatInfoMessage("CommunityUpgrade", Game1.player.Name);
+            }
+            else if (!Game1.MasterPlayer.mailReceived.Contains("communityUpgradeShortcuts"))
+            {
+                Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
+                Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
+                Game1.RequireLocation<Town>("Town").daysUntilCommunityUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
+                ModEntry.Multiplayer?.globalChatInfoMessage("CommunityUpgrade", Game1.player.Name);
+            }
+
+            return false;
         }
     }
 }
