@@ -71,9 +71,26 @@ namespace AnythingAnywhere
         [DefaultValue(false, "Farming")]
         public bool EnableWildTreeTweaks { get; set; }
 
+        // House
+        [DefaultValue(true, "House")]
+        public bool DisableHardCodedWarp { get; set; }
+
+        [DefaultValue(false, "House")]
+        public bool UpgradeCabins { get; set; }
+
+        [DefaultValue(false, "House")]
+        public bool EnableFreeHouseUpgrade { get; set; }
+
+        [DefaultValue(false, "House")]
+        public bool EnableFreeRenovations { get; set; }
+
+
         // Misc
         [DefaultValue(false, "Misc")]
         public bool EnableCaskFunctionality { get; set; }
+
+        [DefaultValue(false, "Misc")]
+        public bool EnableFreeCommunityUpgrade { get; set; }
 
         [DefaultValue(false, "Misc")]
         public bool EnableJukeboxFunctionality { get; set; }

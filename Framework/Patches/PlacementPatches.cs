@@ -1,16 +1,9 @@
 ﻿using Common.Helpers;
-using HarmonyLib;
 using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 
 namespace AnythingAnywhere.Framework.Patches
 {
@@ -28,8 +21,7 @@ namespace AnythingAnywhere.Framework.Patches
             Patch<Furniture>(PatchType.Postfix, nameof(Furniture.canBePlacedHere), nameof(CanBePlacedHerePostfix), [typeof(GameLocation), typeof(Vector2), typeof(CollisionMask), typeof(bool)]);
             Patch<Furniture>(PatchType.Postfix, nameof(Furniture.canBeRemoved), nameof(CanBeRemovedPostfix), [typeof(Farmer)]);
 
-            Patch<BedFurniture>(PatchType.Postfix, nameof(BedFurniture.CanModifyBed), nameof(CanModifyBedPostfix), [typeof(Farmer)]);
-            Patch<BedFurniture>(PatchType.Transpiler, nameof(BedFurniture.placementAction), nameof(PlacementActionTranspiler));
+
         }
 
         // Object placement action
@@ -251,40 +243,6 @@ namespace AnythingAnywhere.Framework.Patches
 
             if (__instance.isPassable())
                 __result = true;
-        }
-
-        // Enable modifying other players beds/placing inside of other players homes
-        private static void CanModifyBedPostfix(BedFurniture __instance, Farmer who, ref bool __result)
-        {
-            if (!ModEntry.Config.EnableFreePlace)
-                __result = true;
-        }
-
-        // Enable all beds indoors
-        private static IEnumerable<CodeInstruction> PlacementActionTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
-        {
-            var placementActionTranspiler = instructions.ToList();
-            try
-            {
-                var matcher = new CodeMatcher(placementActionTranspiler, generator);
-
-                matcher.MatchEndForward(
-                        new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(FarmHouse), nameof(FarmHouse.upgradeLevel)).GetGetMethod()),
-                        new CodeMatch(OpCodes.Ldc_I4_2))
-                    .Set(OpCodes.Ldc_I4_0, null)
-                    .MatchEndForward(
-                        new CodeMatch(OpCodes.Callvirt, AccessTools.Property(typeof(FarmHouse), nameof(FarmHouse.upgradeLevel)).GetGetMethod()),
-                        new CodeMatch(OpCodes.Ldc_I4_1))
-                    .Set(OpCodes.Ldc_I4_0, null)
-                    .ThrowIfNotMatch("Could not find get_upgradeLevel()");
-
-                return matcher.InstructionEnumeration();
-            }
-            catch (Exception e)
-            {
-                ModEntry.ModMonitor.Log($"There was an issue modifying the instructions for {typeof(BedFurniture)}.{original.Name}: {e}", LogLevel.Error);
-                return placementActionTranspiler;
-            }
         }
     }
 }

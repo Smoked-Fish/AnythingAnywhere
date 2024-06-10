@@ -20,17 +20,12 @@ namespace AnythingAnywhere.Framework.Patches
 {
     internal sealed class BuildingPatches : PatchHelper
     {
-        public static Vector2 FarmHouseRealPos { get; private set; }
-
         public void Apply()
         {
             Patch<GameLocation>(PatchType.Postfix, nameof(GameLocation.isBuildable), nameof(IsBuildablePostfix), [typeof(Vector2), typeof(bool)]);
-
             Patch<CarpenterMenu>(PatchType.Prefix, nameof(CarpenterMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
             Patch<CarpenterMenu>(PatchType.Prefix, nameof(CarpenterMenu.GetInitialBuildingPlacementViewport), nameof(GetInitialBuildingPlacementViewportPrefix), [typeof(GameLocation)]);
             Patch<CarpenterMenu>(PatchType.Transpiler, nameof(CarpenterMenu.draw), nameof(DrawTranspiler), [typeof(SpriteBatch)]);
-
-            Patch<FarmHouse>(PatchType.Prefix, "resetLocalState", nameof(ResetLocalStatePrefix));
         }
 
         // Sets tiles buildable for construction (just visual)
@@ -302,11 +297,6 @@ namespace AnythingAnywhere.Framework.Patches
                 ModEntry.ModMonitor.Log($"There was an issue modifying the instructions for {typeof(CarpenterMenu)}.{original.Name}: {e}", LogLevel.Error);
                 return codeInstructions;
             }
-        }
-
-        private static void ResetLocalStatePrefix(FarmHouse __instance)
-        {
-            FarmHouseRealPos = Game1.player.Tile;
         }
     }
 }

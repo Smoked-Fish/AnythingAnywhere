@@ -37,6 +37,7 @@ namespace AnythingAnywhere
             new BuildingPatches().Apply();
             new FarmingPatches().Apply();
             new PlacementPatches().Apply();
+            new CabinAndHousePatches().Apply();
             new MiscPatches().Apply();
 
             // Add debug commands
@@ -52,6 +53,7 @@ namespace AnythingAnywhere
             helper.Events.Content.AssetRequested += EventHandlers.OnAssetRequested;
             helper.Events.GameLoop.UpdateTicked += EventHandlers.OnUpdateTicked;
             helper.Events.Player.Warped += EventHandlers.OnWarped;
+            helper.Events.GameLoop.DayEnding += EventHandlers.OnDayEnding;
 
             // Hook into Custom events
             ButtonOptions.Click += EventHandlers.OnClick;
@@ -83,6 +85,7 @@ namespace AnythingAnywhere
             ConfigManager.AddPageLink("Placing");
             ConfigManager.AddPageLink("Building");
             ConfigManager.AddPageLink("Farming");
+            ConfigManager.AddPageLink("House");
             ConfigManager.AddPageLink("Misc");
 
             // Register the placing settings
@@ -121,11 +124,20 @@ namespace AnythingAnywhere
             ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
             ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));
 
+            // Register the Cabin and Farmhouse settings
+            ConfigManager.AddPage("House");
+            ConfigManager.AddButtonOption("House", "ResetPage", fieldId: "House");
+            ConfigManager.AddHorizontalSeparator();
+            ConfigManager.AddOption(nameof(ModConfig.DisableHardCodedWarp));
+            ConfigManager.AddOption(nameof(ModConfig.EnableFreeHouseUpgrade));
+            ConfigManager.AddOption(nameof(ModConfig.EnableFreeRenovations));
+
             // Register the Misc settings
             ConfigManager.AddPage("Misc");
             ConfigManager.AddButtonOption("Misc", "ResetPage", fieldId: "Misc");
             ConfigManager.AddHorizontalSeparator();
             ConfigManager.AddOption(nameof(ModConfig.EnableCaskFunctionality));
+            ConfigManager.AddOption(nameof(ModConfig.EnableFreeCommunityUpgrade));
             ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
             ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
             ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
