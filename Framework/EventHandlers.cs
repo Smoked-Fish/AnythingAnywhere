@@ -7,6 +7,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Buildings;
+using StardewValley.GameData.HomeRenovations;
 using StardewValley.Locations;
 using StardewValley.TokenizableStrings;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace AnythingAnywhere.Framework
     internal static class EventHandlers
     {
         private static bool _buildingConfigChanged;
+        private static bool _renovationConfigChanged;
 
         #region Event Subscriptions
         internal static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
@@ -58,23 +60,73 @@ namespace AnythingAnywhere.Framework
                         }
                     }, AssetEditPriority.Late);
             }
+
+            if (e.Name.IsEquivalentTo("Data/HomeRenovations"))
+            {
+                e.Edit(
+                    asset =>
+                    {
+                        var data = asset.AsDictionary<string, HomeRenovation>().Data;
+                        foreach (var renovationDataKey in data.Keys.ToList())
+                        {
+                            data[renovationDataKey] = ModifyHomeRenovationData(data[renovationDataKey], ModEntry.Config.EnableFreeRenovations);
+                        }
+                    }, AssetEditPriority.Late);
+            }
         }
 
         internal static void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
         {
-            if (!_buildingConfigChanged) return;
-            ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
-            _buildingConfigChanged = false;
+            if (_buildingConfigChanged)
+            {
+                ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
+                _buildingConfigChanged = false;
+            }
+
+            if (_renovationConfigChanged)
+            {
+                ModEntry.ModHelper.GameContent.InvalidateCache("Data/HomeRenovations");
+                _renovationConfigChanged = false;
+            }
         }
 
         internal static void OnWarped(object? sender, WarpedEventArgs e)
         {
+            if (!ModEntry.Config.DisableHardCodedWarp)
+                return;
+
             if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors) return;
             if (e.OldLocation is Cellar or FarmHouse or Cabin || (e.NewLocation is not FarmHouse && e.OldLocation is not Cabin)) return;
 
-            Game1.player.Position = BuildingPatches.FarmHouseRealPos * 64f;
+            Game1.player.Position = CabinAndHousePatches.FarmHouseRealPos * 64f;
             Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
             Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
+        }
+
+        internal static void OnDayEnding(object? sender, DayEndingEventArgs e)
+        {
+            if (!Context.IsMainPlayer)
+                return;
+
+            foreach (var building in Game1.getFarm().buildings.Where(building => building.isCabin))
+            {
+                Cabin cabinIndoors = (Cabin)building.indoors.Value;
+                bool isFarmerOnline = false;
+
+                foreach (var unused in Game1.getOnlineFarmers().Where(farmer => farmer == cabinIndoors.owner))
+                {
+                    isFarmerOnline = true;
+                }
+
+                // TODO: test to see if farming being online will work still
+                if (!isFarmerOnline && building.daysUntilUpgrade.Value == 1)
+                {
+                    building.daysUntilUpgrade.Value = -1;
+                    cabinIndoors.moveObjectsForHouseUpgrade(cabinIndoors.upgradeLevel);
+                    cabinIndoors.setMapForUpgradeLevel(cabinIndoors.upgradeLevel);
+                    cabinIndoors.upgradeLevel++;
+                }
+            }
         }
 
         internal static void OnConfigChanged(object? sender, ConfigChangedEventArgs e)
@@ -87,7 +139,10 @@ namespace AnythingAnywhere.Framework
                 case nameof(ModConfig.EnableInstantBuild):
                 case nameof(ModConfig.RemoveBuildConditions):
                 case nameof(ModConfig.EnableGreenhouse):
-                    _buildingConfigChanged = true; // Doesn't work if I don't do this
+                    _buildingConfigChanged = true;
+                    break;
+                case nameof(ModConfig.EnableFreeRenovations):
+                    _renovationConfigChanged = true;
                     break;
             }
         }
@@ -132,7 +187,7 @@ namespace AnythingAnywhere.Framework
         }
         #endregion
 
-        #region Modify Building Data
+        #region Modify Asset Data
         private static BuildingData ModifyBuildingData(BuildingData data, bool enableFreeBuild, bool enableInstantBuild, bool removeBuildConditions, bool enableGreenhouse)
         {
             // Add greenhouse first
@@ -189,6 +244,14 @@ namespace AnythingAnywhere.Framework
         private static void RemoveBuildConditions(BuildingData data)
         {
             data.BuildCondition = "";
+        }
+
+        private static HomeRenovation ModifyHomeRenovationData(HomeRenovation data, bool freeRenovations)
+        {
+            if (freeRenovations)
+                data.Price = 0;
+
+            return data;
         }
         #endregion
 
