@@ -65,11 +65,30 @@
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Wild Tree Tweaks",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Removes growth restrictions on wild trees. This will quickly grow out of control",
 
+  // House Config
+  "Config.AnythingAnywhere.House.Title": "House",
+
+  "Config.AnythingAnywhere.DisableHardCodedWarp.Name": "Remove Hardcoded Warps",
+  "Config.AnythingAnywhere.DisableHardCodedWarp.Description": "Remove the Hardcoded warp in the farmhouse",
+
+  "Config.AnythingAnywhere.UpgradeCabins.Name": "Upgrade Cabins",
+  "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop",
+
+  "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Name": "Free House Upgrades",
+  "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Description": "Makes house upgrades free",
+
+  "Config.AnythingAnywhere.EnableFreeRenovations.Name": "Free Renovations",
+  "Config.AnythingAnywhere.EnableFreeRenovations.Description": "Makes house renovations free",
+
+
   // Misc Config
   "Config.AnythingAnywhere.Misc.Title": "Misc",
 
   "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "Cask Tweaks",
   "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "Enables cask functionality anywhere",
+
+  "Config.AnythingAnywhere.EnableFreeCommunityUpgrade.Name": "Free Community Upgrades",
+  "Config.AnythingAnywhere.EnableFreeCommunityUpgrade.Description": "Makes community upgrades free",
 
   "Config.AnythingAnywhere.EnableJukeboxFunctionality.Name": "Jukebox Tweaks",
   "Config.AnythingAnywhere.EnableJukeboxFunctionality.Description": "Enables jukebox functionality anywhere. (except in the rain)",

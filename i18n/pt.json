@@ -97,5 +97,7 @@
   //TODO
   "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "Buildings build here will not not save correctly",
   "Config.AnythingAnywhere.DisableSeasonRestrictions.Name": "Grow in Any Season",
-  "Config.AnythingAnywhere.DisableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season"
+  "Config.AnythingAnywhere.DisableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season",
+  "Config.AnythingAnywhere.UpgradeCabins.Name": "Upgrade Cabins",
+  "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop"
 }
