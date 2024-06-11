@@ -77,10 +77,10 @@ public sealed class ModConfig : IConfigurable
     [DefaultValue(false, "House")]
     public bool InstantHomeUpgrade { get; set; }
 
-    [DefaultValue(false, "House")]
+    [DefaultValue(true, "House")]
     public bool UpgradeCabins { get; set; }
 
-    [DefaultValue(false, "House")]
+    [DefaultValue(true, "House")]
     public bool RenovateCabins { get; set; }
 
     [DefaultValue(false, "House")]
