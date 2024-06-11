@@ -107,24 +107,20 @@ internal static class EventHandlers
         if (!Context.IsMainPlayer)
             return;
 
-        foreach (var building in Game1.getFarm().buildings.Where(building => building.isCabin))
+        foreach (var offlineFarmhand in Game1.getOfflineFarmhands())
         {
-            Cabin cabinIndoors = (Cabin)building.indoors.Value;
-            bool isFarmerOnline = false;
-
-            foreach (var unused in Game1.getOnlineFarmers().Where(farmer => farmer == cabinIndoors.owner))
-            {
-                isFarmerOnline = true;
-            }
-
-            // TODO: test to see if farming being online will work still
-            if (!isFarmerOnline && building.daysUntilUpgrade.Value == 1)
-            {
-                building.daysUntilUpgrade.Value = -1;
-                cabinIndoors.moveObjectsForHouseUpgrade(cabinIndoors.upgradeLevel);
-                cabinIndoors.setMapForUpgradeLevel(cabinIndoors.upgradeLevel);
-                cabinIndoors.upgradeLevel++;
-            }
+            if (offlineFarmhand.daysUntilHouseUpgrade.Value <= 0)
+                continue;
+            offlineFarmhand.daysUntilHouseUpgrade.Value--;
+            if (offlineFarmhand.daysUntilHouseUpgrade.Value > 0)
+                continue;
+            FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(offlineFarmhand);
+            homeOfFarmer.moveObjectsForHouseUpgrade(offlineFarmhand.HouseUpgradeLevel + 1);
+            offlineFarmhand.HouseUpgradeLevel++;
+            offlineFarmhand.daysUntilHouseUpgrade.Value = -1;
+            homeOfFarmer.setMapForUpgradeLevel(offlineFarmhand.HouseUpgradeLevel);
+            Game1.stats.checkForBuildingUpgradeAchievements();
+            offlineFarmhand.autoGenerateActiveDialogueEvent("houseUpgrade_" + offlineFarmhand.HouseUpgradeLevel);
         }
     }
 

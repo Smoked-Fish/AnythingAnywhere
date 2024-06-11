@@ -66,7 +66,7 @@ internal static class UpgradeHelper
 
         if (ModEntry.Config.EnableFreeBuild)
         {
-            cabinBuilding.daysUntilUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
+            cabinInstance.owner.daysUntilHouseUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
             Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
             Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
             ModEntry.Multiplayer?.globalChatInfoMessage("HouseUpgrade", Game1.player.Name, Lexicon.getTokenizedPossessivePronoun(Game1.player.IsMale));
@@ -79,7 +79,7 @@ internal static class UpgradeHelper
             case 0:
                 if (Game1.player.Money >= 10000 && Game1.player.Items.ContainsId("(O)388", 450))
                 {
-                    cabinBuilding.daysUntilUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
+                    cabinInstance.owner.daysUntilHouseUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
                     Game1.player.Money -= 10000;
                     Game1.player.Items.ReduceId("(O)388", 450);
                     Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
