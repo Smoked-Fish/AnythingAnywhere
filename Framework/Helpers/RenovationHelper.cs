@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using static StardewValley.HouseRenovation;
 
 namespace AnythingAnywhere.Framework.Helpers;
-
 internal static class RenovationHelper
 {
     public static void RenovateCabinsResponses()
@@ -32,11 +31,11 @@ internal static class RenovationHelper
     }
 
     #nullable disable
-    #pragma warning disable AvoidImplicitNetFieldCast
+    #pragma warning disable AvoidImplicitNetFieldCast, RCS1163
     private static List<ISalable> GetAvailableRenovationsForFarmer(Farmer owner)
     {
         FarmHouse farmhouse = Game1.RequireLocation<FarmHouse>(owner.homeLocation.Value);
-        List<ISalable> available_renovations = new List<ISalable>();
+        List<ISalable> available_renovations = [];
         Dictionary<string, HomeRenovation> data = DataLoader.HomeRenovations(Game1.content);
         foreach (string key in data.Keys)
         {
@@ -50,7 +49,7 @@ internal static class RenovationHelper
                     bool match = true;
                     if (requirement_value.Length > 0 && requirement_value[0] == '!')
                     {
-                        requirement_value = requirement_value.Substring(1);
+                        requirement_value = requirement_value[1..];
                         match = false;
                     }
                     int value = int.Parse(requirement_value);
@@ -84,7 +83,7 @@ internal static class RenovationHelper
             {
                 continue;
             }
-            HouseRenovation renovation = new HouseRenovation
+            HouseRenovation renovation = new()
             {
                 location = farmhouse,
             };
@@ -135,10 +134,10 @@ internal static class RenovationHelper
             {
                 foreach (RectGroup rectGroup in renovation_data.RectGroups)
                 {
-                    List<Rectangle> rectangles = new List<Rectangle>();
+                    List<Rectangle> rectangles = [];
                     foreach (Rect rect in rectGroup.Rects)
                     {
-                        Rectangle rectangle = default(Rectangle);
+                        Rectangle rectangle = default;
                         rectangle.X = rect.X;
                         rectangle.Y = rect.Y;
                         rectangle.Width = rect.Width;
@@ -162,6 +161,7 @@ internal static class RenovationHelper
                             break;
                         }
                         renovation.onRenovation = (Action<HouseRenovation, int>)Delegate.Combine(renovation.onRenovation, new Action<HouseRenovation, int>(OnRenovation1));
+
                         void OnRenovation1(HouseRenovation selectedRenovation, int index)
                         {
                             if (action_data.Value == "selected")

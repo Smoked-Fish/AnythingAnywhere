@@ -225,7 +225,6 @@ internal sealed class PlacementPatches : PatchHelper
             __result = true;
     }
 
-
     // Enables disabling wall furniture in all places in decoratable locations. It can be annoying indoors.
     private static void GetAdditionalFurniturePlacementStatusPostfix(Furniture __instance, GameLocation location, int x, int y, Farmer who, ref int __result)
     {
