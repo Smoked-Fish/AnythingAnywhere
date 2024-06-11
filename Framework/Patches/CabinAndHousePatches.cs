@@ -194,11 +194,13 @@ namespace AnythingAnywhere.Framework.Patches
         // Enable modifying other players beds/placing inside of other players homes
         private static void CanModifyBedPostfix(BedFurniture __instance, Farmer who, ref bool __result)
         {
-            if (!ModEntry.Config.EnableFreePlace)
-                __result = true;
+            if (!ModEntry.Config.EnablePlacing)
+                return;
+
+            __result = true;
         }
 
-        // Enable all beds indoors (HOST MUST HAVE MOD TO WORK)
+        // Enable all beds indoors
         private static IEnumerable<CodeInstruction> PlacementActionTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
         {
             var placementActionTranspiler = instructions.ToList();
