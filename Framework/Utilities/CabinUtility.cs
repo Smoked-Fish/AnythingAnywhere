@@ -1,4 +1,5 @@
-﻿using StardewValley;
+﻿using StardewModdingAPI;
+using StardewValley;
 using StardewValley.Locations;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,30 +13,17 @@ namespace AnythingAnywhere.Framework.Utilities
             if (!Game1.IsMasterGame)
                 return null;
 
-            var cabinBuildings = GetCabins();
-
+            var cabins = GetCabins();
             List<KeyValuePair<string, string>> cabinPageNames = [];
-            foreach (var cabin in cabinBuildings)
-            {
-                // Do not show cabins that cannot be renovated
-                if (toRenovate && cabin.owner.HouseUpgradeLevel < 2)
-                    continue;
 
-                // Do not show max level cabins
-                if (!toRenovate && cabin.owner.HouseUpgradeLevel < 3)
-                    continue;
+            foreach (var cabin in cabins)
+            {
+                bool shouldAddCabin = toRenovate ? cabin.owner.HouseUpgradeLevel >= 2 : cabin.owner.HouseUpgradeLevel < 3;
+                if (!shouldAddCabin) continue;
 
                 string msg = Game1.content.LoadString("Strings\\Buildings:Cabin_Name");
-                if (string.IsNullOrEmpty(cabin.owner.Name))
-                {
-                    msg = $"Empty {msg}";
-                    cabinPageNames.Add(new KeyValuePair<string, string>(cabin.uniqueName.Value, msg));
-                }
-                else
-                {
-                    msg = $"{cabin.owner.displayName}'s {msg}";
-                    cabinPageNames.Add(new KeyValuePair<string, string>(cabin.uniqueName.Value, msg));
-                }
+                msg = string.IsNullOrEmpty(cabin.owner.Name) ? $"Empty {msg}" : $"{cabin.owner.displayName}'s {msg}";
+                cabinPageNames.Add(new KeyValuePair<string, string>(cabin.uniqueName.Value, msg));
             }
 
             return cabinPageNames;
@@ -44,11 +32,11 @@ namespace AnythingAnywhere.Framework.Utilities
         public static bool HasCabinsToUpgrade(bool toRenovate = false)
         {
             var cabinsToUpgrade = GetCabinsToUpgrade(toRenovate);
-            return cabinsToUpgrade != null && cabinsToUpgrade.Count > 0;
+            return cabinsToUpgrade is { Count: > 0 };
         }
 
 
-        public static List<Cabin> GetCabins()
+        private static List<Cabin> GetCabins()
         {
             List<Cabin> cabins = [];
 
