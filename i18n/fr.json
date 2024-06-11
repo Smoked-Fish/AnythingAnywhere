@@ -5,8 +5,8 @@
   "Config.AnythingAnywhere.EnablePlacing.Name": "Activer le placement",
   "Config.AnythingAnywhere.EnablePlacing.Description": "Permet de placer des objets (meubles, coffres, etc.) à n'importe quel endroit.",
 
-  "Config.AnythingAnywhere.EnableFreePlace.Name": "Placement libre",
-  "Config.AnythingAnywhere.EnableFreePlace.Description": "Permet de placer des meubles à n'importe quel endroit sans restrictions, même dans les murs.",
+  "Config.AnythingAnywhere.EnablePlaceAnywhere.Name": "Placement libre",
+  "Config.AnythingAnywhere.EnablePlaceAnywhere.Description": "Permet de placer des meubles à n'importe quel endroit sans restrictions, même dans les murs.",
 
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Name": "Récupération de tapis simple",
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Description": "Permet de récupérer les tapis avec des meubles dessus.",

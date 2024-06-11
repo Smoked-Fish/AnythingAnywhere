@@ -5,8 +5,8 @@
   "Config.AnythingAnywhere.EnablePlacing.Name": "Enable Placing",
   "Config.AnythingAnywhere.EnablePlacing.Description": "Enables placing objects(furniture, chests, etc) at any location",
 
-  "Config.AnythingAnywhere.EnableFreePlace.Name": "Place Anywhere",
-  "Config.AnythingAnywhere.EnableFreePlace.Description": "Enables placing furniture at any location, even in walls",
+  "Config.AnythingAnywhere.EnablePlaceAnywhere.Name": "Place Anywhere",
+  "Config.AnythingAnywhere.EnablePlaceAnywhere.Description": "Enables placing furniture at any location, even in walls",
 
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Name": "Rug Removal Bypass",
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Description": "Enables picking up rugs with furniture on top of them",

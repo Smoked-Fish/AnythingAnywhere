@@ -5,8 +5,8 @@
   "Config.AnythingAnywhere.EnablePlacing.Name": "Permitir colocação",
   "Config.AnythingAnywhere.EnablePlacing.Description": "Permite colocar objetos (móveis, baús, etc) em qualquer lugar.",
 
-  "Config.AnythingAnywhere.EnableFreePlace.Name": "Coloque em qualquer lugar",
-  "Config.AnythingAnywhere.EnableFreePlace.Description": "Permite colocar móveis em qualquer local, até mesmo em paredes.",
+  "Config.AnythingAnywhere.EnablePlaceAnywhere.Name": "Coloque em qualquer lugar",
+  "Config.AnythingAnywhere.EnablePlaceAnywhere.Description": "Permite colocar móveis em qualquer local, até mesmo em paredes.",
 
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Name": "Ignorar remoção de tapete",
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Description": "Permite pegar tapetes com móveis em cima.",

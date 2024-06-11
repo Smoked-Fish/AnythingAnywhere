@@ -92,7 +92,7 @@ public class ModEntry : Mod
         ConfigManager.AddButtonOption("Placing", "ResetPage", fieldId: "Placing");
         ConfigManager.AddHorizontalSeparator();
         ConfigManager.AddOption(nameof(ModConfig.EnablePlacing));
-        ConfigManager.AddOption(nameof(ModConfig.EnableFreePlace));
+        ConfigManager.AddOption(nameof(ModConfig.EnablePlaceAnywhere));
         ConfigManager.AddOption(nameof(ModConfig.EnableRugRemovalBypass));
 
         // Register the build settings
