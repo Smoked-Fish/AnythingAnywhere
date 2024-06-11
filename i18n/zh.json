@@ -77,5 +77,7 @@
   "Config.AnythingAnywhere.DisableSeasonRestrictions.Name": "Grow in Any Season",
   "Config.AnythingAnywhere.DisableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season",
   "Config.AnythingAnywhere.UpgradeCabins.Name": "Upgrade Cabins",
-  "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop"
+  "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop",
+  "Config.AnythingAnywhere.RenovateCabins.Name": "Renovate Cabins",
+  "Config.AnythingAnywhere.RenovateCabins.Description": "Lets you renovate cabins from Robins shop"
 }

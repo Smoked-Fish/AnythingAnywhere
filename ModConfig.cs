@@ -79,6 +79,9 @@ namespace AnythingAnywhere
         public bool UpgradeCabins { get; set; }
 
         [DefaultValue(false, "House")]
+        public bool RenovateCabins { get; set; }
+
+        [DefaultValue(false, "House")]
         public bool EnableFreeHouseUpgrade { get; set; }
 
         [DefaultValue(false, "House")]

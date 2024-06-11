@@ -129,6 +129,8 @@ namespace AnythingAnywhere
             ConfigManager.AddButtonOption("House", "ResetPage", fieldId: "House");
             ConfigManager.AddHorizontalSeparator();
             ConfigManager.AddOption(nameof(ModConfig.DisableHardCodedWarp));
+            ConfigManager.AddOption(nameof(ModConfig.UpgradeCabins));
+            ConfigManager.AddOption(nameof(ModConfig.RenovateCabins));
             ConfigManager.AddOption(nameof(ModConfig.EnableFreeHouseUpgrade));
             ConfigManager.AddOption(nameof(ModConfig.EnableFreeRenovations));
 

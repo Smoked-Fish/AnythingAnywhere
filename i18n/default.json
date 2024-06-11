@@ -74,6 +74,9 @@
   "Config.AnythingAnywhere.UpgradeCabins.Name": "Upgrade Cabins",
   "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop",
 
+  "Config.AnythingAnywhere.RenovateCabins.Name": "Renovate Cabins",
+  "Config.AnythingAnywhere.RenovateCabins.Description": "Lets you renovate cabins from Robins shop",
+
   "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Name": "Free House Upgrades",
   "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Description": "Makes house upgrades free",
 
