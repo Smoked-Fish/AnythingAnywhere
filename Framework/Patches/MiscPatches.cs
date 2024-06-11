@@ -108,14 +108,14 @@ namespace AnythingAnywhere.Framework.Patches
             {
                 Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_PamUpgrade_Accepted");
                 Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
-                Game1.RequireLocation<Town>("Town").daysUntilCommunityUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
+                Game1.RequireLocation<Town>("Town").daysUntilCommunityUpgrade.Value = 3;
                 ModEntry.Multiplayer?.globalChatInfoMessage("CommunityUpgrade", Game1.player.Name);
             }
             else if (!Game1.MasterPlayer.mailReceived.Contains("communityUpgradeShortcuts"))
             {
                 Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
                 Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
-                Game1.RequireLocation<Town>("Town").daysUntilCommunityUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
+                Game1.RequireLocation<Town>("Town").daysUntilCommunityUpgrade.Value = 3;
                 ModEntry.Multiplayer?.globalChatInfoMessage("CommunityUpgrade", Game1.player.Name);
             }
 
