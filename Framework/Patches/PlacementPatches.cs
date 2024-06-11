@@ -186,7 +186,7 @@ internal sealed class PlacementPatches : PatchHelper
             bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
             if (((canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) ||
                 ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2)) ||
-                ModEntry.Config.EnableFreePlace)
+                ModEntry.Config.EnablePlaceAnywhere)
             {
                 location.playSound("dirtyHit");
                 DelayedAction.playSoundAfterDelay("coin", 100);
@@ -217,7 +217,7 @@ internal sealed class PlacementPatches : PatchHelper
     private static bool CanBePlacedHerePrefix(SObject __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
     {
         if (!ModEntry.Config.EnablePlacing) return true;
-        if (!ModEntry.Config.EnableFreePlace) return true;
+        if (!ModEntry.Config.EnablePlaceAnywhere) return true;
 
         __result = !l.objects.ContainsKey(tile);
         return false;
@@ -247,7 +247,7 @@ internal sealed class PlacementPatches : PatchHelper
     //Enable placing furniture in walls
     private static void CanBePlacedHerePostfix(Furniture __instance, GameLocation l, Vector2 tile, ref bool __result, CollisionMask collisionMask = CollisionMask.All, bool showError = false)
     {
-        if (ModEntry.Config.EnableFreePlace)
+        if (ModEntry.Config.EnablePlaceAnywhere)
             __result = true;
     }
 

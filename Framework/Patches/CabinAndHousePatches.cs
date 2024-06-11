@@ -70,7 +70,7 @@ internal sealed class CabinAndHousePatches : PatchHelper
         if (!ModEntry.Config.EnableFreeHouseUpgrade)
             return true;
 
-        Game1.player.daysUntilHouseUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
+        Game1.player.daysUntilHouseUpgrade.Value = ModEntry.Config.InstantHomeUpgrade ? 0 : 3;
         Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
         Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
         ModEntry.Multiplayer?.globalChatInfoMessage("HouseUpgrade", Game1.player.Name, Lexicon.getTokenizedPossessivePronoun(Game1.player.IsMale));

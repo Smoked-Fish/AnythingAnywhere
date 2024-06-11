@@ -12,7 +12,7 @@ public sealed class ModConfig : IConfigurable
     public bool EnablePlacing { get; set; }
 
     [DefaultValue(false, "Placing")]
-    public bool EnableFreePlace { get; set; }
+    public bool EnablePlaceAnywhere { get; set; }
 
     [DefaultValue(false, "Placing")]
     public bool EnableRugRemovalBypass { get; set; }
@@ -73,6 +73,9 @@ public sealed class ModConfig : IConfigurable
     // House
     [DefaultValue(true, "House")]
     public bool DisableHardCodedWarp { get; set; }
+
+    [DefaultValue(false, "House")]
+    public bool InstantHomeUpgrade { get; set; }
 
     [DefaultValue(false, "House")]
     public bool UpgradeCabins { get; set; }

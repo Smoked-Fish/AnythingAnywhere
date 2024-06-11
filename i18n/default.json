@@ -71,6 +71,9 @@
   "Config.AnythingAnywhere.DisableHardCodedWarp.Name": "Remove Hardcoded Warps",
   "Config.AnythingAnywhere.DisableHardCodedWarp.Description": "Remove the Hardcoded warp in the farmhouse",
 
+  "Config.AnythingAnywhere.InstantHomeUpgrade.Name": "Instant House Upgrade",
+  "Config.AnythingAnywhere.InstantHomeUpgrade.Description": "Instantly upgrades the farmhouse/cabin",
+
   "Config.AnythingAnywhere.UpgradeCabins.Name": "Upgrade Cabins",
   "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop",
 

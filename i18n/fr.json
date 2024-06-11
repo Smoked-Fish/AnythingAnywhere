@@ -98,5 +98,7 @@
   "Config.AnythingAnywhere.UpgradeCabins.Name": "Upgrade Cabins",
   "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop",
   "Config.AnythingAnywhere.RenovateCabins.Name": "Renovate Cabins",
-  "Config.AnythingAnywhere.RenovateCabins.Description": "Lets you renovate cabins from Robins shop"
+  "Config.AnythingAnywhere.RenovateCabins.Description": "Lets you renovate cabins from Robins shop",
+  "Config.AnythingAnywhere.InstantHomeUpgrade.Name": "Instant House Upgrade",
+  "Config.AnythingAnywhere.InstantHomeUpgrade.Description": "Instantly upgrades the farmhouse/cabin"
 }

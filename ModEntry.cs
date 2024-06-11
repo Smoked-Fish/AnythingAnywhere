@@ -128,6 +128,7 @@ public class ModEntry : Mod
         ConfigManager.AddButtonOption("House", "ResetPage", fieldId: "House");
         ConfigManager.AddHorizontalSeparator();
         ConfigManager.AddOption(nameof(ModConfig.DisableHardCodedWarp));
+        ConfigManager.AddOption(nameof(ModConfig.InstantHomeUpgrade));
         ConfigManager.AddOption(nameof(ModConfig.UpgradeCabins));
         ConfigManager.AddOption(nameof(ModConfig.RenovateCabins));
         ConfigManager.AddOption(nameof(ModConfig.EnableFreeHouseUpgrade));
