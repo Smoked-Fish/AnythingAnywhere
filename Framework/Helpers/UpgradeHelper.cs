@@ -23,7 +23,7 @@ internal static class UpgradeHelper
         {
             case 0:
                 msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_UpgradeHouse1");
-                msg = ModEntry.Config.EnableFreeBuild ? msg.Replace("10,000", "0").Replace("10.000", "0").Replace("10 000", "0").Replace("450", "0") : msg;
+                msg = ModEntry.Config.EnableFreeHouseUpgrade ? msg.Replace("10,000", "0").Replace("10.000", "0").Replace("10 000", "0").Replace("450", "0") : msg;
                 Game1.currentLocation.createQuestionDialogue(Game1.parseText(msg), Game1.currentLocation.createYesNoResponses(), (_, answer) =>
                     {
                         if (answer == "Yes")
@@ -32,7 +32,7 @@ internal static class UpgradeHelper
                 );
                 break;
             case 1:
-                msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_UpgradeHouse2", ModEntry.Config.EnableFreeBuild ? "0" : "65,000", ModEntry.Config.EnableFreeBuild ? "0" : "100");
+                msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_UpgradeHouse2", ModEntry.Config.EnableFreeHouseUpgrade ? "0" : "65,000", ModEntry.Config.EnableFreeHouseUpgrade ? "0" : "100");
                 Game1.currentLocation.createQuestionDialogue(Game1.parseText(msg), Game1.currentLocation.createYesNoResponses(), (_, answer) =>
                     {
                         if (answer == "Yes")
@@ -42,7 +42,7 @@ internal static class UpgradeHelper
                 break;
             case 2:
                 msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_UpgradeHouse3");
-                msg = ModEntry.Config.EnableFreeBuild ? msg.Replace("10,000", "0").Replace("10.000", "0").Replace("100,000", "0").Replace("100.000", "0").Replace("100 000", "0") : msg;
+                msg = ModEntry.Config.EnableFreeHouseUpgrade ? msg.Replace("10,000", "0").Replace("10.000", "0").Replace("100,000", "0").Replace("100.000", "0").Replace("100 000", "0") : msg;
                 Game1.currentLocation.createQuestionDialogue(Game1.parseText(msg), Game1.currentLocation.createYesNoResponses(), (_, answer) =>
                     {
                         if (answer == "Yes")
@@ -64,7 +64,7 @@ internal static class UpgradeHelper
             return;
         }
 
-        if (ModEntry.Config.EnableFreeBuild)
+        if (ModEntry.Config.EnableFreeHouseUpgrade)
         {
             cabinInstance.owner.daysUntilHouseUpgrade.Value = ModEntry.Config.EnableInstantBuild ? 0 : 3;
             Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
