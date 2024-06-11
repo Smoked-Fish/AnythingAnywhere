@@ -180,12 +180,24 @@ internal sealed class PlacementPatches : PatchHelper
             if (!__instance.IsTeaSapling())
                 return true;
 
-            // Is a Tea Sapling
-            location.playSound("dirtyHit");
-            DelayedAction.playSoundAfterDelay("coin", 100);
-            var newBush = new Bush(placementTile, 3, location);
-            location.terrainFeatures.Add(placementTile, CustomBushModData.AddBushModData(newBush, __instance));
-            __result = true;
+            string? deniedMessage2 = null;
+            bool canDig = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Diggable", "Back") != null;
+            string tileType = location.doesTileHaveProperty((int)placementTile.X, (int)placementTile.Y, "Type", "Back");
+            bool canPlantTrees = location.doesEitherTileOrTileIndexPropertyEqual((int)placementTile.X, (int)placementTile.Y, "CanPlantTrees", "Back", "T");
+            if (((canDig || tileType == "Grass" || tileType == "Dirt" || canPlantTrees) && (!location.IsNoSpawnTile(placementTile, "Tree") || canPlantTrees)) ||
+                ((canDig || tileType == "Stone") && location.CanPlantTreesHere(__instance.ItemId, (int)placementTile.X, (int)placementTile.Y, out deniedMessage2)) ||
+                ModEntry.Config.EnableFreePlace)
+            {
+                location.playSound("dirtyHit");
+                DelayedAction.playSoundAfterDelay("coin", 100);
+                var newBush = new Bush(placementTile, 3, location);
+                location.terrainFeatures.Add(placementTile, CustomBushModData.AddBushModData(newBush, __instance));
+                __result = true;
+                return false;
+            }
+            deniedMessage2 ??= Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13068");
+            Game1.showRedMessage(deniedMessage2);
+            __result = false;
             return false;
 	    }
         if (__instance.Category is -74 or -19)
