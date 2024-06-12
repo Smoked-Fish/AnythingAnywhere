@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
 using AnythingAnywhere.Framework.External.CustomBush;
 
