@@ -10,7 +10,7 @@ internal static class UpgradeHelper
     public static void UpgradeCabinsResponses()
     {
         var cabinPageNames = CabinUtility.GetCabinsToUpgrade();
-        Game1.currentLocation.ShowPagedResponses("Upgrade Cabin?", cabinPageNames, OfferCabinUpgrade, true);
+        Game1.currentLocation.ShowPagedResponses("Upgrade Cabin?", cabinPageNames, OfferCabinUpgrade);
     }
 
     private static void OfferCabinUpgrade(string cabin)
@@ -24,34 +24,25 @@ internal static class UpgradeHelper
             case 0:
                 msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_UpgradeHouse1");
                 msg = ModEntry.Config.EnableFreeHouseUpgrade ? msg.Replace("10,000", "0").Replace("10.000", "0").Replace("10 000", "0").Replace("450", "0") : msg;
-                Game1.currentLocation.createQuestionDialogue(Game1.parseText(msg), Game1.currentLocation.createYesNoResponses(), (_, answer) =>
-                    {
-                        if (answer == "Yes")
-                            AcceptCabinUpgrade(cabin);
-                    }
-                );
                 break;
             case 1:
                 msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_UpgradeHouse2", ModEntry.Config.EnableFreeHouseUpgrade ? "0" : "65,000", ModEntry.Config.EnableFreeHouseUpgrade ? "0" : "100");
-                Game1.currentLocation.createQuestionDialogue(Game1.parseText(msg), Game1.currentLocation.createYesNoResponses(), (_, answer) =>
-                    {
-                        if (answer == "Yes")
-                            AcceptCabinUpgrade(cabin);
-                    }
-                );
                 break;
             case 2:
                 msg = Game1.content.LoadString("Strings\\Locations:ScienceHouse_Carpenter_UpgradeHouse3");
                 msg = ModEntry.Config.EnableFreeHouseUpgrade ? msg.Replace("10,000", "0").Replace("10.000", "0").Replace("100,000", "0").Replace("100.000", "0").Replace("100 000", "0") : msg;
-                Game1.currentLocation.createQuestionDialogue(Game1.parseText(msg), Game1.currentLocation.createYesNoResponses(), (_, answer) =>
-                    {
-                        if (answer == "Yes")
-                            AcceptCabinUpgrade(cabin);
-                    }
-                );
                 break;
+            default:
+                return; // or handle the default case
         }
+
+        Game1.currentLocation.createQuestionDialogue(Game1.parseText(msg), Game1.currentLocation.createYesNoResponses(), (_, answer) =>
+        {
+            if (answer != "Yes") return;
+            AcceptCabinUpgrade(cabin);
+        });
     }
+
 
     private static void AcceptCabinUpgrade(string cabin)
     {
@@ -66,7 +57,7 @@ internal static class UpgradeHelper
 
         if (ModEntry.Config.EnableFreeHouseUpgrade)
         {
-            cabinInstance.owner.daysUntilHouseUpgrade.Value = ModEntry.Config.InstantHomeUpgrade ? 0 : 3;
+            cabinInstance.owner.daysUntilHouseUpgrade.Value = 3;
             Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
             Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
             ModEntry.Multiplayer?.globalChatInfoMessage("HouseUpgrade", Game1.player.Name, Lexicon.getTokenizedPossessivePronoun(Game1.player.IsMale));
@@ -79,7 +70,7 @@ internal static class UpgradeHelper
             case 0:
                 if (Game1.player.Money >= 10000 && Game1.player.Items.ContainsId("(O)388", 450))
                 {
-                    cabinInstance.owner.daysUntilHouseUpgrade.Value = ModEntry.Config.InstantHomeUpgrade ? 0 : 3;
+                    cabinInstance.owner.daysUntilHouseUpgrade.Value = 3;
                     Game1.player.Money -= 10000;
                     Game1.player.Items.ReduceId("(O)388", 450);
                     Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
@@ -100,7 +91,7 @@ internal static class UpgradeHelper
             case 1:
                 if (Game1.player.Money >= 65000 && Game1.player.Items.ContainsId("(O)709", 100))
                 {
-                    cabinBuilding.daysUntilUpgrade.Value = ModEntry.Config.InstantHomeUpgrade ? 0 : 3;
+                    cabinBuilding.daysUntilUpgrade.Value = 3;
                     Game1.player.Money -= 65000;
                     Game1.player.Items.ReduceId("(O)709", 100);
                     Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
@@ -121,7 +112,7 @@ internal static class UpgradeHelper
             case 2:
                 if (Game1.player.Money >= 100000)
                 {
-                    cabinBuilding.daysUntilUpgrade.Value = ModEntry.Config.InstantHomeUpgrade ? 0 : 3;
+                    cabinBuilding.daysUntilUpgrade.Value = 3;
                     Game1.player.Money -= 100000;
                     Game1.RequireCharacter("Robin").setNewDialogue("Data\\ExtraDialogue:Robin_HouseUpgrade_Accepted");
                     Game1.drawDialogue(Game1.getCharacterFromName("Robin"));
@@ -137,10 +128,16 @@ internal static class UpgradeHelper
         }
     }
 
-    public static void CompleteHouseUpgrade(Farmer owner)
+    public static void CompleteHouseUpgrade(Farmer owner, bool debug = false)
     {
-        if (!ModEntry.Config.InstantHomeUpgrade)
+        if (!ModEntry.Config.InstantHomeUpgrade && !debug)
             return;
+
+        if (debug)
+        {
+            var msg = $"Upgrading cabin at {Utility.getHomeOfFarmer(owner).NameOrUniqueName} from level {owner.HouseUpgradeLevel} to {owner.HouseUpgradeLevel + 1}";
+            ModEntry.ModMonitor.Log(msg, LogLevel.Debug);
+        }
 
         var homeOfFarmer = Utility.getHomeOfFarmer(owner);
         homeOfFarmer.moveObjectsForHouseUpgrade(owner.HouseUpgradeLevel + 1);
@@ -149,5 +146,31 @@ internal static class UpgradeHelper
         homeOfFarmer.setMapForUpgradeLevel(owner.HouseUpgradeLevel);
         owner.stats.checkForBuildingUpgradeAchievements();
         owner.autoGenerateActiveDialogueEvent("houseUpgrade_" + owner.HouseUpgradeLevel);
+    }
+
+    public static void UpgradeAllCabins()
+    {
+        int count = 0;
+        foreach (var cabin in CabinUtility.GetCabins())
+        {
+            if (cabin.owner.isActive() || cabin.owner.HouseUpgradeLevel >= 3)
+                continue;
+
+            var msg = $"Upgrading cabin at {cabin.NameOrUniqueName} from level {cabin.owner.HouseUpgradeLevel} to 3";
+            ModEntry.ModMonitor.Log(msg, LogLevel.Debug);
+
+            var homeOfFarmer = Utility.getHomeOfFarmer(cabin.owner);
+            homeOfFarmer.moveObjectsForHouseUpgrade(3);
+            cabin.owner.HouseUpgradeLevel = 3;
+            cabin.owner.daysUntilHouseUpgrade.Value = -1;
+            homeOfFarmer.setMapForUpgradeLevel(cabin.owner.HouseUpgradeLevel);
+            cabin.owner.stats.checkForBuildingUpgradeAchievements();
+            cabin.owner.autoGenerateActiveDialogueEvent("houseUpgrade_" + cabin.owner.HouseUpgradeLevel);
+
+            count++;
+        }
+
+        ModEntry.ModMonitor.Log($"Upgraded {count} cabins", LogLevel.Debug);
+
     }
 }

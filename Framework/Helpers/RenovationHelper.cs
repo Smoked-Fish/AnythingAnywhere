@@ -32,7 +32,7 @@ internal static class RenovationHelper
 
     #nullable disable
     #pragma warning disable AvoidImplicitNetFieldCast, RCS1163
-    private static List<ISalable> GetAvailableRenovationsForFarmer(Farmer owner)
+    public static List<ISalable> GetAvailableRenovationsForFarmer(Farmer owner)
     {
         FarmHouse farmhouse = Game1.RequireLocation<FarmHouse>(owner.homeLocation.Value);
         List<ISalable> available_renovations = [];

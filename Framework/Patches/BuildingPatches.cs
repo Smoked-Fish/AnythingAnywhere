@@ -24,7 +24,7 @@ internal sealed class BuildingPatches : PatchHelper
         Patch<GameLocation>(PatchType.Postfix, nameof(GameLocation.isBuildable), nameof(IsBuildablePostfix), [typeof(Vector2), typeof(bool)]);
         Patch<CarpenterMenu>(PatchType.Prefix, nameof(CarpenterMenu.receiveLeftClick), nameof(ReceiveLeftClickPrefix), [typeof(int), typeof(int), typeof(bool)]);
         Patch<CarpenterMenu>(PatchType.Prefix, nameof(CarpenterMenu.GetInitialBuildingPlacementViewport), nameof(GetInitialBuildingPlacementViewportPrefix), [typeof(GameLocation)]);
-        Patch<CarpenterMenu>(PatchType.Transpiler, nameof(CarpenterMenu.draw), nameof(DrawTranspiler), [typeof(SpriteBatch)]);
+        Patch<CarpenterMenu>(PatchType.Transpiler, nameof(CarpenterMenu.draw), nameof(CarpenterMenuDrawTranspiler), [typeof(SpriteBatch)]);
     }
 
     // Sets tiles buildable for construction (just visual)
@@ -275,7 +275,7 @@ internal sealed class BuildingPatches : PatchHelper
     }
 
     // Don't display gold if build cost is less than 1 instead of 0
-    private static IEnumerable<CodeInstruction> DrawTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
+    private static IEnumerable<CodeInstruction> CarpenterMenuDrawTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
     {
         var codeInstructions = instructions.ToList();
         try

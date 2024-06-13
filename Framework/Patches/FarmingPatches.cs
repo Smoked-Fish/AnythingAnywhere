@@ -25,6 +25,9 @@ internal sealed class FarmingPatches : PatchHelper
         Patch<FruitTree>(PatchType.Postfix, nameof(FruitTree.IsTooCloseToAnotherTree), nameof(IsTooCloseToAnotherTreePostfix), [typeof(Vector2), typeof(GameLocation), typeof(bool)]);
         Patch<Tree>(PatchType.Postfix, nameof(Tree.IsGrowthBlockedByNearbyTree), nameof(IsGrowthBlockedByNearbyTreePostfix));
 
+        Patch<FruitTree>(PatchType.Postfix, nameof(FruitTree.IgnoresSeasonsHere), nameof(IgnoreSeasonsHerePostfix));
+        Patch<FruitTree>(PatchType.Postfix, nameof(FruitTree.IsInSeasonHere), nameof(IsInSeasonHerePostfix));
+
         Patch<JunimoHut>(PatchType.Postfix, nameof(JunimoHut.dayUpdate), nameof(DayUpdatePostfix), [typeof(int)]);
     }
 
@@ -110,10 +113,29 @@ internal sealed class FarmingPatches : PatchHelper
             __result = false;
     }
 
-    public static void IsGrowthBlockedByNearbyTreePostfix(Tree __instance, ref bool __result)
+    private static void IsGrowthBlockedByNearbyTreePostfix(Tree __instance, ref bool __result)
     {
         if (ModEntry.Config.EnableWildTreeTweaks)
             __result = false;
+    }
+
+    // Fix to use the normal season index but still produce fruit
+    private static void IgnoreSeasonsHerePostfix(FruitTree __instance, ref bool __result)
+    {
+        if (!ModEntry.Config.ForceCorrectTreeSprite || __instance.Location.IsGreenhouse)
+            return;
+
+        __result = false;
+    }
+
+    // Fix to use the normal season index but still produce fruit
+    private static void IsInSeasonHerePostfix(FruitTree __instance, ref bool __result)
+    {
+        if (!ModEntry.Config.ForceCorrectTreeSprite || __instance.Location.IsGreenhouse)
+            return;
+
+        if (ModEntry.Config.DisableSeasonRestrictions)
+            __result = true;
     }
 
     // Send juminos out even if the farmer isn't there.

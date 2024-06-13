@@ -17,7 +17,9 @@ internal static class CabinUtility
         foreach (var cabin in cabins)
         {
             bool shouldAddCabin = toRenovate ? cabin.owner.HouseUpgradeLevel >= 2 : cabin.owner.HouseUpgradeLevel < 3;
-            if (!shouldAddCabin) continue;
+            bool isUpgrading = cabin.owner.daysUntilHouseUpgrade.Value > 0;
+
+            if (!shouldAddCabin || isUpgrading || cabin.owner.isActive()) continue;
 
             string msg = Game1.content.LoadString("Strings\\Buildings:Cabin_Name");
             msg = string.IsNullOrEmpty(cabin.owner.Name) ? $"Empty {msg}" : $"{cabin.owner.displayName}'s {msg}";
@@ -33,7 +35,7 @@ internal static class CabinUtility
         return cabinsToUpgrade is { Count: > 0 };
     }
 
-    private static List<Cabin> GetCabins()
+    public static List<Cabin> GetCabins()
     {
         List<Cabin> cabins = [];
 
