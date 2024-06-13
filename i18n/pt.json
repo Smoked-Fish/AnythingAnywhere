@@ -103,5 +103,9 @@
   "Config.AnythingAnywhere.RenovateCabins.Name": "Renovate Cabins",
   "Config.AnythingAnywhere.RenovateCabins.Description": "Lets you renovate cabins from Robins shop",
   "Config.AnythingAnywhere.InstantHomeUpgrade.Name": "Instant House Upgrade",
-  "Config.AnythingAnywhere.InstantHomeUpgrade.Description": "Instantly upgrades the farmhouse/cabin"
+  "Config.AnythingAnywhere.InstantHomeUpgrade.Description": "Instantly upgrades the farmhouse/cabin",
+  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Name": "Force Season Tree Texture",
+  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Description": "When 'Grow in Any Season' is enabled, this will make tree textures go back to the seasonal sprite texture",
+  "Config.AnythingAnywhere.CabinMenuButton.Name": "Cabin Menu",
+  "Config.AnythingAnywhere.CabinMenuButton.Description": "Opens the menu to upgrade/renovate the cabins if you can't use Robins menu due to mod conflicts"
 }

@@ -70,6 +70,9 @@ public sealed class ModConfig : IConfigurable
     [DefaultValue(false, "Farming")]
     public bool EnableWildTreeTweaks { get; set; }
 
+    [DefaultValue(false, "Farming")]
+    public bool ForceCorrectTreeSprite { get; set; }
+
     // House
     [DefaultValue(true, "House")]
     public bool DisableHardCodedWarp { get; set; }
@@ -82,6 +85,9 @@ public sealed class ModConfig : IConfigurable
 
     [DefaultValue(true, "House")]
     public bool RenovateCabins { get; set; }
+
+    [DefaultValue(SButton.None, "House")]
+    public KeybindList? CabinMenuButton { get; set; }
 
     [DefaultValue(false, "House")]
     public bool EnableFreeHouseUpgrade { get; set; }

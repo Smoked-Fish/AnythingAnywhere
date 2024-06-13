@@ -65,6 +65,9 @@
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Wild Tree Tweaks",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Removes growth restrictions on wild trees. This will quickly grow out of control",
 
+  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Name": "Force Season Tree Texture",
+  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Description": "When 'Grow in Any Season' is enabled, this will make tree textures go back to the seasonal sprite texture",
+
   // House Config
   "Config.AnythingAnywhere.House.Title": "House",
 
@@ -80,12 +83,14 @@
   "Config.AnythingAnywhere.RenovateCabins.Name": "Renovate Cabins",
   "Config.AnythingAnywhere.RenovateCabins.Description": "Lets you renovate cabins from Robins shop",
 
+  "Config.AnythingAnywhere.CabinMenuButton.Name": "Cabin Menu",
+  "Config.AnythingAnywhere.CabinMenuButton.Description": "Opens the menu to upgrade/renovate the cabins if you can't use Robins menu due to mod conflicts",
+
   "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Name": "Free House Upgrades",
   "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Description": "Makes house upgrades free",
 
   "Config.AnythingAnywhere.EnableFreeRenovations.Name": "Free Renovations",
   "Config.AnythingAnywhere.EnableFreeRenovations.Description": "Makes house renovations free",
-
 
   // Misc Config
   "Config.AnythingAnywhere.Misc.Title": "Misc",

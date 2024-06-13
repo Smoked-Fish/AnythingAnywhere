@@ -6,7 +6,7 @@
   </PropertyGroup>
   
   <!-- Import Common targets -->
-  <Import Project="$(MOD_UTILITIES)\Common\common.targets" Condition="'$(GITHUB_ACTIONS)' != 'true'"/>
-  <Import Project="$(MSBuildThisFileDirectory)Common/common.targets" Condition="'$(GITHUB_ACTIONS)' == 'true'"/>
+  <Import Project="$(MOD_UTILITIES)\Common\common.targets" Condition="'$(GITHUB_ACTIONS)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)Common/common.targets" Condition="'$(GITHUB_ACTIONS)' == 'true'" />
   
 </Project>
