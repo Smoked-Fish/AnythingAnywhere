@@ -17,6 +17,7 @@ internal static class ConsoleCommands
         ModEntry.ModHelper.ConsoleCommands.Add("aa_upgrade_cabin", "Instantly upgrades the cabin the player is inside of.\n\nUsage: aa_upgrade_cabin", DebugUpgradeCabin);
         ModEntry.ModHelper.ConsoleCommands.Add("aa_upgrade_all_cabins", "Instantly upgrades all cabins to max level.\n\nUsage: aa_upgrade_all_cabins", DebugUpgradeAllCabins);
         ModEntry.ModHelper.ConsoleCommands.Add("aa_renovate_cabin", "Opens the renovation menu for the cabin the player is inside of.\n\nUsage: aa_renovate_cabin", DebugRenovateCabin);
+        ModEntry.ModHelper.ConsoleCommands.Add("aa_greenhouse_fix", "Finishes construction on all greenhouses.\n\nUsage: aa_greenhouse_fix", DebugGreenhouseFix);
     }
 
     private static void DebugRemoveFurniture(string command, string[] args)
@@ -193,5 +194,38 @@ internal static class ConsoleCommands
         {
             purchaseSound = null
         };
+    }
+
+    private static void DebugGreenhouseFix(string command, string[] args)
+    {
+        if (args.Length > 0)
+        {
+            ModEntry.ModMonitor.Log("This command does not take any arguments", LogLevel.Warn);
+            return;
+        }
+
+        if (!Context.IsWorldReady)
+        {
+            ModEntry.ModMonitor.Log("You need to load a save to use this command.", LogLevel.Error);
+            return;
+        }
+
+        if (!Game1.IsMasterGame)
+        {
+            ModEntry.ModMonitor.Log("You need to be the main player to use this command.", LogLevel.Error);
+            return;
+        }
+
+        int count = 0;
+        foreach (var location in Game1.locations)
+        {
+            foreach (var building in location.buildings.Where(building => building.buildingType.Value == "Greenhouse" && building.isUnderConstruction()))
+            {
+                count++;
+                building.FinishConstruction();
+            }
+        }
+
+        ModEntry.ModMonitor.Log($"Command finished construction on {count} Greenhouses", LogLevel.Debug);
     }
 }
