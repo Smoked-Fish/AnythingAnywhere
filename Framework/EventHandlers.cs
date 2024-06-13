@@ -12,6 +12,8 @@ using StardewValley.Locations;
 using StardewValley.TokenizableStrings;
 using System.Collections.Generic;
 using System.Linq;
+using AnythingAnywhere.Framework.Helpers;
+using AnythingAnywhere.Framework.Utilities;
 
 namespace AnythingAnywhere.Framework;
 internal static class EventHandlers
@@ -43,6 +45,9 @@ internal static class EventHandlers
 
         if (ModEntry.Config.WizardBuildMenu!.JustPressed() && ModEntry.Config.EnableBuilding)
             HandleBuildButtonPress("Wizard");
+
+        if (ModEntry.Config.CabinMenuButton!.JustPressed() && Game1.IsMasterGame)
+            HandleCabinMenuButtonPress();
     }
 
     internal static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
@@ -294,6 +299,39 @@ internal static class EventHandlers
         Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
     }
 
+    #endregion
+
+    #region Activate Cabin Menu
+    private static void HandleCabinMenuButtonPress()
+    {
+        if (!Context.IsPlayerFree || Game1.activeClickableMenu != null) 
+            return;
+        List<Response> options = [];
+
+        if (Game1.IsMasterGame && CabinUtility.HasCabinsToUpgrade())
+            options.Add(new Response("AA_Upgrade", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_UpgradeCabin")));
+
+        if (Game1.IsMasterGame && CabinUtility.HasCabinsToUpgrade(true))
+            options.Add(new Response("AA_Renovate", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_RenovateCabin")));
+
+        options.Add(new Response("Leave", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_Leave")));
+
+        Game1.player.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu"), [.. options], (_, answer) =>
+        {
+            switch (answer)
+            {
+                case "AA_Upgrade":
+                    UpgradeHelper.UpgradeCabinsResponses();
+                    break;
+                case "AA_Renovate":
+                    RenovationHelper.RenovateCabinsResponses();
+                    break;
+                default:
+                    Game1.player.currentLocation.answerDialogueAction("carpenter_" + answer, null);
+                    break;
+            }
+        });
+    }
     #endregion
 
     #region Blacklist
