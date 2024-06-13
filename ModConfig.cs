@@ -39,7 +39,7 @@ public sealed class ModConfig : IConfigurable
     [DefaultValue(SButton.LeftShift, "Building")]
     public KeybindList? BuildModifier { get; set; }
 
-    [DefaultValue(true, "Building")]
+    [DefaultValue(false, "Building")]
     public bool EnableGreenhouse { get; set; }
 
     [DefaultValue(false, "Building")]
