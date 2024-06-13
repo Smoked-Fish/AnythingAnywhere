@@ -50,11 +50,17 @@
   // Farming Config
   "Config.AnythingAnywhere.Farming.Title": "Farming",
 
-  "Config.AnythingAnywhere.EnablePlanting.Name": "Enable Farming",
-  "Config.AnythingAnywhere.EnablePlanting.Description": "Enables farming at any location",
+  "Config.AnythingAnywhere.EnableFarmingAnywhere.Name": "Enable Farming",
+  "Config.AnythingAnywhere.EnableFarmingAnywhere.Description": "Enables farming at any location",
 
-  "Config.AnythingAnywhere.DisableSeasonRestrictions.Name": "Grow in Any Season",
-  "Config.AnythingAnywhere.DisableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season",
+  "Config.AnythingAnywhere.EnableCropsAnytime.Name": "Crops in Any Season",
+  "Config.AnythingAnywhere.EnableCropsAnytime.Description": "Removes restrictions on crops so they can grow in any season",
+
+  "Config.AnythingAnywhere.EnableTreesAnytime.Name": "Trees in Any Season",
+  "Config.AnythingAnywhere.EnableTreesAnytime.Description": "Removes restrictions on fruit trees so they can produce in any season",
+
+  "Config.AnythingAnywhere.EnableBushesAnytime.Name": "Bushes in Any Season",
+  "Config.AnythingAnywhere.EnableBushesAnytime.Description": "Removes restrictions on bushes so they can produce in any season",
 
   "Config.AnythingAnywhere.EnableDiggingAll.Name": "Hoe Anything",
   "Config.AnythingAnywhere.EnableDiggingAll.Description": "Enables hoeing any tile",
@@ -65,8 +71,8 @@
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "Wild Tree Tweaks",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "Removes growth restrictions on wild trees. This will quickly grow out of control",
 
-  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Name": "Force Season Tree Texture",
-  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Description": "When 'Grow in Any Season' is enabled, this will make tree textures go back to the seasonal sprite texture",
+  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Name": "Greenhouse Tree Texture",
+  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Description": "This will make tree textures have the greenhouse texture when 'EnableTreesAnytime' is enabled",
 
   // House Config
   "Config.AnythingAnywhere.House.Title": "House",

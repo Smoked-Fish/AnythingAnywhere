@@ -69,8 +69,8 @@ public class ModEntry : Mod
 
         if (Helper.ModRegistry.IsLoaded("Pathoschild.CropsAnytimeAnywhere"))
         {
-            Config.EnablePlanting = false;
-            ConfigUtility.SkipConfig(nameof(ModConfig.EnablePlanting));
+            Config.EnableFarmingAnywhere = false;
+            ConfigUtility.SkipConfig(nameof(ModConfig.EnableFarmingAnywhere));
         }
 
         if (!Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu")) return;
@@ -112,12 +112,14 @@ public class ModEntry : Mod
         ConfigManager.AddPage("Farming");
         ConfigManager.AddButtonOption("Farming", "ResetPage", fieldId: "Farming");
         ConfigManager.AddHorizontalSeparator();
-        ConfigManager.AddOption(nameof(ModConfig.EnablePlanting));
-        ConfigManager.AddOption(nameof(ModConfig.DisableSeasonRestrictions));
+        ConfigManager.AddOption(nameof(ModConfig.EnableFarmingAnywhere));
+        ConfigManager.AddOption(nameof(ModConfig.EnableCropsAnytime));
+        ConfigManager.AddOption(nameof(ModConfig.EnableTreesAnytime));
+        ConfigManager.AddOption(nameof(ModConfig.EnableBushesAnytime));
         ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
         ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
         ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));
-        ConfigManager.AddOption(nameof(ModConfig.ForceCorrectTreeSprite));
+        ConfigManager.AddOption(nameof(ModConfig.ForceGreenhouseTreeSprite));
 
         // Register the Cabin and Farmhouse settings
         ConfigManager.AddPage("House");

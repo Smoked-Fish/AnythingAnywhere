@@ -56,10 +56,16 @@ public sealed class ModConfig : IConfigurable
 
     // FARMING
     [DefaultValue(true, "Farming")]
-    public bool EnablePlanting { get; set; }
+    public bool EnableFarmingAnywhere { get; set; }
 
     [DefaultValue(false, "Farming")]
-    public bool DisableSeasonRestrictions { get; set; }
+    public bool EnableCropsAnytime { get; set; }
+
+    [DefaultValue(false, "Farming")]
+    public bool EnableTreesAnytime { get; set; }
+
+    [DefaultValue(false, "Farming")]
+    public bool EnableBushesAnytime { get; set; }
 
     [DefaultValue(false, "Farming")]
     public bool EnableDiggingAll { get; set; }
@@ -71,7 +77,7 @@ public sealed class ModConfig : IConfigurable
     public bool EnableWildTreeTweaks { get; set; }
 
     [DefaultValue(false, "Farming")]
-    public bool ForceCorrectTreeSprite { get; set; }
+    public bool ForceGreenhouseTreeSprite { get; set; }
 
     // House
     [DefaultValue(true, "House")]

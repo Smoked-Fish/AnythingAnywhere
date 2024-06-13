@@ -47,8 +47,8 @@
   // Farming Config
   "Config.AnythingAnywhere.Farming.Title": "Agriculture",
 
-  "Config.AnythingAnywhere.EnablePlanting.Name": "Activer l'agriculture",
-  "Config.AnythingAnywhere.EnablePlanting.Description": "Permet de planter des cultures à n'importe quel endroit.",
+  "Config.AnythingAnywhere.EnableFarmingAnywhere.Name": "Activer l'agriculture",
+  "Config.AnythingAnywhere.EnableFarmingAnywhere.Description": "Permet de planter des cultures à n'importe quel endroit.",
 
   "Config.AnythingAnywhere.EnableDiggingAll.Name": "Labourer n'importe où",
   "Config.AnythingAnywhere.EnableDiggingAll.Description": "Permet de labourer n'importe quelle tuile.",
@@ -93,16 +93,20 @@
 
 
   "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "Buildings build here will not not save correctly",
-  "Config.AnythingAnywhere.DisableSeasonRestrictions.Name": "Grow in Any Season",
-  "Config.AnythingAnywhere.DisableSeasonRestrictions.Description": "Removes growth restrictions on crops so they can grow in any season",
+  "Config.AnythingAnywhere.EnableCropsAnytime.Name": "Grow in Any Season",
+  "Config.AnythingAnywhere.EnableCropsAnytime.Description": "Removes growth restrictions on crops so they can grow in any season",
   "Config.AnythingAnywhere.UpgradeCabins.Name": "Upgrade Cabins",
   "Config.AnythingAnywhere.UpgradeCabins.Description": "Lets you upgrade cabins from Robins shop",
   "Config.AnythingAnywhere.RenovateCabins.Name": "Renovate Cabins",
   "Config.AnythingAnywhere.RenovateCabins.Description": "Lets you renovate cabins from Robins shop",
   "Config.AnythingAnywhere.InstantHomeUpgrade.Name": "Instant House Upgrade",
   "Config.AnythingAnywhere.InstantHomeUpgrade.Description": "Instantly upgrades the farmhouse/cabin",
-  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Name": "Force Season Tree Texture",
-  "Config.AnythingAnywhere.ForceCorrectTreeSprite.Description": "When 'Grow in Any Season' is enabled, this will make tree textures go back to the seasonal sprite texture",
+  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Name": "Greenhouse Tree Texture",
+  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Description": "This will make tree textures have the greenhouse texture when 'EnableTreesAnytime' is enabled",
   "Config.AnythingAnywhere.CabinMenuButton.Name": "Cabin Menu",
-  "Config.AnythingAnywhere.CabinMenuButton.Description": "Opens the menu to upgrade/renovate the cabins if you can't use Robins menu due to mod conflicts"
+  "Config.AnythingAnywhere.CabinMenuButton.Description": "Opens the menu to upgrade/renovate the cabins if you can't use Robins menu due to mod conflicts",
+  "Config.AnythingAnywhere.EnableTreesAnytime.Name": "Trees in Any Season",
+  "Config.AnythingAnywhere.EnableTreesAnytime.Description": "Removes restrictions on fruit trees so they can produce in any season",
+  "Config.AnythingAnywhere.EnableBushesAnytime.Name": "Bushes in Any Season",
+  "Config.AnythingAnywhere.EnableBushesAnytime.Description": "Removes restrictions on bushes so they can produce in any season"
 }
