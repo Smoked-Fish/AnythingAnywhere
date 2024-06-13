@@ -1,16 +1,13 @@
 ﻿using AnythingAnywhere.Framework;
 using AnythingAnywhere.Framework.External.CustomBush;
 using AnythingAnywhere.Framework.Patches;
+using AnythingAnywhere.Framework.Utilities;
 using Common.Managers;
 using Common.Utilities;
 using Common.Utilities.Options;
-using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AnythingAnywhere;
 public class ModEntry : Mod
@@ -40,9 +37,7 @@ public class ModEntry : Mod
         new MiscPatches().Apply();
 
         // Add debug commands
-        helper.ConsoleCommands.Add("aa_remove_objects", "Removes all objects of a specified ID at a specified location.\n\nUsage: aa_remove_objects [LOCATION] [OBJECT_ID]", this.DebugRemoveObjects);
-        helper.ConsoleCommands.Add("aa_remove_furniture", "Removes all furniture of a specified ID at a specified location.\n\nUsage: aa_remove_furniture [LOCATION] [FURNITURE_ID]", this.DebugRemoveFurniture);
-        helper.ConsoleCommands.Add("aa_active", "Lists all active locations.\n\nUsage: aa_active", this.DebugListActiveLocations);
+        ConsoleCommands.RegisterCommands();
 
         // Hook into Game events
         helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
@@ -111,7 +106,7 @@ public class ModEntry : Mod
         ConfigManager.AddOption(nameof(ModConfig.EnableBuildingIndoors));
         ConfigManager.AddOption(nameof(ModConfig.BypassMagicInk));
         ConfigManager.AddHorizontalSeparator();
-        ConfigManager.AddButtonOption("BlacklistedLocations", renderLeft: true, fieldId: "BlacklistCurrentLocation", afterReset: afterReset);
+        ConfigManager.AddButtonOption("BlacklistedLocations", renderLeft: true, fieldId: "BlacklistCurrentLocation", afterReset: () => EventHandlers.ResetBlacklist());
 
         // Register the farming settings
         ConfigManager.AddPage("Farming");
@@ -122,6 +117,7 @@ public class ModEntry : Mod
         ConfigManager.AddOption(nameof(ModConfig.EnableDiggingAll));
         ConfigManager.AddOption(nameof(ModConfig.EnableFruitTreeTweaks));
         ConfigManager.AddOption(nameof(ModConfig.EnableWildTreeTweaks));
+        ConfigManager.AddOption(nameof(ModConfig.ForceCorrectTreeSprite));
 
         // Register the Cabin and Farmhouse settings
         ConfigManager.AddPage("House");
@@ -131,6 +127,7 @@ public class ModEntry : Mod
         ConfigManager.AddOption(nameof(ModConfig.InstantHomeUpgrade));
         ConfigManager.AddOption(nameof(ModConfig.UpgradeCabins));
         ConfigManager.AddOption(nameof(ModConfig.RenovateCabins));
+        ConfigManager.AddOption(nameof(ModConfig.CabinMenuButton));
         ConfigManager.AddOption(nameof(ModConfig.EnableFreeHouseUpgrade));
         ConfigManager.AddOption(nameof(ModConfig.EnableFreeRenovations));
 
@@ -143,109 +140,5 @@ public class ModEntry : Mod
         ConfigManager.AddOption(nameof(ModConfig.EnableJukeboxFunctionality));
         ConfigManager.AddOption(nameof(ModConfig.EnableGoldClockAnywhere));
         ConfigManager.AddOption(nameof(ModConfig.MultipleMiniObelisks));
-    }
-
-    private static readonly Action afterReset = () => EventHandlers.ResetBlacklist();
-
-    private void DebugRemoveFurniture(string command, string[] args)
-    {
-        if (args.Length <= 1)
-        {
-            Monitor.Log("Missing required arguments: [LOCATION] [FURNITURE_ID]", LogLevel.Warn);
-            return;
-        }
-
-        // check context
-        if (!Context.IsWorldReady)
-        {
-            ModMonitor.Log("You need to load a save to use this command.", LogLevel.Error);
-            return;
-        }
-
-        // get target location
-        var location = Game1.locations.FirstOrDefault(p => p.Name?.Equals(args[0], StringComparison.OrdinalIgnoreCase) == true);
-        if (location == null && args[0] == "current")
-        {
-            location = Game1.currentLocation;
-        }
-        if (location == null)
-        {
-            string[] locationNames = (from loc in Game1.locations where !string.IsNullOrWhiteSpace(loc.Name) orderby loc.Name select loc.Name).ToArray();
-            ModMonitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
-            return;
-        }
-
-        // remove objects
-        int removed = 0;
-        foreach (var pair in location.furniture.ToArray())
-        {
-            if (pair.QualifiedItemId != args[1]) continue;
-            location.furniture.Remove(pair);
-            removed++;
-        }
-
-        ModMonitor.Log($"Command removed {removed} furniture objects at {location.NameOrUniqueName}", LogLevel.Info);
-    }
-
-    private void DebugRemoveObjects(string command, string[] args)
-    {
-        if (args.Length <= 1)
-        {
-            Monitor.Log("Missing required arguments: [LOCATION] [OBJECT_ID]", LogLevel.Warn);
-            return;
-        }
-
-        // check context
-        if (!Context.IsWorldReady)
-        {
-            ModMonitor.Log("You need to load a save to use this command.", LogLevel.Error);
-            return;
-        }
-
-        // get target location
-        var location = Game1.locations.FirstOrDefault(p => p.Name?.Equals(args[0], StringComparison.OrdinalIgnoreCase) == true);
-        if (location == null && args[0] == "current")
-        {
-            location = Game1.currentLocation;
-        }
-        if (location == null)
-        {
-            string[] locationNames = (from loc in Game1.locations where !string.IsNullOrWhiteSpace(loc.Name) orderby loc.Name select loc.Name).ToArray();
-            ModMonitor.Log($"Could not find a location with that name. Must be one of [{string.Join(", ", locationNames)}].", LogLevel.Error);
-            return;
-        }
-
-        // remove objects
-        int removed = 0;
-        foreach ((Vector2 tile, var obj) in location.Objects.Pairs.ToArray())
-        {
-            if (obj.QualifiedItemId != args[1]) continue;
-            location.Objects.Remove(tile);
-            removed++;
-        }
-
-        ModMonitor.Log($"Command removed {removed} objects at {location.NameOrUniqueName}", LogLevel.Info);
-    }
-
-    private void DebugListActiveLocations(string command, string[] args)
-    {
-        if (args.Length > 0)
-        {
-            Monitor.Log("This command does not take any arguments", LogLevel.Warn);
-            return;
-        }
-
-        if (!Context.IsWorldReady)
-        {
-            ModMonitor.Log("You need to load a save to use this command.", LogLevel.Error);
-            return;
-        }
-
-        List<string> activeLocations = [];
-        activeLocations.AddRange(from location in Game1.locations where location.isAlwaysActive.Value select location.Name);
-
-        // Print out the comma-separated list of active locations
-        string activeLocationsStr = string.Join(", ", activeLocations);
-        ModMonitor.Log($"Active locations: {activeLocationsStr}", LogLevel.Info);
     }
 }
